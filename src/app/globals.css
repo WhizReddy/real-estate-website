@@ -25,6 +25,32 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Force light mode for form inputs to ensure readability */
+input, textarea, select {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  border-color: #d1d5db !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2) !important;
+}
+
+/* Ensure placeholder text is visible */
+input::placeholder, textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+/* Fix admin panel background to ensure proper contrast */
+.admin-panel {
+  background-color: #f9fafb !important;
+  color: #1f2937 !important;
+}
+
 /* Performance optimizations */
 @keyframes shimmer {
   0% { background-position: 200% 0; }

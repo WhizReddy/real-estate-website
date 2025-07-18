@@ -1,79 +1,48 @@
 import Link from 'next/link';
+import Layout from '@/components/Layout';
 import { Home, Search, ArrowLeft } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="max-w-lg w-full text-center">
-        {/* 404 Illustration */}
-        <div className="mb-8">
-          <div className="text-8xl font-bold text-red-600 mb-4">404</div>
-          <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Search className="w-12 h-12 text-red-600" />
+    <Layout>
+      <div className="min-h-[60vh] flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full text-center">
+          <div className="mb-8">
+            <div className="mx-auto h-24 w-24 text-red-500 mb-6">
+              <Home className="h-full w-full" />
+            </div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
+            <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+              Faqja nuk u gjet
+            </h2>
+            <p className="text-gray-600 mb-8">
+              Na vjen keq, por faqja që po kërkoni nuk ekziston ose është zhvendosur.
+            </p>
           </div>
-        </div>
 
-        {/* Content */}
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
-          Faqja nuk u gjet
-        </h1>
-        
-        <p className="text-gray-600 mb-8">
-          Faqja që po kërkoni nuk ekziston ose është zhvendosur. 
-          Ju lutem kontrolloni adresën ose kthehuni në faqen kryesore.
-        </p>
-
-        {/* Action Buttons */}
-        <div className="space-y-4">
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center w-full bg-red-600 text-white px-6 py-3 rounded-md hover:bg-red-700 transition-colors"
-          >
-            <Home className="w-5 h-5 mr-2" />
-            Kthehu në Faqen Kryesore
-          </Link>
-          
-          <button
-            onClick={() => window.history.back()}
-            className="inline-flex items-center justify-center w-full bg-gray-600 text-white px-6 py-3 rounded-md hover:bg-gray-700 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Kthehu Mbrapa
-          </button>
-        </div>
-
-        {/* Popular Links */}
-        <div className="mt-12 pt-8 border-t border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Faqet më të popullarizuara
-          </h2>
-          <div className="space-y-2">
+          <div className="space-y-4">
             <Link
               href="/"
-              className="block text-red-600 hover:text-red-800 transition-colors"
+              className="inline-flex items-center justify-center w-full px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
             >
-              Pasuritë e disponueshme
+              <ArrowLeft className="h-5 w-5 mr-2" />
+              Kthehu në Faqen Kryesore
             </Link>
+            
             <Link
-              href="/admin/login"
-              className="block text-red-600 hover:text-red-800 transition-colors"
+              href="/properties"
+              className="inline-flex items-center justify-center w-full px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
             >
-              Hyrja e administratorit
+              <Search className="h-5 w-5 mr-2" />
+              Shiko Të Gjitha Pasuritë
             </Link>
           </div>
-        </div>
 
-        {/* Contact Info */}
-        <div className="mt-8 p-4 bg-white rounded-lg shadow-sm">
-          <p className="text-sm text-gray-600">
-            Nëse mendoni se kjo është një gabim, ju lutem na kontaktoni:
-          </p>
-          <div className="mt-2 space-y-1 text-sm">
-            <div>📧 info@pasuritëtiranës.al</div>
-            <div>📞 +355 69 123 4567</div>
+          <div className="mt-8 text-sm text-gray-500">
+            <p>Nëse mendoni se kjo është një gabim, ju lutemi kontaktoni me ne.</p>
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }

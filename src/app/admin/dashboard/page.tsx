@@ -7,6 +7,7 @@ import { Property } from '@/types';
 import { getProperties, deleteProperty } from '@/lib/data';
 import { formatPrice } from '@/lib/utils';
 import { Plus, Edit, Trash2, Eye, LogOut, MessageCircle } from 'lucide-react';
+import CreativeLoader from '@/components/CreativeLoader';
 
 export default function AdminDashboard() {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -56,11 +57,8 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Duke ngarkuar...</p>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-red-50 flex items-center justify-center">
+        <CreativeLoader type="properties" size="lg" />
       </div>
     );
   }

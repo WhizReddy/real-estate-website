@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, X, Image as ImageIcon, AlertCircle } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, AlertCircle, Star, ArrowLeft, ArrowRight, Eye } from 'lucide-react';
 import Image from 'next/image';
 
 interface ImageUploaderProps {
@@ -164,77 +164,138 @@ export default function ImageUploader({
         </div>
       )}
 
-      {/* Image Preview Grid */}
+      {/* Modern Image Preview Grid */}
       {images.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-700">
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+              <ImageIcon className="h-5 w-5 mr-2 text-red-600" />
               Imazhet e Ngarkuara ({images.length})
             </h3>
-            <p className="text-xs text-gray-500">
-              Imazhi i parë do të jetë imazhi kryesor
-            </p>
+            <div className="flex items-center space-x-2 text-xs text-gray-500">
+              <Star className="h-4 w-4 text-yellow-500" />
+              <span>Imazhi i parë është kryesor</span>
+            </div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {images.map((imageUrl, index) => (
               <div
                 key={index}
-                className="relative group bg-gray-100 rounded-lg overflow-hidden aspect-square"
+                className="relative group bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300"
               >
-                <Image
-                  src={imageUrl}
-                  alt={`Property image ${index + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                />
-                
-                {/* Image Controls */}
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex space-x-2">
-                    {/* Move Left */}
-                    {index > 0 && (
+                {/* Image Container */}
+                <div className="aspect-[4/3] relative bg-gradient-to-br from-gray-100 to-gray-200">
+                  {imageUrl.startsWith('data:') ? (
+                    <img
+                      src={imageUrl}
+                      alt={`Property image ${index + 1}`}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      style={{ 
+                        display: 'block',
+                        backgroundColor: '#f3f4f6',
+                        minHeight: '100%',
+                        minWidth: '100%'
+                      }}
+                      onLoad={(e) => {
+                        console.log('Image loaded successfully:', index);
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }}
+                      onError={(e) => {
+                        console.error('Image failed to load:', index, imageUrl.substring(0, 50));
+                        e.currentTarget.style.backgroundColor = '#ef4444';
+                      }}
+                    />
+                  ) : (
+                    <Image
+                      src={imageUrl}
+                      alt={`Property image ${index + 1}`}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      onLoad={() => console.log('Next.js Image loaded:', index)}
+                      onError={() => console.error('Next.js Image failed to load:', index)}
+                    />
+                  )}
+                  
+                  {/* Overlay Controls */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+                      {/* Move Controls */}
+                      <div className="flex space-x-2">
+                        {index > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => moveImage(index, index - 1)}
+                            className="p-2 bg-white/90 backdrop-blur-sm rounded-full text-gray-700 hover:text-red-600 hover:bg-white transition-all duration-200 shadow-lg"
+                            title="Lëviz majtas"
+                          >
+                            <ArrowLeft className="h-4 w-4" />
+                          </button>
+                        )}
+                        
+                        {index < images.length - 1 && (
+                          <button
+                            type="button"
+                            onClick={() => moveImage(index, index + 1)}
+                            className="p-2 bg-white/90 backdrop-blur-sm rounded-full text-gray-700 hover:text-red-600 hover:bg-white transition-all duration-200 shadow-lg"
+                            title="Lëviz djathtas"
+                          >
+                            <ArrowRight className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                      
+                      {/* Delete Button */}
                       <button
                         type="button"
-                        onClick={() => moveImage(index, index - 1)}
-                        className="p-1 bg-white rounded-full text-gray-700 hover:text-red-600 transition-colors"
-                        title="Lëviz majtas"
+                        onClick={() => removeImage(index)}
+                        className="p-2 bg-red-500/90 backdrop-blur-sm rounded-full text-white hover:bg-red-600 transition-all duration-200 shadow-lg"
+                        title="Fshi imazhin"
                       >
-                        ←
+                        <X className="h-4 w-4" />
                       </button>
-                    )}
-                    
-                    {/* Move Right */}
-                    {index < images.length - 1 && (
-                      <button
-                        type="button"
-                        onClick={() => moveImage(index, index + 1)}
-                        className="p-1 bg-white rounded-full text-gray-700 hover:text-red-600 transition-colors"
-                        title="Lëviz djathtas"
-                      >
-                        →
-                      </button>
-                    )}
-                    
-                    {/* Remove */}
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      className="p-1 bg-white rounded-full text-gray-700 hover:text-red-600 transition-colors"
-                      title="Fshi imazhin"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
+                    </div>
                   </div>
                 </div>
 
-                {/* Primary Image Badge */}
-                {index === 0 && (
-                  <div className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
-                    Kryesor
+                {/* Image Info Footer */}
+                <div className="p-4 bg-white">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm font-medium text-gray-900">
+                        Imazhi #{index + 1}
+                      </span>
+                      {index === 0 && (
+                        <div className="flex items-center space-x-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs px-2 py-1 rounded-full">
+                          <Star className="h-3 w-3" />
+                          <span>Kryesor</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center space-x-1 text-xs text-gray-500">
+                      <Eye className="h-3 w-3" />
+                      <span>Visible</span>
+                    </div>
                   </div>
-                )}
+                  
+                  {/* Image Order Indicator */}
+                  <div className="mt-2 flex items-center space-x-1">
+                    {images.map((_, i) => (
+                      <div
+                        key={i}
+                        className={`h-1 flex-1 rounded-full transition-colors duration-200 ${
+                          i === index 
+                            ? 'bg-red-500' 
+                            : i < index 
+                            ? 'bg-gray-300' 
+                            : 'bg-gray-100'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             ))}
           </div>

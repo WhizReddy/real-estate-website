@@ -8,12 +8,18 @@ interface SearchResultsProps {
   properties: Property[];
   totalProperties: number;
   searchTerm?: string;
+  hasMore?: boolean;
+  onLoadMore?: () => void;
+  isLoadingMore?: boolean;
 }
 
 export default function SearchResults({ 
   properties, 
   totalProperties, 
-  searchTerm 
+  searchTerm,
+  hasMore = false,
+  onLoadMore,
+  isLoadingMore = false
 }: SearchResultsProps) {
   const hasResults = properties.length > 0;
   const isFiltered = properties.length !== totalProperties;
@@ -67,7 +73,32 @@ export default function SearchResults({
 
       {/* Results Content */}
       {hasResults ? (
-        <PropertyGrid properties={properties} />
+        <>
+          <PropertyGrid properties={properties} />
+          
+          {/* Load More Button */}
+          {hasMore && onLoadMore && (
+            <div className="mt-12 text-center">
+              <button
+                onClick={onLoadMore}
+                disabled={isLoadingMore}
+                className="inline-flex items-center px-8 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isLoadingMore ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Po ngarkohen më shumë...
+                  </>
+                ) : (
+                  <>
+                    <Home className="h-4 w-4 mr-2" />
+                    Shiko më shumë pasuri
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <NoResultsMessage searchTerm={searchTerm} />
       )}
@@ -108,7 +139,11 @@ function NoResultsMessage({ searchTerm }: { searchTerm?: string }) {
 
         <div className="mt-8">
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.location.reload();
+              }
+            }}
             className="inline-flex items-center px-4 py-2 border border-red-300 text-red-700 rounded-md hover:bg-red-50 transition-colors"
           >
             <Home className="h-4 w-4 mr-2" />

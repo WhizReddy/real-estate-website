@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Property } from '@/types';
 import ImageGallery from '@/components/ImageGallery';
-import MapView from '@/components/MapView';
+import ClientOnlyMapView from '@/components/ClientOnlyMapView';
 import ContactForm from '@/components/ContactForm';
 import Layout from '@/components/Layout';
 import StructuredData from '@/components/StructuredData';
@@ -172,10 +172,9 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   📍 Lokacioni
                 </h3>
-                <MapView 
+                <ClientOnlyMapView 
                   properties={[property]} 
                   height="400px"
-                  showSingleProperty={true}
                 />
               </div>
             </div>

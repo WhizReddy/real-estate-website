@@ -17,16 +17,34 @@ export interface Property {
     bedrooms: number;
     bathrooms: number;
     squareFootage: number;
-    propertyType: 'house' | 'condo' | 'townhouse' | 'apartment';
+    propertyType: "house" | "condo" | "townhouse" | "apartment";
     yearBuilt?: number;
   };
   images: string[];
   features: string[];
-  status: 'active' | 'inactive' | 'pending' | 'sold';
-  listingType: 'sale' | 'rent'; // Për Shitje ose Me Qira
+  status: "active" | "inactive" | "pending" | "sold";
+  listingType: "sale" | "rent"; // Për Shitje ose Me Qira
   isPinned: boolean; // Pin to main page
+  agent: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    photo?: string;
+  };
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Agent {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  photo?: string;
+  bio?: string;
+  specialties: string[];
+  createdAt: string;
 }
 
 export interface ContactInquiry {

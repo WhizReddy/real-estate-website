@@ -145,10 +145,15 @@ export default function NewProperty() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* Basic Information */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Informacione Bazë
-            </h2>
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+            <div className="flex items-center mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-red-600 rounded-xl flex items-center justify-center mr-4">
+                <span className="text-white font-bold text-lg">1</span>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Informacione Bazë
+              </h2>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
@@ -212,10 +217,15 @@ export default function NewProperty() {
           </div>
 
           {/* Images */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Imazhet e Pasurisë *
-            </h2>
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+            <div className="flex items-center mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
+                <span className="text-white font-bold text-lg">2</span>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Imazhet e Pasurisë *
+              </h2>
+            </div>
             <ImageUploader
               images={propertyImages}
               onImagesChange={setPropertyImages}
@@ -225,10 +235,15 @@ export default function NewProperty() {
           </div>
 
           {/* Address */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Adresa dhe Lokacioni
-            </h2>
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+            <div className="flex items-center mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center mr-4">
+                <span className="text-white font-bold text-lg">3</span>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Adresa dhe Lokacioni
+              </h2>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
@@ -326,10 +341,15 @@ export default function NewProperty() {
           </div>
 
           {/* Property Details */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Detajet e Pasurisë
-            </h2>
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+            <div className="flex items-center mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mr-4">
+                <span className="text-white font-bold text-lg">4</span>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Detajet e Pasurisë
+              </h2>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
@@ -425,10 +445,15 @@ export default function NewProperty() {
           </div>
 
           {/* Features */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Karakteristikat
-            </h2>
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+            <div className="flex items-center mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
+                <span className="text-white font-bold text-lg">5</span>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Karakteristikat
+              </h2>
+            </div>
             
             <div className="flex gap-2 mb-4">
               <input

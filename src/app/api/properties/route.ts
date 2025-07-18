@@ -1,16 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
     const properties = await prisma.property.findMany({
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     });
 
     // Transform the data to match the expected format
-    const transformedProperties = properties.map(property => ({
+    const transformedProperties = properties.map((property) => ({
       id: property.id,
       title: property.title,
       description: property.description,
@@ -22,29 +22,32 @@ export async function GET() {
         zipCode: property.zipCode,
         coordinates: {
           lat: property.latitude,
-          lng: property.longitude
-        }
+          lng: property.longitude,
+        },
       },
       details: {
         bedrooms: property.bedrooms,
         bathrooms: property.bathrooms,
         squareFootage: property.squareFootage,
         propertyType: property.propertyType.toLowerCase(),
-        yearBuilt: property.yearBuilt
+        yearBuilt: property.yearBuilt,
       },
-      images: JSON.parse(property.images || '[]'),
-      features: JSON.parse(property.features || '[]'),
+      images: JSON.parse(property.images || "[]"),
+      features: JSON.parse(property.features || "[]"),
       status: property.status.toLowerCase(),
       listingType: property.listingType.toLowerCase(),
       isPinned: property.isPinned,
       createdAt: property.createdAt.toISOString(),
-      updatedAt: property.updatedAt.toISOString()
+      updatedAt: property.updatedAt.toISOString(),
     }));
 
     return NextResponse.json({ properties: transformedProperties });
   } catch (error) {
-    console.error('Error fetching properties:', error);
-    return NextResponse.json({ error: 'Failed to fetch properties' }, { status: 500 });
+    console.error("Error fetching properties:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch properties" },
+      { status: 500 }
+    );
   }
 }
 
@@ -60,7 +63,7 @@ export async function POST(request: NextRequest) {
         street: data.street,
         city: data.city,
         state: data.state,
-        zipCode: data.zipCode || '',
+        zipCode: data.zipCode || "",
         latitude: data.latitude,
         longitude: data.longitude,
         bedrooms: data.bedrooms,
@@ -70,10 +73,10 @@ export async function POST(request: NextRequest) {
         yearBuilt: data.yearBuilt,
         images: JSON.stringify(data.images || []),
         features: JSON.stringify(data.features || []),
-        status: data.status ? data.status.toUpperCase() : 'ACTIVE',
+        status: data.status ? data.status.toUpperCase() : "ACTIVE",
         listingType: data.listingType.toUpperCase(),
-        isPinned: data.isPinned || false
-      }
+        isPinned: data.isPinned || false,
+      },
     });
 
     // Transform the response to match expected format
@@ -89,28 +92,31 @@ export async function POST(request: NextRequest) {
         zipCode: property.zipCode,
         coordinates: {
           lat: property.latitude,
-          lng: property.longitude
-        }
+          lng: property.longitude,
+        },
       },
       details: {
         bedrooms: property.bedrooms,
         bathrooms: property.bathrooms,
         squareFootage: property.squareFootage,
         propertyType: property.propertyType.toLowerCase(),
-        yearBuilt: property.yearBuilt
+        yearBuilt: property.yearBuilt,
       },
-      images: JSON.parse(property.images || '[]'),
-      features: JSON.parse(property.features || '[]'),
+      images: JSON.parse(property.images || "[]"),
+      features: JSON.parse(property.features || "[]"),
       status: property.status.toLowerCase(),
       listingType: property.listingType.toLowerCase(),
       isPinned: property.isPinned,
       createdAt: property.createdAt.toISOString(),
-      updatedAt: property.updatedAt.toISOString()
+      updatedAt: property.updatedAt.toISOString(),
     };
 
     return NextResponse.json(transformedProperty);
   } catch (error) {
-    console.error('Error creating property:', error);
-    return NextResponse.json({ error: 'Failed to create property' }, { status: 500 });
+    console.error("Error creating property:", error);
+    return NextResponse.json(
+      { error: "Failed to create property" },
+      { status: 500 }
+    );
   }
 }

@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Property } from '@/types';
 import { formatPrice } from '@/lib/utils';
+import { MapPin, AlertCircle, RefreshCw } from 'lucide-react';
+import CreativeLoader from '@/components/CreativeLoader';
 
 interface MapViewProps {
   properties: Property[];
@@ -24,139 +26,155 @@ export default function MapView({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
+  const initializeMap = async () => {
+    if (typeof window === 'undefined' || !mapRef.current) return;
 
-    // Dynamically import Leaflet to avoid SSR issues
-    import('leaflet').then((L) => {
-      if (!mapRef.current || mapInstanceRef.current) return;
+    try {
+      setIsLoading(true);
+      setHasError(false);
+
+      // Dynamically import Leaflet with timeout
+      const L = await Promise.race([
+        import('leaflet'),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Leaflet loading timeout')), 10000)
+        )
+      ]) as any;
+
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+
+      // Clear existing markers
+      markersRef.current = [];
 
       // Default to Tirana, Albania if no center provided
       const mapCenter = center || calculateCenter(properties);
 
-      // Define tight bounds around Tirana to prevent getting lost
-      const tiranaBounds = L.latLngBounds(
-        L.latLng(41.2, 19.6), // Southwest corner (tighter around Tirana)
-        L.latLng(41.5, 20.0)  // Northeast corner (tighter around Tirana)
-      );
-
-      // Initialize map with very restricted bounds and mobile-friendly controls
+      // Initialize map with minimal, stable settings
       const map = L.map(mapRef.current, {
         center: mapCenter,
         zoom: zoom,
-        minZoom: 10,
+        minZoom: 8,
         maxZoom: 18,
-        maxBounds: tiranaBounds,
-        maxBoundsViscosity: 0.8, // Strong bounce back when hitting bounds
         zoomControl: true,
-        scrollWheelZoom: 'center', // Always zoom to center
+        scrollWheelZoom: true,
         doubleClickZoom: true,
         dragging: true,
-        touchZoom: 'center', // Mobile-friendly zoom
+        touchZoom: true,
         boxZoom: false,
-        keyboard: true,
-        zoomSnap: 0.5,
-        zoomDelta: 0.5,
-        wheelPxPerZoomLevel: 100, // Slower zoom for better control
+        keyboard: false,
+        attributionControl: false,
+        preferCanvas: true, // Use canvas for better performance
       });
 
-      // Add multiple tile layer options for better coverage
-      const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
+      // Use a single, reliable tile layer
+      const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '',
         maxZoom: 18,
+        timeout: 10000,
       });
 
-      const cartoLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '© OpenStreetMap contributors © CARTO',
-        maxZoom: 18,
-      });
-
-      // Add default layer
-      cartoLayer.addTo(map);
-
-      // Add layer control
-      const baseLayers = {
-        'Harta Standarde': osmLayer,
-        'Harta Moderne': cartoLayer,
-      };
-      L.control.layers(baseLayers).addTo(map);
-
-      // Add scale control
-      L.control.scale({
-        metric: true,
-        imperial: false,
-        position: 'bottomleft'
-      }).addTo(map);
-
-      // Add reset view button
-      const resetControl = L.control({position: 'topleft'});
-      resetControl.onAdd = function() {
-        const div = L.DomUtil.create('div', 'leaflet-control-reset');
-        div.innerHTML = '<button class="bg-white border border-gray-300 rounded p-2 shadow hover:bg-gray-50" title="Kthehu në pamjen fillestare">🏠</button>';
-        div.onclick = function() {
-          if (properties.length > 0) {
-            const group = new L.featureGroup(markersRef.current);
-            map.fitBounds(group.getBounds().pad(0.1));
-          } else {
-            map.setView([41.3275, 19.8187], 13);
-          }
-        };
-        return div;
-      };
-      resetControl.addTo(map);
-
+      tileLayer.addTo(map);
       mapInstanceRef.current = map;
 
-      // Add property markers
-      addPropertyMarkers(L, map, properties, onPropertySelect);
+      // Wait for map to be ready before adding markers
+      map.whenReady(() => {
+        try {
+          addPropertyMarkers(L, map, properties, onPropertySelect);
+          
+          // Simple view setting without complex bounds fitting
+          if (properties.length > 0) {
+            map.setView(mapCenter, zoom);
+          }
+          
+          setIsLoading(false);
+        } catch (error) {
+          console.error('Error adding markers:', error);
+          setIsLoading(false);
+        }
+      });
 
-      // Fit bounds to show all properties if available
-      if (properties.length > 0) {
-        const group = new L.featureGroup(markersRef.current);
-        map.fitBounds(group.getBounds().pad(0.1));
-      }
-    });
+    } catch (error) {
+      console.error('Map initialization error:', error);
+      setHasError(true);
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    initializeMap();
 
     // Cleanup function
     return () => {
       if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
+        try {
+          mapInstanceRef.current.remove();
+        } catch (error) {
+          console.warn('Error cleaning up map:', error);
+        }
         mapInstanceRef.current = null;
         markersRef.current = [];
       }
     };
-  }, []);
+  }, [retryCount]);
 
   // Update markers when properties change
   useEffect(() => {
     if (!mapInstanceRef.current || typeof window === 'undefined') return;
 
-    import('leaflet').then((L) => {
-      // Clear existing markers
-      markersRef.current.forEach((marker) => marker.remove());
-      markersRef.current = [];
+    const updateMarkers = async () => {
+      try {
+        const L = await import('leaflet');
+        
+        // Clear existing markers
+        markersRef.current.forEach((marker) => {
+          try {
+            marker.remove();
+          } catch (error) {
+            console.warn('Error removing marker:', error);
+          }
+        });
+        markersRef.current = [];
 
-      // Add new markers
-      addPropertyMarkers(L, mapInstanceRef.current, properties, onPropertySelect);
+        // Add new markers
+        await addPropertyMarkers(L, mapInstanceRef.current, properties, onPropertySelect);
 
-      // Fit bounds to show all properties
-      if (properties.length > 0 && markersRef.current.length > 0) {
-        const group = new L.featureGroup(markersRef.current);
-        mapInstanceRef.current.fitBounds(group.getBounds().pad(0.1));
+        // Fit bounds to show all properties
+        if (properties.length > 0 && markersRef.current.length > 0) {
+          try {
+            const group = new L.featureGroup(markersRef.current);
+            mapInstanceRef.current.fitBounds(group.getBounds().pad(0.1));
+          } catch (error) {
+            console.warn('Error fitting bounds on update:', error);
+          }
+        }
+      } catch (error) {
+        console.error('Error updating markers:', error);
       }
-    });
+    };
+
+    updateMarkers();
   }, [properties, onPropertySelect]);
 
   // Highlight selected property
   useEffect(() => {
     if (!mapInstanceRef.current || !selectedProperty) return;
 
-    const coords = selectedProperty.address.coordinates;
-    mapInstanceRef.current.setView([coords.lat, coords.lng], 16, {
-      animate: true,
-      duration: 1
-    });
+    try {
+      const coords = selectedProperty.address.coordinates;
+      mapInstanceRef.current.setView([coords.lat, coords.lng], 16, {
+        animate: true,
+        duration: 1
+      });
+    } catch (error) {
+      console.warn('Error highlighting selected property:', error);
+    }
   }, [selectedProperty]);
 
   const calculateCenter = (props: Property[]): [number, number] => {
@@ -169,7 +187,7 @@ export default function MapView({
     return [avgLat, avgLng];
   };
 
-  const addPropertyMarkers = (L: any, map: any, props: Property[], onSelect?: (property: Property) => void) => {
+  const addPropertyMarkers = async (L: any, map: any, props: Property[], onSelect?: (property: Property) => void) => {
     props.forEach((property) => {
       const coords = property.address.coordinates;
       
@@ -256,23 +274,70 @@ export default function MapView({
     });
   };
 
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
+  };
+
   return (
     <div className="relative">
       <div
         ref={mapRef}
         style={{ height }}
-        className="w-full rounded-lg shadow-md border border-gray-200 touch-pan-x touch-pan-y"
+        className="w-full rounded-lg shadow-md border border-gray-200 touch-pan-x touch-pan-y bg-gray-50"
       />
       
-      {/* Map controls info - responsive text */}
-      <div className="absolute bottom-2 left-2 bg-white bg-opacity-90 rounded px-2 py-1 text-xs text-gray-600 hidden sm:block">
-        Lëviz hartën • Zoom me scroll • Hover për info • Klik për detaje
-      </div>
+      {/* Loading State */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-green-50 bg-opacity-95 flex items-center justify-center rounded-lg">
+          <CreativeLoader type="map" size="md" />
+        </div>
+      )}
+
+      {/* Error State */}
+      {hasError && (
+        <div className="absolute inset-0 bg-white bg-opacity-95 flex items-center justify-center rounded-lg">
+          <div className="text-center p-6">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Problem me hartën</h3>
+            <p className="text-gray-600 text-sm mb-4">
+              Nuk mund të ngarkohet harta. Ju lutem provoni përsëri.
+            </p>
+            <button
+              onClick={handleRetry}
+              className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Provo Përsëri
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* No Properties State */}
+      {!isLoading && !hasError && properties.length === 0 && (
+        <div className="absolute inset-0 bg-white bg-opacity-95 flex items-center justify-center rounded-lg">
+          <div className="text-center p-6">
+            <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Nuk ka pasuri</h3>
+            <p className="text-gray-600 text-sm">
+              Nuk ka pasuri për t'u shfaqur në hartë.
+            </p>
+          </div>
+        </div>
+      )}
       
-      {/* Mobile-friendly controls info */}
-      <div className="absolute bottom-2 left-2 bg-white bg-opacity-90 rounded px-2 py-1 text-xs text-gray-600 sm:hidden">
-        Lëviz • Zoom • Prek për detaje
-      </div>
+      {/* Map controls info - only show when map is loaded */}
+      {!isLoading && !hasError && properties.length > 0 && (
+        <>
+          <div className="absolute bottom-2 left-2 bg-white bg-opacity-90 rounded px-2 py-1 text-xs text-gray-600 hidden sm:block">
+            Lëviz hartën • Zoom me scroll • Hover për info • Klik për detaje
+          </div>
+          
+          <div className="absolute bottom-2 left-2 bg-white bg-opacity-90 rounded px-2 py-1 text-xs text-gray-600 sm:hidden">
+            Lëviz • Zoom • Prek për detaje
+          </div>
+        </>
+      )}
     </div>
   );
 }

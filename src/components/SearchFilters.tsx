@@ -20,6 +20,7 @@ interface FilterState {
   bedrooms: string;
   bathrooms: string;
   listingType: string;
+  agent: string;
 }
 
 export default function SearchFilters({ properties, onFilteredResults }: SearchFiltersProps) {
@@ -32,6 +33,7 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
     bedrooms: '',
     bathrooms: '',
     listingType: '',
+    agent: '',
   });
 
   // Use ref to store the callback to prevent infinite loops
@@ -45,6 +47,10 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
   );
   const uniquePropertyTypes = useMemo(() => 
     [...new Set(properties.map(p => p.details.propertyType))].sort(), 
+    [properties]
+  );
+  const uniqueAgents = useMemo(() => 
+    [...new Set(properties.map(p => p.agent))].sort((a, b) => a.name.localeCompare(b.name)), 
     [properties]
   );
   const maxPrice = useMemo(() => 
@@ -102,6 +108,11 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
         return false;
       }
 
+      // Agent filter
+      if (filters.agent && property.agent.id !== filters.agent) {
+        return false;
+      }
+
       return true;
     });
   }, []);
@@ -142,6 +153,7 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
       bedrooms: '',
       bathrooms: '',
       listingType: '',
+      agent: '',
     });
   };
 
@@ -153,7 +165,8 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
     filters.propertyType ||
     filters.bedrooms ||
     filters.bathrooms ||
-    filters.listingType;
+    filters.listingType ||
+    filters.agent;
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -312,6 +325,25 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
               <option value="">Të gjitha</option>
               <option value="sale">Për Shitje</option>
               <option value="rent">Me Qira</option>
+            </select>
+          </div>
+
+          {/* Agent Filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              👤 Agjenti
+            </label>
+            <select
+              value={filters.agent}
+              onChange={(e) => handleFilterChange('agent', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+            >
+              <option value="">Të gjithë agjentët</option>
+              {uniqueAgents.map(agent => (
+                <option key={agent.id} value={agent.id}>
+                  {agent.name}
+                </option>
+              ))}
             </select>
           </div>
         </div>
