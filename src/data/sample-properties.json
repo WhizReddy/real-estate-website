@@ -1,0 +1,211 @@
+[
+  {
+    "id": "prop-001",
+    "title": "Apartament Modern në Qendër të Tiranës",
+    "description": "Apartament i bukur 2+1 në zemër të qendrës së Tiranës. Ka dritare të mëdha, dysheme parket dhe ballkon privat me pamje nga qyteti. Afër restoranteve, dyqaneve dhe transportit publik.",
+    "price": 120000,
+    "address": {
+      "street": "Rruga Dëshmorët e Kombit, Nr. 15",
+      "city": "Tiranë",
+      "state": "Tiranë",
+      "zipCode": "1001",
+      "coordinates": {
+        "lat": 41.3275,
+        "lng": 19.8187
+      }
+    },
+    "details": {
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "squareFootage": 85,
+      "propertyType": "apartment",
+      "yearBuilt": 2018
+    },
+    "images": [
+      "/images/properties/apartment-1-main.svg",
+      "/images/properties/apartment-1-living.svg",
+      "/images/properties/apartment-1-kitchen.svg",
+      "/images/properties/apartment-1-bedroom.svg"
+    ],
+    "features": [
+      "Dysheme parket",
+      "Pajisje moderne kuzhine",
+      "Ballkon privat",
+      "Ashensor",
+      "Parking",
+      "Qendror"
+    ],
+    "status": "active",
+    "listingType": "sale",
+    "isPinned": true,
+    "createdAt": "2024-01-15T10:00:00.000Z",
+    "updatedAt": "2024-01-15T10:00:00.000Z"
+  },
+  {
+    "id": "prop-002",
+    "title": "Shtëpi Familjare në Kashar",
+    "description": "Shtëpi e bukur 3+1 në një lagje të qetë në Kashar. Ka oborr të madh, kuzhinë të rinovuar dhe garazh. Perfekte për familje me shkolla të mira në afërsi.",
+    "price": 1200,
+    "address": {
+      "street": "Rruga Pjetër Bogdani, Nr. 45",
+      "city": "Kashar",
+      "state": "Tiranë",
+      "zipCode": "1051",
+      "coordinates": {
+        "lat": 41.3547,
+        "lng": 19.7731
+      }
+    },
+    "details": {
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "squareFootage": 150,
+      "propertyType": "house",
+      "yearBuilt": 2010
+    },
+    "images": [
+      "/images/properties/house-1-main.svg",
+      "/images/properties/house-1-living.svg",
+      "/images/properties/house-1-kitchen.svg",
+      "/images/properties/house-1-garden.svg"
+    ],
+    "features": [
+      "Kuzhinë e rinovuar",
+      "Oborr i madh",
+      "Garazh",
+      "Oxhak",
+      "Dollap të mëdhenj",
+      "Afër shkollave"
+    ],
+    "status": "active",
+    "listingType": "rent",
+    "isPinned": false,
+    "createdAt": "2024-01-10T14:30:00.000Z",
+    "updatedAt": "2024-01-10T14:30:00.000Z"
+  },
+  {
+    "id": "prop-003",
+    "title": "Vila Luksoze në Rezidencë",
+    "description": "Vila elegante 4+1 me kopsht privat në një rezidencë prestigjioze. Ka finishe moderne, plan të hapur dhe terrasa në çati. E vendosur në një komunitet të mbyllur me siguri.",
+    "price": 350000,
+    "address": {
+      "street": "Rezidenca Green Park, Vila 12",
+      "city": "Tiranë",
+      "state": "Tiranë",
+      "zipCode": "1023",
+      "coordinates": {
+        "lat": 41.3456,
+        "lng": 19.8345
+      }
+    },
+    "details": {
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "squareFootage": 220,
+      "propertyType": "house",
+      "yearBuilt": 2020
+    },
+    "images": [
+      "/images/properties/villa-1-main.svg",
+      "/images/properties/villa-1-living.svg",
+      "/images/properties/villa-1-garden.svg",
+      "/images/properties/villa-1-terrace.svg"
+    ],
+    "features": [
+      "Kopsht privat",
+      "Terrasa në çati",
+      "Komunitet i mbyllur",
+      "Finishe moderne",
+      "Plan i hapur",
+      "Sistem sigurie"
+    ],
+    "status": "active",
+    "listingType": "sale",
+    "isPinned": true,
+    "createdAt": "2024-01-05T09:15:00.000Z",
+    "updatedAt": "2024-01-05T09:15:00.000Z"
+  },
+  {
+    "id": "prop-004",
+    "title": "Studio në Bllok",
+    "description": "Studio perfekt për të rinj ose si investim. Ka dizajn të mirë, kuzhinë të plotë dhe dritare të mëdha. Lokacion i shkëlqyer në Bllok, afër gjithçkaje.",
+    "price": 600,
+    "address": {
+      "street": "Rruga Ibrahim Rugova, Nr. 8",
+      "city": "Tiranë",
+      "state": "Tiranë",
+      "zipCode": "1019",
+      "coordinates": {
+        "lat": 41.3193,
+        "lng": 19.8225
+      }
+    },
+    "details": {
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFootage": 35,
+      "propertyType": "apartment",
+      "yearBuilt": 2016
+    },
+    "images": [
+      "/images/properties/studio-1-main.svg",
+      "/images/properties/studio-1-kitchen.svg",
+      "/images/properties/studio-1-bathroom.svg"
+    ],
+    "features": [
+      "Dizajn modern",
+      "Kuzhinë e plotë",
+      "Dritare të mëdha",
+      "Në Bllok",
+      "Mirëmbajtje e ulët",
+      "Mundësi investimi"
+    ],
+    "status": "active",
+    "listingType": "rent",
+    "isPinned": false,
+    "createdAt": "2024-01-20T16:45:00.000Z",
+    "updatedAt": "2024-01-20T16:45:00.000Z"
+  },
+  {
+    "id": "prop-005",
+    "title": "Penthouse me Pamje Panoramike",
+    "description": "Penthouse ekskluziv 3+1 me pamje panoramike të Tiranës. Ka terrasa private, finishe premium dhe akses në pishinë. Ndërtim i ri me ashensor dhe parking nëntokësor.",
+    "price": 280000,
+    "address": {
+      "street": "Sky Tower, Kati 15",
+      "city": "Tiranë",
+      "state": "Tiranë",
+      "zipCode": "1001",
+      "coordinates": {
+        "lat": 41.3308,
+        "lng": 19.8172
+      }
+    },
+    "details": {
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "squareFootage": 140,
+      "propertyType": "apartment",
+      "yearBuilt": 2021
+    },
+    "images": [
+      "/images/properties/penthouse-1-main.svg",
+      "/images/properties/penthouse-1-living.svg",
+      "/images/properties/penthouse-1-terrace.svg",
+      "/images/properties/penthouse-1-view.svg"
+    ],
+    "features": [
+      "Pamje panoramike",
+      "Terrasa private",
+      "Finishe premium",
+      "Pishina",
+      "Parking nëntokësor",
+      "Ashensor"
+    ],
+    "status": "inactive",
+    "listingType": "sale",
+    "isPinned": false,
+    "createdAt": "2024-01-01T12:00:00.000Z",
+    "updatedAt": "2024-01-25T10:30:00.000Z"
+  }
+]

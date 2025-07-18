@@ -1,0 +1,7 @@
+<svg width="144" height="144" xmlns="http://www.w3.org/2000/svg">
+  <rect width="144" height="144" fill="#dc2626"/>
+  <path d="M72 18L27 54v72h90V54L72 18z" fill="white"/>
+  <rect x="54" y="90" width="18" height="36" fill="#dc2626"/>
+  <rect x="90" y="72" width="18" height="18" fill="#dc2626"/>
+  <rect x="36" y="72" width="18" height="18" fill="#dc2626"/>
+</svg>

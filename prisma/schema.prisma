@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Property {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       Int
+  
+  // Address information
+  street      String
+  city        String
+  state       String
+  zipCode     String
+  latitude    Float
+  longitude   Float
+  
+  // Property details
+  bedrooms       Int
+  bathrooms      Int
+  squareFootage  Int
+  propertyType   String // HOUSE, APARTMENT, CONDO, TOWNHOUSE
+  yearBuilt      Int?
+  
+  // Images and features (stored as JSON strings for SQLite compatibility)
+  images         String // JSON array of image URLs
+  features       String // JSON array of features
+  
+  // Status and listing info
+  status         String @default("ACTIVE") // ACTIVE, INACTIVE, SOLD, RENTED
+  listingType    String // SALE, RENT
+  isPinned       Boolean @default(false)
+  
+  // Timestamps
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  
+  // Relations
+  inquiries      Inquiry[]
+  
+  @@map("properties")
+}
+
+model Inquiry {
+  id         String   @id @default(cuid())
+  
+  // Customer information
+  name       String
+  email      String
+  phone      String?
+  message    String
+  
+  // Property relation
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  // Status tracking
+  status     String @default("NEW") // NEW, CONTACTED, IN_PROGRESS, CLOSED
+  
+  // Timestamps
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  @@map("inquiries")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      String @default("AGENT") // ADMIN, AGENT
+  
+  // Authentication
+  password  String
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("users")
+}
+

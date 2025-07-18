@@ -1,0 +1,9 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="600" fill="#f3f4f6"/>
+    <rect x="50" y="50" width="700" height="500" fill="#e5e7eb" stroke="#d1d5db" stroke-width="2"/>
+    <text x="400" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" fill="#6b7280">Studio</text>
+    <text x="400" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#9ca3af">Kryesore</text>
+    <rect x="300" y="200" width="200" height="150" fill="#dc2626" opacity="0.1"/>
+    <path d="M350 225 L400 200 L450 225 V275 H350 Z" fill="#dc2626" opacity="0.3"/>
+    <rect x="375" y="250" width="50" height="25" fill="#dc2626" opacity="0.5"/>
+  </svg>
