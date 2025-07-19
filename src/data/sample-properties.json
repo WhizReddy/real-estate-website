@@ -38,6 +38,12 @@
     "status": "active",
     "listingType": "sale",
     "isPinned": true,
+    "agent": {
+      "id": "agent-001",
+      "name": "Arben Kelmendi",
+      "email": "arben@pasurite-tiranes.al",
+      "phone": "+355 69 123 4567"
+    },
     "createdAt": "2024-01-15T10:00:00.000Z",
     "updatedAt": "2024-01-15T10:00:00.000Z"
   },
@@ -80,6 +86,12 @@
     "status": "active",
     "listingType": "rent",
     "isPinned": false,
+    "agent": {
+      "id": "agent-002",
+      "name": "Elona Hoxha",
+      "email": "elona@pasurite-tiranes.al",
+      "phone": "+355 69 234 5678"
+    },
     "createdAt": "2024-01-10T14:30:00.000Z",
     "updatedAt": "2024-01-10T14:30:00.000Z"
   },
@@ -122,6 +134,12 @@
     "status": "active",
     "listingType": "sale",
     "isPinned": true,
+    "agent": {
+      "id": "agent-003",
+      "name": "Dritan Berisha",
+      "email": "dritan@pasurite-tiranes.al",
+      "phone": "+355 69 345 6789"
+    },
     "createdAt": "2024-01-05T09:15:00.000Z",
     "updatedAt": "2024-01-05T09:15:00.000Z"
   },
@@ -163,6 +181,12 @@
     "status": "active",
     "listingType": "rent",
     "isPinned": false,
+    "agent": {
+      "id": "agent-001",
+      "name": "Arben Kelmendi",
+      "email": "arben@pasurite-tiranes.al",
+      "phone": "+355 69 123 4567"
+    },
     "createdAt": "2024-01-20T16:45:00.000Z",
     "updatedAt": "2024-01-20T16:45:00.000Z"
   },
@@ -205,6 +229,12 @@
     "status": "inactive",
     "listingType": "sale",
     "isPinned": false,
+    "agent": {
+      "id": "agent-002",
+      "name": "Elona Hoxha",
+      "email": "elona@pasurite-tiranes.al",
+      "phone": "+355 69 234 5678"
+    },
     "createdAt": "2024-01-01T12:00:00.000Z",
     "updatedAt": "2024-01-25T10:30:00.000Z"
   }

@@ -49,10 +49,15 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
     [...new Set(properties.map(p => p.details.propertyType))].sort(), 
     [properties]
   );
-  const uniqueAgents = useMemo(() => 
-    [...new Set(properties.map(p => p.agent))].sort((a, b) => a.name.localeCompare(b.name)), 
-    [properties]
-  );
+  const uniqueAgents = useMemo(() => {
+    const agentMap = new Map();
+    properties.forEach(p => {
+      if (p.agent && p.agent.id && p.agent.name) {
+        agentMap.set(p.agent.id, p.agent);
+      }
+    });
+    return Array.from(agentMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+  }, [properties]);
   const maxPrice = useMemo(() => 
     Math.max(...properties.map(p => p.price)), 
     [properties]
@@ -109,7 +114,7 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
       }
 
       // Agent filter
-      if (filters.agent && property.agent.id !== filters.agent) {
+      if (filters.agent && property.agent && property.agent.id !== filters.agent) {
         return false;
       }
 
@@ -169,16 +174,16 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
     filters.agent;
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6 sm:mb-8">
       {/* Search Bar */}
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" />
         <input
           type="text"
-          placeholder="Kërkoni sipas titullit, përshkrimit, adresës ose karakteristikave..."
+          placeholder="Kërkoni pasuri..."
           value={filters.searchTerm}
           onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
-          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+          className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
         />
       </div>
 
@@ -208,7 +213,7 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
 
       {/* Advanced Filters */}
       {isExpanded && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4 border-t border-gray-200">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pt-4 border-t border-gray-200">
           {/* Price Range */}
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-2">

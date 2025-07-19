@@ -21,7 +21,8 @@ const DynamicSearchResults = dynamic(() => import('@/components/SearchResults'),
   loading: () => <div className="h-96 bg-white rounded-lg shadow-md animate-pulse"></div>
 });
 
-const PROPERTIES_PER_PAGE = 12; // Show 12 properties per page
+const PROPERTIES_PER_PAGE = 9; // Show 9 properties per page for better performance
+const MAX_INITIAL_LOAD = 18; // Maximum properties to load initially
 
 export default function Home() {
   const [allProperties, setAllProperties] = useState<Property[]>([]);
@@ -39,10 +40,14 @@ export default function Home() {
         const activeProperties = properties.filter(
           property => property.status === 'active' || property.status === 'pending'
         );
+        
+        // Limit initial load to prevent overwhelming the page
+        const limitedProperties = activeProperties.slice(0, MAX_INITIAL_LOAD);
+        
         setAllProperties(activeProperties);
-        setFilteredProperties(activeProperties);
+        setFilteredProperties(limitedProperties);
         // Show first page of properties
-        setDisplayedProperties(activeProperties.slice(0, PROPERTIES_PER_PAGE));
+        setDisplayedProperties(limitedProperties.slice(0, PROPERTIES_PER_PAGE));
       } catch (error) {
         console.error('Error loading properties:', error);
       } finally {
@@ -157,6 +162,15 @@ export default function Home() {
             properties={allProperties}
             onFilteredResults={handleFilteredResults}
           />
+
+          {/* Performance Notice */}
+          {allProperties.length > MAX_INITIAL_LOAD && (
+            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800">
+                <span className="font-medium">📊 Performancë e optimizuar:</span> Po shfaqen {Math.min(filteredProperties.length, MAX_INITIAL_LOAD)} pasuri nga {allProperties.length} gjithsej për performancë më të mirë. Përdorni filtrat për të gjetur pasuritë që ju interesojnë.
+              </p>
+            </div>
+          )}
 
           {/* Properties and Map Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

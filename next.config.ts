@@ -28,28 +28,8 @@ const nextConfig: NextConfig = {
   
   // Headers for better caching and security
   async headers() {
+    // Completely disable CSP in development to avoid font loading issues
     return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin',
-          },
-          {
-            key: 'Content-Security-Policy',
-            value: "default-src 'self'; font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https:; frame-src 'none'; object-src 'none';",
-          },
-        ],
-      },
       {
         source: '/images/(.*)',
         headers: [

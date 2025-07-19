@@ -4,24 +4,8 @@ import { useEffect } from 'react';
 
 export default function ResourcePreloader() {
   useEffect(() => {
-    // Preload critical resources
-    const preloadResources = [
-      // Preload critical images
-      { href: '/icons/icon-192x192.svg', as: 'image' },
-      
-      // Preload critical fonts (if using custom fonts)
-      // { href: '/fonts/custom-font.woff2', as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' },
-    ];
-
-    preloadResources.forEach(resource => {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.href = resource.href;
-      link.as = resource.as;
-      if (resource.type) link.type = resource.type;
-      if (resource.crossOrigin) link.crossOrigin = resource.crossOrigin;
-      document.head.appendChild(link);
-    });
+    // Preload critical resources only when needed
+    // Icons are loaded on-demand, no need to preload them
 
     // Prefetch likely next pages
     const prefetchPages = [

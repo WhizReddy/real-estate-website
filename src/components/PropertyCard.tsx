@@ -102,24 +102,22 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           </p>
 
           {/* Property Stats */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              {property.details.bedrooms > 0 && (
-                <div className="flex items-center space-x-1 bg-gray-50 px-3 py-2 rounded-lg">
-                  <Bed className="h-4 w-4 text-red-600" />
-                  <span className="text-sm font-medium text-gray-700">{property.details.bedrooms}</span>
-                </div>
-              )}
-              
-              <div className="flex items-center space-x-1 bg-gray-50 px-3 py-2 rounded-lg">
-                <Bath className="h-4 w-4 text-red-600" />
-                <span className="text-sm font-medium text-gray-700">{property.details.bathrooms}</span>
+          <div className="flex flex-wrap gap-2 sm:gap-3">
+            {property.details.bedrooms > 0 && (
+              <div className="flex items-center space-x-1 bg-gray-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg">
+                <Bed className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />
+                <span className="text-xs sm:text-sm font-medium text-gray-700">{property.details.bedrooms}</span>
               </div>
-              
-              <div className="flex items-center space-x-1 bg-gray-50 px-3 py-2 rounded-lg">
-                <Square className="h-4 w-4 text-red-600" />
-                <span className="text-sm font-medium text-gray-700">{property.details.squareFootage}m²</span>
-              </div>
+            )}
+            
+            <div className="flex items-center space-x-1 bg-gray-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg">
+              <Bath className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />
+              <span className="text-xs sm:text-sm font-medium text-gray-700">{property.details.bathrooms}</span>
+            </div>
+            
+            <div className="flex items-center space-x-1 bg-gray-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg">
+              <Square className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />
+              <span className="text-xs sm:text-sm font-medium text-gray-700">{property.details.squareFootage}m²</span>
             </div>
           </div>
 
