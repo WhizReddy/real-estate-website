@@ -10,6 +10,7 @@ import { ArrowLeft, Plus, X } from "lucide-react";
 import ImageUploader from "@/components/ImageUploader";
 import InteractiveMapView from "@/components/InteractiveMapView";
 import { saveProperty } from "@/lib/data";
+import { validateFormField } from "@/lib/validation";
 
 interface PropertyFormData {
   title: string;
@@ -37,14 +38,21 @@ export default function NewProperty() {
   const [featureInput, setFeatureInput] = useState("");
   const [featuresList, setFeaturesList] = useState<string[]>([]);
   const [propertyImages, setPropertyImages] = useState<string[]>([]);
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
+  const [isDirty, setIsDirty] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty: formIsDirty },
     setValue,
     watch,
+    reset,
+    getValues,
   } = useForm<PropertyFormData>({
     defaultValues: {
       city: "Tiranë",
@@ -66,6 +74,62 @@ export default function NewProperty() {
     }
   }, [router]);
 
+  // Real-time validation handler
+  const handleFieldValidation = (fieldName: string, value: unknown) => {
+    const error = validateFormField(fieldName, value);
+    setValidationErrors((prev) => ({
+      ...prev,
+      [fieldName]: error ? error.message : "",
+    }));
+  };
+
+  // Track form changes
+  useEffect(() => {
+    const hasChanges =
+      formIsDirty || featuresList.length > 0 || propertyImages.length > 0;
+    setHasUnsavedChanges(hasChanges);
+    setIsDirty(hasChanges);
+  }, [formIsDirty, featuresList.length, propertyImages.length]);
+
+  // Warn user about unsaved changes when leaving the page
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue =
+          "You have unsaved changes. Are you sure you want to leave?";
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [hasUnsavedChanges]);
+
+  // Reset form to initial state
+  const resetForm = () => {
+    reset();
+    setFeaturesList([]);
+    setPropertyImages([]);
+    setValidationErrors({});
+    setHasUnsavedChanges(false);
+    setIsDirty(false);
+  };
+
+  // Handle navigation with unsaved changes warning
+  const handleNavigation = (href: string) => {
+    if (hasUnsavedChanges) {
+      const confirmed = window.confirm(
+        "Ju keni ndryshime të paruajtura. Jeni të sigurt që doni të largoheni?"
+      );
+      if (confirmed) {
+        router.push(href);
+      }
+    } else {
+      router.push(href);
+    }
+  };
+
   const addFeature = () => {
     if (featureInput.trim() && !featuresList.includes(featureInput.trim())) {
       setFeaturesList([...featuresList, featureInput.trim()]);
@@ -81,6 +145,13 @@ export default function NewProperty() {
     setIsSubmitting(true);
 
     try {
+      // Validate required images
+      if (propertyImages.length === 0) {
+        alert("Ju lutem ngarkoni të paktën një imazh për pasurinë.");
+        setIsSubmitting(false);
+        return;
+      }
+
       const propertyData = {
         title: data.title,
         description: data.description,
@@ -110,12 +181,41 @@ export default function NewProperty() {
       };
 
       // Save to database using the API
-      await saveProperty(propertyData);
+      const savedProperty = await saveProperty(propertyData);
 
+      // Reset form state after successful submission
+      resetForm();
+
+      // Show success message
+      alert("Pasuria u ruajt me sukses!");
+
+      // Redirect to dashboard
       router.push("/admin/dashboard");
     } catch (error) {
       console.error("Error creating property:", error);
-      alert("Gabim gjatë ruajtjes së pasurisë. Ju lutem provoni përsëri.");
+
+      // Provide specific error messages based on error type
+      if (error instanceof Error) {
+        if (error.message.includes("Validation failed")) {
+          alert(
+            `Gabim në validim: ${error.message.replace(
+              "Validation failed: ",
+              ""
+            )}`
+          );
+        } else if (
+          error.message.includes("network") ||
+          error.message.includes("fetch")
+        ) {
+          alert(
+            "Gabim në lidhje. Ju lutem kontrolloni internetin dhe provoni përsëri."
+          );
+        } else {
+          alert(`Gabim: ${error.message}`);
+        }
+      } else {
+        alert("Gabim gjatë ruajtjes së pasurisë. Ju lutem provoni përsëri.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -127,13 +227,13 @@ export default function NewProperty() {
       <header className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center">
-            <Link
-              href="/admin/dashboard"
+            <button
+              onClick={() => handleNavigation("/admin/dashboard")}
               className="flex items-center text-blue-100 hover:text-white mr-6 transition-colors duration-200"
             >
               <ArrowLeft className="h-5 w-5 mr-2" />
               <span className="font-medium">Kthehu</span>
-            </Link>
+            </button>
             <h1 className="text-3xl font-bold text-white">Shto Pasuri të Re</h1>
           </div>
         </div>
@@ -555,12 +655,13 @@ export default function NewProperty() {
 
           {/* Submit */}
           <div className="flex justify-end space-x-4">
-            <Link
-              href="/admin/dashboard"
+            <button
+              type="button"
+              onClick={() => handleNavigation("/admin/dashboard")}
               className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
             >
               Anulo
-            </Link>
+            </button>
             <button
               type="submit"
               disabled={isSubmitting}

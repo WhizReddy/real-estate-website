@@ -8,6 +8,7 @@ import { getProperties, deleteProperty } from '@/lib/data';
 import { formatPrice } from '@/lib/utils';
 import { Plus, Edit, Trash2, Eye, LogOut, MessageCircle, Search, Filter, X } from 'lucide-react';
 import CreativeLoader from '@/components/CreativeLoader';
+import DatabaseStatusMonitor from '@/components/DatabaseStatusMonitor';
 
 export default function AdminDashboard() {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -159,6 +160,7 @@ export default function AdminDashboard() {
               <p className="text-blue-200">Menaxhoni pasuritë tuaja</p>
             </div>
             <div className="flex items-center space-x-6">
+              <DatabaseStatusMonitor />
               <Link
                 href="/admin/inquiries"
                 className="flex items-center text-blue-100 hover:text-white transition-colors duration-200"
@@ -186,6 +188,11 @@ export default function AdminDashboard() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Database Status Panel */}
+        <div className="mb-8">
+          <DatabaseStatusMonitor showDetails={true} />
+        </div>
+
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { validatePropertyData } from "@/lib/validation";
 
 export async function GET() {
   try {
@@ -55,28 +56,54 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
 
+    // Use comprehensive validation and sanitization
+    const validationResult = validatePropertyData(data);
+
+    if (!validationResult.isValid) {
+      const errorDetails: Record<string, string> = {};
+      validationResult.errors.forEach(error => {
+        errorDetails[error.field] = error.message;
+      });
+
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Invalid input data",
+            details: errorDetails,
+          },
+          timestamp: new Date().toISOString(),
+        },
+        { status: 400 }
+      );
+    }
+
+    // Use sanitized data for database insertion
+    const sanitizedData = {
+      title: validationResult.sanitizedData.title,
+      description: validationResult.sanitizedData.description,
+      price: validationResult.sanitizedData.price,
+      street: validationResult.sanitizedData.street,
+      city: validationResult.sanitizedData.city,
+      state: validationResult.sanitizedData.state,
+      zipCode: validationResult.sanitizedData.zipCode,
+      latitude: validationResult.sanitizedData.latitude,
+      longitude: validationResult.sanitizedData.longitude,
+      bedrooms: validationResult.sanitizedData.bedrooms,
+      bathrooms: validationResult.sanitizedData.bathrooms,
+      squareFootage: validationResult.sanitizedData.squareFootage,
+      propertyType: validationResult.sanitizedData.propertyType.toUpperCase(),
+      yearBuilt: validationResult.sanitizedData.yearBuilt,
+      images: JSON.stringify(validationResult.sanitizedData.images),
+      features: JSON.stringify(validationResult.sanitizedData.features),
+      status: validationResult.sanitizedData.status.toUpperCase(),
+      listingType: validationResult.sanitizedData.listingType.toUpperCase(),
+      isPinned: validationResult.sanitizedData.isPinned,
+    };
+
     const property = await prisma.property.create({
-      data: {
-        title: data.title,
-        description: data.description,
-        price: data.price,
-        street: data.street,
-        city: data.city,
-        state: data.state,
-        zipCode: data.zipCode || "",
-        latitude: data.latitude,
-        longitude: data.longitude,
-        bedrooms: data.bedrooms,
-        bathrooms: data.bathrooms,
-        squareFootage: data.squareFootage,
-        propertyType: data.propertyType.toUpperCase(),
-        yearBuilt: data.yearBuilt,
-        images: JSON.stringify(data.images || []),
-        features: JSON.stringify(data.features || []),
-        status: data.status ? data.status.toUpperCase() : "ACTIVE",
-        listingType: data.listingType.toUpperCase(),
-        isPinned: data.isPinned || false,
-      },
+      data: sanitizedData,
     });
 
     // Transform the response to match expected format
@@ -111,11 +138,56 @@ export async function POST(request: NextRequest) {
       updatedAt: property.updatedAt.toISOString(),
     };
 
-    return NextResponse.json(transformedProperty);
+    return NextResponse.json({
+      success: true,
+      data: transformedProperty,
+    });
   } catch (error) {
     console.error("Error creating property:", error);
+    
+    // Handle specific database errors
+    if (error instanceof Error) {
+      if (error.message.includes('Unique constraint')) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: "DUPLICATE_ENTRY",
+              message: "A property with similar details already exists",
+              details: error.message,
+            },
+            timestamp: new Date().toISOString(),
+          },
+          { status: 409 }
+        );
+      }
+      
+      if (error.message.includes('Foreign key constraint')) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: "INVALID_REFERENCE",
+              message: "Invalid reference to related data",
+              details: error.message,
+            },
+            timestamp: new Date().toISOString(),
+          },
+          { status: 400 }
+        );
+      }
+    }
+
     return NextResponse.json(
-      { error: "Failed to create property" },
+      {
+        success: false,
+        error: {
+          code: "INTERNAL_ERROR",
+          message: "Failed to create property",
+          details: error instanceof Error ? error.message : "Unknown error",
+        },
+        timestamp: new Date().toISOString(),
+      },
       { status: 500 }
     );
   }

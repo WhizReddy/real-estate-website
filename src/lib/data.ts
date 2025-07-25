@@ -113,18 +113,35 @@ export async function saveProperty(property: Omit<Property, 'id' | 'createdAt' |
         yearBuilt: property.details.yearBuilt,
         images: property.images,
         features: property.features,
+        status: property.status,
         listingType: property.listingType.toUpperCase(),
         isPinned: property.isPinned,
       }),
     });
 
+    const result = await response.json();
+
     if (!response.ok) {
-      throw new Error('Failed to save property');
+      // Handle validation errors with detailed feedback
+      if (result.error?.code === 'VALIDATION_ERROR') {
+        const errorMessages = Object.values(result.error.details).join(', ');
+        throw new Error(`Validation failed: ${errorMessages}`);
+      }
+      
+      // Handle other API errors
+      throw new Error(result.error?.message || 'Failed to save property');
     }
 
-    return await response.json();
+    // Return the property data from the success response
+    return result.data;
   } catch (error) {
     console.error('Error saving property:', error);
+    
+    // Provide more specific error messages
+    if (error instanceof Error) {
+      throw error;
+    }
+    
     throw new Error('Failed to save property');
   }
 }
