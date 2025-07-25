@@ -35,12 +35,12 @@ export default function SearchResults({
                 <>
                   {isFiltered ? (
                     <>
-                      <Search className="inline h-5 w-5 mr-2 text-red-600" />
+                      <Search className="inline h-5 w-5 mr-2 text-blue-600" />
                       Rezultatet e Kërkimit
                     </>
                   ) : (
                     <>
-                      <Home className="inline h-5 w-5 mr-2 text-red-600" />
+                      <Home className="inline h-5 w-5 mr-2 text-blue-600" />
                       Të Gjitha Pasuritë
                     </>
                   )}
@@ -58,7 +58,7 @@ export default function SearchResults({
                   {properties.length} pasuri{properties.length !== 1 ? '' : ''} 
                   {isFiltered && ` nga ${totalProperties} gjithsej`}
                   {searchTerm && (
-                    <span className="text-red-600 font-medium">
+                    <span className="text-blue-600 font-medium">
                       {' '}për "{searchTerm}"
                     </span>
                   )}
@@ -82,7 +82,7 @@ export default function SearchResults({
               <button
                 onClick={onLoadMore}
                 disabled={isLoadingMore}
-                className="inline-flex items-center px-8 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isLoadingMore ? (
                   <>
@@ -119,7 +119,7 @@ function NoResultsMessage({ searchTerm }: { searchTerm?: string }) {
             {searchTerm ? (
               <>
                 Nuk gjetëm asnjë pasuri që përputhet me kërkimin tuaj për{' '}
-                <span className="font-medium text-red-600">"{searchTerm}"</span>
+                <span className="font-medium text-blue-600">"{searchTerm}"</span>
               </>
             ) : (
               'Nuk gjetëm asnjë pasuri që përputhet me kriteret e zgjedhura.'
@@ -144,7 +144,7 @@ function NoResultsMessage({ searchTerm }: { searchTerm?: string }) {
                 window.location.reload();
               }
             }}
-            className="inline-flex items-center px-4 py-2 border border-red-300 text-red-700 rounded-md hover:bg-red-50 transition-colors"
+            className="inline-flex items-center px-4 py-2 border border-blue-300 text-blue-700 rounded-md hover:bg-blue-50 transition-colors"
           >
             <Home className="h-4 w-4 mr-2" />
             Shiko të gjitha pasuritë

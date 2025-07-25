@@ -140,7 +140,7 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-red-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <CreativeLoader type="properties" size="lg" />
       </div>
     );
@@ -175,7 +175,7 @@ export default function AdminDashboard() {
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <LogOut className="h-5 w-5 mr-2" />
                 <span className="font-medium">Dil</span>
@@ -239,7 +239,7 @@ export default function AdminDashboard() {
               placeholder="Kërkoni pasuri..."
               value={filters.search}
               onChange={(e) => handleFilterChange('search', e.target.value)}
-              className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               id="search-properties"
               name="search"
               autoComplete="search"
@@ -250,7 +250,7 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center text-gray-700 hover:text-red-600 transition-colors"
+              className="flex items-center text-gray-700 hover:text-blue-600 transition-colors"
             >
               <Filter className="h-5 w-5 mr-2" />
               <span className="font-medium">Filtrat e Avancuara</span>
@@ -263,7 +263,7 @@ export default function AdminDashboard() {
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="flex items-center text-red-600 hover:text-red-700 text-sm"
+                  className="flex items-center text-blue-600 hover:text-blue-700 text-sm"
                 >
                   <X className="h-4 w-4 mr-1" />
                   Pastro Filtrat
@@ -272,7 +272,7 @@ export default function AdminDashboard() {
               
               <Link
                 href="/admin/properties/new"
-                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors flex items-center"
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center"
               >
                 <Plus className="h-5 w-5 mr-2" />
                 Shto Pasuri të Re
@@ -293,7 +293,7 @@ export default function AdminDashboard() {
                   name="status"
                   value={filters.status}
                   onChange={(e) => handleFilterChange('status', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   autoComplete="off"
                 >
                   <option value="all">Të gjitha</option>
@@ -313,7 +313,7 @@ export default function AdminDashboard() {
                   name="propertyType"
                   value={filters.propertyType}
                   onChange={(e) => handleFilterChange('propertyType', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   autoComplete="off"
                 >
                   <option value="all">Të gjitha llojet</option>
@@ -334,7 +334,7 @@ export default function AdminDashboard() {
                   name="listingType"
                   value={filters.listingType}
                   onChange={(e) => handleFilterChange('listingType', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   autoComplete="off"
                 >
                   <option value="all">Të gjitha</option>
@@ -353,7 +353,7 @@ export default function AdminDashboard() {
                   name="location"
                   value={filters.location}
                   onChange={(e) => handleFilterChange('location', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   autoComplete="off"
                 >
                   <option value="all">Të gjitha qytetet</option>
@@ -463,7 +463,7 @@ export default function AdminDashboard() {
                         </Link>
                         <button
                           onClick={() => setDeleteConfirm(property.id)}
-                          className="text-red-600 hover:text-red-900"
+                          className="text-blue-600 hover:text-blue-900"
                           title="Fshi"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -482,7 +482,7 @@ export default function AdminDashboard() {
             <div className="text-gray-500 text-lg mb-4">Nuk ka pasuri të regjistruara</div>
             <Link
               href="/admin/properties/new"
-              className="bg-red-600 text-white px-6 py-3 rounded-md hover:bg-red-700 transition-colors inline-flex items-center"
+              className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors inline-flex items-center"
             >
               <Plus className="h-5 w-5 mr-2" />
               Shto Pasurinë e Parë
@@ -511,7 +511,7 @@ export default function AdminDashboard() {
                 </button>
                 <button
                   onClick={() => handleDelete(deleteConfirm)}
-                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                 >
                   Fshi
                 </button>

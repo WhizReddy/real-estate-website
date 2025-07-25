@@ -127,7 +127,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                       {property.features.map((feature, index) => (
                         <div key={index} className="flex items-center text-gray-600">
-                          <div className="w-2 h-2 bg-red-600 rounded-full mr-2"></div>
+                          <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
                           <span className="capitalize">{feature}</span>
                         </div>
                       ))}

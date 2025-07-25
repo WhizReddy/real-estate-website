@@ -162,11 +162,11 @@ export default function NewProperty() {
                   {...register("title", {
                     required: "Titulli është i detyrueshëm",
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="p.sh. Apartament Modern në Qendër të Tiranës"
                 />
                 {errors.title && (
-                  <p className="text-red-600 text-sm mt-1">
+                  <p className="text-blue-600 text-sm mt-1">
                     {errors.title.message}
                   </p>
                 )}
@@ -181,11 +181,11 @@ export default function NewProperty() {
                   {...register("description", {
                     required: "Përshkrimi është i detyrueshëm",
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Përshkruani pasurinë në detaje..."
                 />
                 {errors.description && (
-                  <p className="text-red-600 text-sm mt-1">
+                  <p className="text-blue-600 text-sm mt-1">
                     {errors.description.message}
                   </p>
                 )}
@@ -201,11 +201,11 @@ export default function NewProperty() {
                     required: "Çmimi është i detyrueshëm",
                     min: 1,
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="120000"
                 />
                 {errors.price && (
-                  <p className="text-red-600 text-sm mt-1">
+                  <p className="text-blue-600 text-sm mt-1">
                     {errors.price.message}
                   </p>
                 )}
@@ -217,7 +217,7 @@ export default function NewProperty() {
                 </label>
                 <select
                   {...register("listingType")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="sale">Për Shitje</option>
                   <option value="rent">Me Qira</option>
@@ -265,11 +265,11 @@ export default function NewProperty() {
                   {...register("street", {
                     required: "Rruga është e detyrueshme",
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="p.sh. Rruga Dëshmorët e Kombit, Nr. 15"
                 />
                 {errors.street && (
-                  <p className="text-red-600 text-sm mt-1">
+                  <p className="text-blue-600 text-sm mt-1">
                     {errors.street.message}
                   </p>
                 )}
@@ -284,10 +284,10 @@ export default function NewProperty() {
                   {...register("city", {
                     required: "Qyteti është i detyrueshëm",
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 {errors.city && (
-                  <p className="text-red-600 text-sm mt-1">
+                  <p className="text-blue-600 text-sm mt-1">
                     {errors.city.message}
                   </p>
                 )}
@@ -300,7 +300,7 @@ export default function NewProperty() {
                 <input
                   type="text"
                   {...register("zipCode")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="1001"
                 />
               </div>
@@ -315,11 +315,11 @@ export default function NewProperty() {
                   {...register("lat", {
                     required: "Latitude është e detyrueshme",
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="41.3275"
                 />
                 {errors.lat && (
-                  <p className="text-red-600 text-sm mt-1">
+                  <p className="text-blue-600 text-sm mt-1">
                     {errors.lat.message}
                   </p>
                 )}
@@ -335,11 +335,11 @@ export default function NewProperty() {
                   {...register("lng", {
                     required: "Longitude është e detyrueshme",
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="19.8187"
                 />
                 {errors.lng && (
-                  <p className="text-red-600 text-sm mt-1">
+                  <p className="text-blue-600 text-sm mt-1">
                     {errors.lng.message}
                   </p>
                 )}
@@ -391,7 +391,7 @@ export default function NewProperty() {
                   type="number"
                   min="0"
                   {...register("bedrooms", { min: 0 })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="2"
                 />
               </div>
@@ -408,11 +408,11 @@ export default function NewProperty() {
                     required: "Numri i banjove është i detyrueshëm",
                     min: 1,
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="1"
                 />
                 {errors.bathrooms && (
-                  <p className="text-red-600 text-sm mt-1">
+                  <p className="text-blue-600 text-sm mt-1">
                     {errors.bathrooms.message}
                   </p>
                 )}
@@ -429,11 +429,11 @@ export default function NewProperty() {
                     required: "Sipërfaqja është e detyrueshme",
                     min: 1,
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="85"
                 />
                 {errors.squareFootage && (
-                  <p className="text-red-600 text-sm mt-1">
+                  <p className="text-blue-600 text-sm mt-1">
                     {errors.squareFootage.message}
                   </p>
                 )}
@@ -445,7 +445,7 @@ export default function NewProperty() {
                 </label>
                 <select
                   {...register("propertyType")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="apartment">Apartament</option>
                   <option value="house">Shtëpi</option>
@@ -463,7 +463,7 @@ export default function NewProperty() {
                   min="1900"
                   max={new Date().getFullYear()}
                   {...register("yearBuilt")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="2018"
                 />
               </div>
@@ -474,7 +474,7 @@ export default function NewProperty() {
                 </label>
                 <select
                   {...register("status")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="active">Aktive</option>
                   <option value="inactive">Jo-aktive</option>
@@ -504,13 +504,13 @@ export default function NewProperty() {
                 onKeyPress={(e) =>
                   e.key === "Enter" && (e.preventDefault(), addFeature())
                 }
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Shto karakteristikë (p.sh. Dysheme parket)"
               />
               <button
                 type="button"
                 onClick={addFeature}
-                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 flex items-center"
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -526,7 +526,7 @@ export default function NewProperty() {
                   <button
                     type="button"
                     onClick={() => removeFeature(index)}
-                    className="ml-2 text-gray-500 hover:text-red-600"
+                    className="ml-2 text-gray-500 hover:text-blue-600"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -545,7 +545,7 @@ export default function NewProperty() {
               <input
                 type="checkbox"
                 {...register("isPinned")}
-                className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
               <label className="ml-2 text-sm text-gray-700">
                 Pin në faqen kryesore (do të shfaqet në krye të listës)
@@ -564,7 +564,7 @@ export default function NewProperty() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Duke ruajtur..." : "Ruaj Pasurinë"}
             </button>

@@ -183,7 +183,7 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
           placeholder="Kërkoni pasuri..."
           value={filters.searchTerm}
           onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
-          className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+          className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
 
@@ -191,7 +191,7 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center text-gray-700 hover:text-red-600 transition-colors"
+          className="flex items-center text-gray-700 hover:text-blue-600 transition-colors"
         >
           <Filter className="h-5 w-5 mr-2" />
           <span className="font-medium">Filtrat e Avancuara</span>
@@ -203,7 +203,7 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
         {hasActiveFilters && (
           <button
             onClick={clearFilters}
-            className="flex items-center text-red-600 hover:text-red-700 text-sm"
+            className="flex items-center text-blue-600 hover:text-blue-700 text-sm"
           >
             <X className="h-4 w-4 mr-1" />
             Pastro Filtrat
@@ -217,7 +217,7 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
           {/* Price Range */}
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-2">
-              <Euro className="inline h-4 w-4 mr-1 text-red-600" />
+              <Euro className="inline h-4 w-4 mr-1 text-blue-600" />
               Çmimi (€)
             </label>
             <div className="space-y-2">
@@ -227,14 +227,14 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
                   placeholder="Min"
                   value={filters.priceRange.min || ''}
                   onChange={(e) => handlePriceRangeChange('min', parseInt(e.target.value) || 0)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <input
                   type="number"
                   placeholder="Max"
                   value={filters.priceRange.max === maxPrice ? '' : filters.priceRange.max}
                   onChange={(e) => handlePriceRangeChange('max', parseInt(e.target.value) || maxPrice)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="text-xs text-gray-500">
@@ -246,13 +246,13 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
           {/* Location */}
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-2">
-              <MapPin className="inline h-4 w-4 mr-1 text-red-600" />
+              <MapPin className="inline h-4 w-4 mr-1 text-blue-600" />
               Lokacioni
             </label>
             <select
               value={filters.location}
               onChange={(e) => handleFilterChange('location', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Të gjitha qytetet</option>
               {uniqueCities.map(city => (
@@ -264,13 +264,13 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
           {/* Property Type */}
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-2">
-              <Home className="inline h-4 w-4 mr-1 text-red-600" />
+              <Home className="inline h-4 w-4 mr-1 text-blue-600" />
               Lloji i Pasurisë
             </label>
             <select
               value={filters.propertyType}
               onChange={(e) => handleFilterChange('propertyType', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Të gjitha llojet</option>
               <option value="house">Shtëpi</option>
@@ -283,13 +283,13 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
           {/* Bedrooms */}
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-2">
-              <Bed className="inline h-4 w-4 mr-1 text-red-600" />
+              <Bed className="inline h-4 w-4 mr-1 text-blue-600" />
               Dhomat e Gjumit
             </label>
             <select
               value={filters.bedrooms}
               onChange={(e) => handleFilterChange('bedrooms', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Çdo numër</option>
               <option value="1">1 dhomë</option>
@@ -302,13 +302,13 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
           {/* Bathrooms */}
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-2">
-              <Bath className="inline h-4 w-4 mr-1 text-red-600" />
+              <Bath className="inline h-4 w-4 mr-1 text-blue-600" />
               Banjot
             </label>
             <select
               value={filters.bathrooms}
               onChange={(e) => handleFilterChange('bathrooms', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Çdo numër</option>
               <option value="1">1 banjo</option>
@@ -325,7 +325,7 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
             <select
               value={filters.listingType}
               onChange={(e) => handleFilterChange('listingType', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Të gjitha</option>
               <option value="sale">Për Shitje</option>
@@ -341,7 +341,7 @@ export default function SearchFilters({ properties, onFilteredResults }: SearchF
             <select
               value={filters.agent}
               onChange={(e) => handleFilterChange('agent', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Të gjithë agjentët</option>
               {uniqueAgents.map(agent => (

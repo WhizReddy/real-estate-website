@@ -37,9 +37,9 @@ export default function Navigation() {
             <div className="text-3xl">🏠</div>
             <div className="hidden sm:block">
               <h1 className="text-2xl font-bold text-white tracking-tight">
-                Pasuritë e Tiranës
+                Real Estate Tiranë
               </h1>
-              <p className="text-blue-200 text-sm">Premium Real Estate</p>
+              <p className="text-blue-200 text-sm">Premium Properties</p>
             </div>
           </Link>
 
@@ -66,7 +66,7 @@ export default function Navigation() {
             {/* Admin Link */}
             <Link
               href="/admin/login"
-              className="flex items-center space-x-2 px-6 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-200 text-sm font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="flex items-center space-x-2 px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 text-sm font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <User className="h-4 w-4" />
               <span>Hyrje për Agjentë</span>
@@ -117,7 +117,7 @@ export default function Navigation() {
           <Link
             href="/admin/login"
             onClick={() => setIsMenuOpen(false)}
-            className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-200 text-base font-medium mt-4 shadow-lg"
+            className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 text-base font-medium mt-4 shadow-lg"
           >
             <User className="h-5 w-5" />
             <span>Hyrje për Agjentë</span>
