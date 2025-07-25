@@ -15,11 +15,8 @@ interface PropertyDetailClientProps {
 
 export default function PropertyDetailClient({ property }: PropertyDetailClientProps) {
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('sq-AL', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 0,
-    }).format(price);
+    // Use a consistent format that works the same on server and client
+    return `€${price.toLocaleString('en-US')}`;
   };
 
   const getPropertyTypeLabel = (type: string) => {
@@ -39,23 +36,23 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
   return (
     <Layout>
       <StructuredData property={property} type="property" />
-      <div className="bg-gray-50">
+      <div className="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
         {/* Breadcrumb Header */}
-        <section className="bg-white shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <section className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center">
               <Link
                 href="/"
-                className="flex items-center text-gray-600 hover:text-gray-900 mr-4"
+                className="flex items-center text-blue-100 hover:text-white mr-6 transition-colors duration-200"
               >
-                <ArrowLeft className="h-5 w-5 mr-1" />
-                Kthehu
+                <ArrowLeft className="h-5 w-5 mr-2" />
+                <span className="font-medium">Kthehu</span>
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{property.title}</h1>
-                <div className="flex items-center text-gray-600 mt-1">
-                  <MapPin className="h-4 w-4 mr-1" />
-                  <span>{property.address.street}, {property.address.city}</span>
+                <h1 className="text-3xl font-bold text-white mb-2">{property.title}</h1>
+                <div className="flex items-center text-blue-200">
+                  <MapPin className="h-5 w-5 mr-2" />
+                  <span className="text-lg">{property.address.street}, {property.address.city}</span>
                 </div>
               </div>
             </div>
@@ -72,48 +69,48 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
               </div>
 
               {/* Property Details */}
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex items-center justify-between mb-6">
+              <div className="bg-white rounded-xl shadow-lg p-8 border border-blue-100">
+                <div className="flex items-center justify-between mb-8">
                   <div>
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className="bg-red-100 text-red-800 text-sm font-medium px-2.5 py-0.5 rounded">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <span className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 text-sm font-semibold px-4 py-2 rounded-full border border-blue-200">
                         {getListingTypeLabel(property.listingType)}
                       </span>
                       {property.isPinned && (
-                        <span className="bg-yellow-100 text-yellow-800 text-sm font-medium px-2.5 py-0.5 rounded flex items-center">
-                          <Star className="h-3 w-3 mr-1" />
+                        <span className="bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800 text-sm font-semibold px-4 py-2 rounded-full border border-yellow-200 flex items-center">
+                          <Star className="h-4 w-4 mr-2 fill-current" />
                           I Zgjedhur
                         </span>
                       )}
                     </div>
-                    <h2 className="text-3xl font-bold text-gray-900 flex items-center">
-                      <Euro className="h-8 w-8 mr-2 text-red-600" />
+                    <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent flex items-center">
+                      <Euro className="h-10 w-10 mr-3 text-blue-600" />
                       {formatPrice(property.price)}
                     </h2>
                   </div>
                 </div>
 
                 {/* Key Details */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <Bed className="h-6 w-6 text-red-600 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-gray-900">{property.details.bedrooms}</div>
-                    <div className="text-sm text-gray-600">Dhoma Gjumi</div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                  <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 hover:shadow-md transition-shadow duration-200">
+                    <Bed className="h-8 w-8 text-blue-600 mx-auto mb-3" />
+                    <div className="text-3xl font-bold text-blue-900">{property.details.bedrooms}</div>
+                    <div className="text-sm text-blue-700 font-medium">Dhoma Gjumi</div>
                   </div>
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <Bath className="h-6 w-6 text-red-600 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-gray-900">{property.details.bathrooms}</div>
-                    <div className="text-sm text-gray-600">Banjo</div>
+                  <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 hover:shadow-md transition-shadow duration-200">
+                    <Bath className="h-8 w-8 text-blue-600 mx-auto mb-3" />
+                    <div className="text-3xl font-bold text-blue-900">{property.details.bathrooms}</div>
+                    <div className="text-sm text-blue-700 font-medium">Banjo</div>
                   </div>
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <Square className="h-6 w-6 text-red-600 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-gray-900">{property.details.squareFootage}</div>
-                    <div className="text-sm text-gray-600">m²</div>
+                  <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 hover:shadow-md transition-shadow duration-200">
+                    <Square className="h-8 w-8 text-blue-600 mx-auto mb-3" />
+                    <div className="text-3xl font-bold text-blue-900">{property.details.squareFootage}</div>
+                    <div className="text-sm text-blue-700 font-medium">m²</div>
                   </div>
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <Home className="h-6 w-6 text-red-600 mx-auto mb-2" />
-                    <div className="text-sm font-bold text-gray-900">{getPropertyTypeLabel(property.details.propertyType)}</div>
-                    <div className="text-sm text-gray-600">Lloji</div>
+                  <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 hover:shadow-md transition-shadow duration-200">
+                    <Home className="h-8 w-8 text-blue-600 mx-auto mb-3" />
+                    <div className="text-lg font-bold text-blue-900">{getPropertyTypeLabel(property.details.propertyType)}</div>
+                    <div className="text-sm text-blue-700 font-medium">Lloji</div>
                   </div>
                 </div>
 

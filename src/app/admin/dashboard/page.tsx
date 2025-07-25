@@ -93,7 +93,7 @@ export default function AdminDashboard() {
   // Apply filters whenever filters change
   useEffect(() => {
     applyFilters();
-  }, [filters, allProperties]);
+  }, [filters, allProperties, applyFilters]);
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters(prev => ({
@@ -147,38 +147,38 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-white">
                 Paneli i Administrimit
               </h1>
-              <p className="text-gray-600">Menaxhoni pasuritë tuaja</p>
+              <p className="text-blue-200">Menaxhoni pasuritë tuaja</p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-6">
               <Link
                 href="/admin/inquiries"
-                className="text-gray-600 hover:text-gray-900"
+                className="flex items-center text-blue-100 hover:text-white transition-colors duration-200"
               >
-                <MessageCircle className="h-5 w-5 inline mr-1" />
-                Pyetjet
+                <MessageCircle className="h-5 w-5 mr-2" />
+                <span className="font-medium">Pyetjet</span>
               </Link>
               <Link
                 href="/"
-                className="text-gray-600 hover:text-gray-900"
+                className="flex items-center text-blue-100 hover:text-white transition-colors duration-200"
               >
-                <Eye className="h-5 w-5 inline mr-1" />
-                Shiko Faqen
+                <Eye className="h-5 w-5 mr-2" />
+                <span className="font-medium">Shiko Faqen</span>
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center text-red-600 hover:text-red-700"
+                className="flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
-                <LogOut className="h-5 w-5 mr-1" />
-                Dil
+                <LogOut className="h-5 w-5 mr-2" />
+                <span className="font-medium">Dil</span>
               </button>
             </div>
           </div>

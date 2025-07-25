@@ -29,31 +29,32 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50">
+    <nav className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-2xl sticky top-0 z-50 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-18">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="text-2xl">🏠</div>
+          <Link href="/" className="flex items-center space-x-3 py-2">
+            <div className="text-3xl">🏠</div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold text-red-600">
+              <h1 className="text-2xl font-bold text-white tracking-tight">
                 Pasuritë e Tiranës
               </h1>
+              <p className="text-blue-200 text-sm">Premium Real Estate</p>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             {navigation.map((item) => {
               const Icon = item.icon;
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive(item.href)
-                      ? 'text-red-600 bg-red-50'
-                      : 'text-gray-700 hover:text-red-600 hover:bg-red-50'
+                      ? 'text-white bg-blue-700 shadow-lg'
+                      : 'text-blue-100 hover:text-white hover:bg-blue-700/50'
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -65,7 +66,7 @@ export default function Navigation() {
             {/* Admin Link */}
             <Link
               href="/admin/login"
-              className="flex items-center space-x-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm font-medium"
+              className="flex items-center space-x-2 px-6 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-200 text-sm font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <User className="h-4 w-4" />
               <span>Hyrje për Agjentë</span>
@@ -76,7 +77,7 @@ export default function Navigation() {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500"
+              className="inline-flex items-center justify-center p-2 rounded-lg text-blue-100 hover:text-white hover:bg-blue-700/50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-400 transition-all duration-200"
               aria-expanded="false"
             >
               <span className="sr-only">Hap menunë kryesore</span>
@@ -92,7 +93,7 @@ export default function Navigation() {
 
       {/* Mobile menu */}
       <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'}`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
+        <div className="px-4 pt-4 pb-6 space-y-2 bg-gradient-to-b from-blue-800 to-blue-900 border-t border-blue-700">
           {navigation.map((item) => {
             const Icon = item.icon;
             return (
@@ -100,10 +101,10 @@ export default function Navigation() {
                 key={item.name}
                 href={item.href}
                 onClick={() => setIsMenuOpen(false)}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 ${
                   isActive(item.href)
-                    ? 'text-red-600 bg-red-50'
-                    : 'text-gray-700 hover:text-red-600 hover:bg-red-50'
+                    ? 'text-white bg-blue-700 shadow-lg'
+                    : 'text-blue-100 hover:text-white hover:bg-blue-700/50'
                 }`}
               >
                 <Icon className="h-5 w-5" />
@@ -116,7 +117,7 @@ export default function Navigation() {
           <Link
             href="/admin/login"
             onClick={() => setIsMenuOpen(false)}
-            className="flex items-center space-x-2 px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-base font-medium mt-4"
+            className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-200 text-base font-medium mt-4 shadow-lg"
           >
             <User className="h-5 w-5" />
             <span>Hyrje për Agjentë</span>

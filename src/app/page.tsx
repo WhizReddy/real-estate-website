@@ -96,9 +96,9 @@ export default function Home() {
     <Layout>
       <StructuredData type="website" />
       <StructuredData type="organization" />
-      <div className="bg-gray-50">
-        {/* Modern Hero Section */}
-        <section className="relative bg-gradient-to-br from-red-600 via-red-700 to-red-800 overflow-hidden">
+      <div className="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+        {/* Royal Blue Hero Section */}
+        <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="absolute inset-0 opacity-20">
