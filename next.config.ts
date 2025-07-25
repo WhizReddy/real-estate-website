@@ -2,28 +2,41 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['localhost', 'pasurite-tiranes.al'],
-    formats: ['image/webp', 'image/avif'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    // Allow data URLs for base64 images
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+    formats: ['image/webp'],
     dangerouslyAllowSVG: true,
-    contentDispositionType: 'attachment',
-    // Enable unoptimized for data URLs
-    unoptimized: false,
+    unoptimized: process.env.NODE_ENV === 'development',
   },
   
-  // Performance optimizations
+  // Performance optimizations for faster compilation
   compress: true,
   poweredByHeader: false,
-  
-  // Static generation optimization
   generateEtags: false,
+  
+  // Faster compilation in development
+  swcMinify: true,
   
   // Experimental features for better performance
   experimental: {
     optimizeCss: true,
-    optimizePackageImports: ['lucide-react'],
+    optimizePackageImports: ['lucide-react', '@prisma/client'],
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
   },
   
   // Headers for better caching and security

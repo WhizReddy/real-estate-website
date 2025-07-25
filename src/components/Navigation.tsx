@@ -33,13 +33,21 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-18">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 py-2">
-            <div className="text-3xl">🏠</div>
+          <Link href="/" className="flex items-center space-x-3 py-2 group">
+            <div className="relative">
+              <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                <svg className="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                  <path d="M12 1l11 9h-3v10h-6v-6h-4v6H4V10H1L12 1z" opacity="0.3"/>
+                </svg>
+              </div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-pulse"></div>
+            </div>
             <div className="hidden sm:block">
-              <h1 className="text-2xl font-bold text-white tracking-tight">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent tracking-tight">
                 Real Estate Tiranë
               </h1>
-              <p className="text-blue-200 text-sm">Premium Properties</p>
+              <p className="text-blue-200 text-sm font-medium">Premium Properties • {new Date().getFullYear()}</p>
             </div>
           </Link>
 

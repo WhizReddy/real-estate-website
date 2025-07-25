@@ -1,81 +1,109 @@
 import Link from 'next/link';
-import { Mail, Phone, MapPin, Clock, Facebook, Instagram, Twitter } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Facebook, Instagram, Twitter, Building2, Award, Shield, Users } from 'lucide-react';
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+  
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="text-2xl">🏠</div>
-              <h3 className="text-xl font-bold text-red-400">
-                Pasuritë e Tiranës
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl">
+                <Building2 className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                Real Estate Tiranë
               </h3>
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="text-gray-300 text-sm leading-relaxed">
               Partneri juaj i besuar për të gjetur shtëpinë perfekte në Tiranë. 
-              Ofrojmë shërbime profesionale për blerje, shitje dhe qira pasurie.
+              Ofrojmë shërbime profesionale për blerje, shitje dhe qira pasurie me teknologji moderne.
             </p>
+            
+            {/* Trust Indicators */}
+            <div className="grid grid-cols-3 gap-4 py-4">
+              <div className="text-center">
+                <Award className="h-5 w-5 text-blue-400 mx-auto mb-1" />
+                <div className="text-xs text-gray-400">Certifikuar</div>
+              </div>
+              <div className="text-center">
+                <Shield className="h-5 w-5 text-blue-400 mx-auto mb-1" />
+                <div className="text-xs text-gray-400">I Sigurt</div>
+              </div>
+              <div className="text-center">
+                <Users className="h-5 w-5 text-blue-400 mx-auto mb-1" />
+                <div className="text-xs text-gray-400">500+ Klientë</div>
+              </div>
+            </div>
+            
             <div className="flex space-x-4">
               <a
-                href="#"
-                className="text-gray-400 hover:text-red-400 transition-colors"
+                href="https://facebook.com"
+                className="text-gray-400 hover:text-blue-400 transition-colors p-2 bg-gray-800 rounded-lg hover:bg-blue-600/20"
                 aria-label="Facebook"
               >
-                <Facebook className="h-5 w-5" />
+                <Facebook className="h-4 w-4" />
               </a>
               <a
-                href="#"
-                className="text-gray-400 hover:text-red-400 transition-colors"
+                href="https://instagram.com"
+                className="text-gray-400 hover:text-blue-400 transition-colors p-2 bg-gray-800 rounded-lg hover:bg-blue-600/20"
                 aria-label="Instagram"
               >
-                <Instagram className="h-5 w-5" />
+                <Instagram className="h-4 w-4" />
               </a>
               <a
-                href="#"
-                className="text-gray-400 hover:text-red-400 transition-colors"
+                href="https://twitter.com"
+                className="text-gray-400 hover:text-blue-400 transition-colors p-2 bg-gray-800 rounded-lg hover:bg-blue-600/20"
                 aria-label="Twitter"
               >
-                <Twitter className="h-5 w-5" />
+                <Twitter className="h-4 w-4" />
               </a>
             </div>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-white">Lidhje të Shpejta</h4>
-            <ul className="space-y-2">
+            <h4 className="text-lg font-semibold text-white flex items-center">
+              <div className="w-1 h-6 bg-gradient-to-b from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+              Lidhje të Shpejta
+            </h4>
+            <ul className="space-y-3">
               <li>
                 <Link
                   href="/"
-                  className="text-gray-400 hover:text-red-400 transition-colors text-sm"
+                  className="text-gray-300 hover:text-blue-400 transition-colors text-sm flex items-center group"
                 >
+                  <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Kryesore
                 </Link>
               </li>
               <li>
                 <Link
                   href="/#properties"
-                  className="text-gray-400 hover:text-red-400 transition-colors text-sm"
+                  className="text-gray-300 hover:text-blue-400 transition-colors text-sm flex items-center group"
                 >
+                  <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Pasuritë
                 </Link>
               </li>
               <li>
                 <Link
                   href="/#about"
-                  className="text-gray-400 hover:text-red-400 transition-colors text-sm"
+                  className="text-gray-300 hover:text-blue-400 transition-colors text-sm flex items-center group"
                 >
+                  <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Rreth Nesh
                 </Link>
               </li>
               <li>
                 <Link
                   href="/#contact"
-                  className="text-gray-400 hover:text-red-400 transition-colors text-sm"
+                  className="text-gray-300 hover:text-blue-400 transition-colors text-sm flex items-center group"
                 >
+                  <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Kontakti
                 </Link>
               </li>
@@ -84,63 +112,82 @@ export default function Footer() {
 
           {/* Services */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-white">Shërbimet</h4>
-            <ul className="space-y-2">
-              <li>
-                <span className="text-gray-400 text-sm">Blerje Pasurie</span>
+            <h4 className="text-lg font-semibold text-white flex items-center">
+              <div className="w-1 h-6 bg-gradient-to-b from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+              Shërbimet {currentYear}
+            </h4>
+            <ul className="space-y-3">
+              <li className="flex items-center text-gray-300 text-sm">
+                <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+                Blerje Pasurie Premium
               </li>
-              <li>
-                <span className="text-gray-400 text-sm">Shitje Pasurie</span>
+              <li className="flex items-center text-gray-300 text-sm">
+                <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+                Shitje me Teknologji AI
               </li>
-              <li>
-                <span className="text-gray-400 text-sm">Qira Pasurie</span>
+              <li className="flex items-center text-gray-300 text-sm">
+                <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+                Qira Afatgjatë & Afatshkurtër
               </li>
-              <li>
-                <span className="text-gray-400 text-sm">Konsulencë Pasurie</span>
+              <li className="flex items-center text-gray-300 text-sm">
+                <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+                Konsulencë Investimi
               </li>
-              <li>
-                <span className="text-gray-400 text-sm">Vlerësim Pasurie</span>
+              <li className="flex items-center text-gray-300 text-sm">
+                <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+                Vlerësim Profesional
               </li>
             </ul>
           </div>
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-white">Informacione Kontakti</h4>
-            <div className="space-y-3">
-              <div className="flex items-start space-x-3">
-                <MapPin className="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0" />
-                <div className="text-gray-400 text-sm">
+            <h4 className="text-lg font-semibold text-white flex items-center">
+              <div className="w-1 h-6 bg-gradient-to-b from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+              Kontakti {currentYear}
+            </h4>
+            <div className="space-y-4">
+              <div className="flex items-start space-x-3 p-3 bg-gray-800/50 rounded-lg hover:bg-blue-600/10 transition-colors">
+                <MapPin className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                <div className="text-gray-300 text-sm">
+                  <p className="font-medium">Zyra Kryesore</p>
                   <p>Rruga "Dëshmorët e Kombit"</p>
-                  <p>Tiranë, Shqipëri</p>
+                  <p>Tiranë 1001, Shqipëri</p>
                 </div>
               </div>
               
-              <div className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-red-400 flex-shrink-0" />
-                <a
-                  href="tel:+35569123456"
-                  className="text-gray-400 hover:text-red-400 transition-colors text-sm"
-                >
-                  +355 69 123 4567
-                </a>
+              <div className="flex items-center space-x-3 p-3 bg-gray-800/50 rounded-lg hover:bg-blue-600/10 transition-colors">
+                <Phone className="h-5 w-5 text-blue-400 flex-shrink-0" />
+                <div>
+                  <a
+                    href="tel:+35569123456"
+                    className="text-gray-300 hover:text-blue-400 transition-colors text-sm font-medium"
+                  >
+                    +355 69 123 4567
+                  </a>
+                  <p className="text-xs text-gray-500">24/7 Mbështetje</p>
+                </div>
               </div>
               
-              <div className="flex items-center space-x-3">
-                <Mail className="h-5 w-5 text-red-400 flex-shrink-0" />
-                <a
-                  href="mailto:info@pasuritëtiranës.al"
-                  className="text-gray-400 hover:text-red-400 transition-colors text-sm"
-                >
-                  info@pasuritëtiranës.al
-                </a>
+              <div className="flex items-center space-x-3 p-3 bg-gray-800/50 rounded-lg hover:bg-blue-600/10 transition-colors">
+                <Mail className="h-5 w-5 text-blue-400 flex-shrink-0" />
+                <div>
+                  <a
+                    href="mailto:info@realestate-tirana.al"
+                    className="text-gray-300 hover:text-blue-400 transition-colors text-sm font-medium"
+                  >
+                    info@realestate-tirana.al
+                  </a>
+                  <p className="text-xs text-gray-500">Përgjigje brenda 1 ore</p>
+                </div>
               </div>
               
-              <div className="flex items-start space-x-3">
-                <Clock className="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0" />
-                <div className="text-gray-400 text-sm">
-                  <p>Hën-Pre: 9:00-18:00</p>
-                  <p>Sht-Dje: 10:00-16:00</p>
+              <div className="flex items-start space-x-3 p-3 bg-gray-800/50 rounded-lg">
+                <Clock className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                <div className="text-gray-300 text-sm">
+                  <p className="font-medium">Orari i Punës</p>
+                  <p>Hën-Pre: 9:00-19:00</p>
+                  <p>Sht-Dje: 10:00-17:00</p>
                 </div>
               </div>
             </div>
@@ -148,23 +195,33 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 mt-8 pt-8">
+        <div className="border-t border-gray-700/50 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-gray-400 text-sm">
-              © {new Date().getFullYear()} Pasuritë e Tiranës. Të gjitha të drejtat e rezervuara.
+            <div className="text-gray-400 text-sm flex items-center">
+              <span>© {currentYear} Real Estate Tiranë.</span>
+              <span className="mx-2">•</span>
+              <span>Të gjitha të drejtat e rezervuara.</span>
+              <span className="mx-2">•</span>
+              <span className="text-blue-400">Powered by Modern Tech</span>
             </div>
             <div className="flex space-x-6">
               <Link
                 href="/privacy"
-                className="text-gray-400 hover:text-red-400 transition-colors text-sm"
+                className="text-gray-400 hover:text-blue-400 transition-colors text-sm"
               >
-                Politika e Privatësisë
+                Privatësia
               </Link>
               <Link
                 href="/terms"
-                className="text-gray-400 hover:text-red-400 transition-colors text-sm"
+                className="text-gray-400 hover:text-blue-400 transition-colors text-sm"
               >
-                Kushtet e Përdorimit
+                Kushtet
+              </Link>
+              <Link
+                href="/cookies"
+                className="text-gray-400 hover:text-blue-400 transition-colors text-sm"
+              >
+                Cookies
               </Link>
             </div>
           </div>
