@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Property } from '@/types';
@@ -52,8 +52,8 @@ export default function AdminDashboard() {
   const uniqueCities = [...new Set(allProperties.map(p => p.address.city))].sort();
   const uniquePropertyTypes = [...new Set(allProperties.map(p => p.details.propertyType))].sort();
 
-  // Apply filters
-  const applyFilters = () => {
+  // Apply filters with useCallback to prevent infinite re-renders
+  const applyFilters = useCallback(() => {
     let filtered = allProperties;
 
     // Search filter
@@ -88,12 +88,12 @@ export default function AdminDashboard() {
     }
 
     setProperties(filtered);
-  };
+  }, [allProperties, filters]);
 
   // Apply filters whenever filters change
   useEffect(() => {
     applyFilters();
-  }, [filters, allProperties, applyFilters]);
+  }, [applyFilters]);
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters(prev => ({
@@ -439,7 +439,7 @@ export default function AdminDashboard() {
                           ? 'bg-green-100 text-green-800'
                           : property.status === 'pending'
                           ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
+                          : 'bg-gray-100 text-gray-800'
                       }`}>
                         {property.status === 'active' ? 'Aktive' : 
                          property.status === 'pending' ? 'Në Pritje' : 'E Shitur'}

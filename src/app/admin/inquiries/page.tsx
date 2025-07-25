@@ -96,7 +96,7 @@ export default function InquiriesPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -107,7 +107,7 @@ export default function InquiriesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center">
-              <MessageCircle className="h-8 w-8 text-red-600 mr-3" />
+              <MessageCircle className="h-8 w-8 text-blue-600 mr-3" />
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">Pyetjet e Klientëve</h1>
                 <p className="text-gray-600">Menaxhoni pyetjet dhe kërkesat e klientëve</p>
@@ -156,7 +156,7 @@ export default function InquiriesPage() {
                     <div
                       key={inquiry.id}
                       className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
-                        selectedInquiry?.id === inquiry.id ? 'bg-red-50 border-l-4 border-red-600' : ''
+                        selectedInquiry?.id === inquiry.id ? 'bg-blue-50 border-l-4 border-blue-600' : ''
                       }`}
                       onClick={() => handleViewInquiry(inquiry)}
                     >
@@ -200,7 +200,7 @@ export default function InquiriesPage() {
                               e.stopPropagation();
                               handleDeleteInquiry(inquiry.id);
                             }}
-                            className="text-red-600 hover:text-red-800"
+                            className="text-blue-600 hover:text-blue-800"
                             title="Fshi pyetjen"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -269,7 +269,7 @@ export default function InquiriesPage() {
                           <div>
                             <p className="font-medium text-gray-900">{selectedInquiry.propertyTitle}</p>
                             {selectedInquiry.propertyPrice && (
-                              <p className="text-red-600 font-semibold">
+                              <p className="text-blue-600 font-semibold">
                                 €{selectedInquiry.propertyPrice.toLocaleString()}
                               </p>
                             )}
