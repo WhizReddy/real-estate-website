@@ -390,6 +390,149 @@ export function validatePropertyData(data: any): ValidationResult {
   };
 }
 
+// Validate user role
+export function validateUserRole(role: string): boolean {
+  const validRoles = ['ADMIN', 'AGENT'];
+  return validRoles.includes(role.toUpperCase());
+}
+
+// Validate password strength
+export function validatePassword(password: string): { isValid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  
+  if (!password || typeof password !== 'string') {
+    errors.push('Password is required');
+    return { isValid: false, errors };
+  }
+  
+  if (password.length < 6) {
+    errors.push('Password must be at least 6 characters long');
+  }
+  
+  if (password.length > 128) {
+    errors.push('Password cannot exceed 128 characters');
+  }
+  
+  // Check for at least one letter and one number for stronger passwords
+  if (!/[a-zA-Z]/.test(password)) {
+    errors.push('Password must contain at least one letter');
+  }
+  
+  if (!/\d/.test(password)) {
+    errors.push('Password must contain at least one number');
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+}
+
+// Comprehensive agent data validation
+export function validateAgentData(data: any): ValidationResult {
+  const errors: ValidationError[] = [];
+  const sanitizedData: any = {};
+
+  // Name validation and sanitization
+  if (!data.name || typeof data.name !== 'string') {
+    errors.push({
+      field: 'name',
+      message: 'Name is required and must be a string',
+      code: 'REQUIRED_FIELD',
+    });
+  } else {
+    const sanitizedName = sanitizeText(data.name, 100);
+    if (sanitizedName.length < 2) {
+      errors.push({
+        field: 'name',
+        message: 'Name must be at least 2 characters long',
+        code: 'MIN_LENGTH',
+      });
+    } else {
+      sanitizedData.name = sanitizedName;
+    }
+  }
+
+  // Email validation and sanitization
+  if (!data.email || typeof data.email !== 'string') {
+    errors.push({
+      field: 'email',
+      message: 'Email is required and must be a string',
+      code: 'REQUIRED_FIELD',
+    });
+  } else {
+    const emailValidation = validateEmail(data.email);
+    if (!emailValidation.isValid) {
+      errors.push({
+        field: 'email',
+        message: 'Invalid email format',
+        code: 'INVALID_EMAIL',
+      });
+    } else {
+      sanitizedData.email = emailValidation.sanitized;
+    }
+  }
+
+  // Phone validation and sanitization (optional)
+  if (data.phone && typeof data.phone === 'string' && data.phone.trim() !== '') {
+    const phoneValidation = validatePhone(data.phone);
+    if (!phoneValidation.isValid) {
+      errors.push({
+        field: 'phone',
+        message: 'Invalid phone number format',
+        code: 'INVALID_PHONE',
+      });
+    } else {
+      sanitizedData.phone = phoneValidation.sanitized;
+    }
+  }
+
+  // Password validation
+  if (!data.password || typeof data.password !== 'string') {
+    errors.push({
+      field: 'password',
+      message: 'Password is required and must be a string',
+      code: 'REQUIRED_FIELD',
+    });
+  } else {
+    const passwordValidation = validatePassword(data.password);
+    if (!passwordValidation.isValid) {
+      passwordValidation.errors.forEach(error => {
+        errors.push({
+          field: 'password',
+          message: error,
+          code: 'WEAK_PASSWORD',
+        });
+      });
+    } else {
+      sanitizedData.password = data.password; // Don't sanitize password, just validate
+    }
+  }
+
+  // Role validation
+  if (!data.role || typeof data.role !== 'string') {
+    errors.push({
+      field: 'role',
+      message: 'Role is required and must be a string',
+      code: 'REQUIRED_FIELD',
+    });
+  } else if (!validateUserRole(data.role)) {
+    errors.push({
+      field: 'role',
+      message: 'Invalid role. Must be ADMIN or AGENT',
+      code: 'INVALID_ROLE',
+    });
+  } else {
+    sanitizedData.role = data.role.toUpperCase();
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    sanitizedData: errors.length === 0 ? sanitizedData : undefined,
+  };
+}
+
 // Client-side validation for form fields
 export function validateFormField(fieldName: string, value: any): ValidationError | null {
   switch (fieldName) {
@@ -447,9 +590,153 @@ export function validateFormField(fieldName: string, value: any): ValidationErro
       }
       break;
 
+    // Agent form field validations
+    case 'agentName':
+      if (!value || typeof value !== 'string') {
+        return { field: 'agentName', message: 'Name is required', code: 'REQUIRED_FIELD' };
+      }
+      if (value.trim().length < 2) {
+        return { field: 'agentName', message: 'Name must be at least 2 characters', code: 'MIN_LENGTH' };
+      }
+      if (value.length > 100) {
+        return { field: 'agentName', message: 'Name cannot exceed 100 characters', code: 'MAX_LENGTH' };
+      }
+      break;
+
+    case 'agentEmail':
+      if (!value || typeof value !== 'string') {
+        return { field: 'agentEmail', message: 'Email is required', code: 'REQUIRED_FIELD' };
+      }
+      const emailValidation = validateEmail(value);
+      if (!emailValidation.isValid) {
+        return { field: 'agentEmail', message: 'Invalid email format', code: 'INVALID_EMAIL' };
+      }
+      break;
+
+    case 'agentPhone':
+      if (value && typeof value === 'string' && value.trim() !== '') {
+        const phoneValidation = validatePhone(value);
+        if (!phoneValidation.isValid) {
+          return { field: 'agentPhone', message: 'Invalid phone number format', code: 'INVALID_PHONE' };
+        }
+      }
+      break;
+
+    case 'agentPassword':
+      if (!value || typeof value !== 'string') {
+        return { field: 'agentPassword', message: 'Password is required', code: 'REQUIRED_FIELD' };
+      }
+      const passwordValidation = validatePassword(value);
+      if (!passwordValidation.isValid) {
+        return { field: 'agentPassword', message: passwordValidation.errors[0], code: 'WEAK_PASSWORD' };
+      }
+      break;
+
+    case 'agentRole':
+      if (!value || typeof value !== 'string') {
+        return { field: 'agentRole', message: 'Role is required', code: 'REQUIRED_FIELD' };
+      }
+      if (!validateUserRole(value)) {
+        return { field: 'agentRole', message: 'Invalid role. Must be ADMIN or AGENT', code: 'INVALID_ROLE' };
+      }
+      break;
+
     default:
       break;
   }
 
   return null;
+}
+
+// Validate agent update data (for editing existing agents)
+export function validateAgentUpdateData(data: any): ValidationResult {
+  const errors: ValidationError[] = [];
+  const sanitizedData: any = {};
+
+  // Name validation and sanitization (required for updates)
+  if (data.name !== undefined) {
+    if (!data.name || typeof data.name !== 'string') {
+      errors.push({
+        field: 'name',
+        message: 'Name is required and must be a string',
+        code: 'REQUIRED_FIELD',
+      });
+    } else {
+      const sanitizedName = sanitizeText(data.name, 100);
+      if (sanitizedName.length < 2) {
+        errors.push({
+          field: 'name',
+          message: 'Name must be at least 2 characters long',
+          code: 'MIN_LENGTH',
+        });
+      } else {
+        sanitizedData.name = sanitizedName;
+      }
+    }
+  }
+
+  // Email validation and sanitization (required for updates)
+  if (data.email !== undefined) {
+    if (!data.email || typeof data.email !== 'string') {
+      errors.push({
+        field: 'email',
+        message: 'Email is required and must be a string',
+        code: 'REQUIRED_FIELD',
+      });
+    } else {
+      const emailValidation = validateEmail(data.email);
+      if (!emailValidation.isValid) {
+        errors.push({
+          field: 'email',
+          message: 'Invalid email format',
+          code: 'INVALID_EMAIL',
+        });
+      } else {
+        sanitizedData.email = emailValidation.sanitized;
+      }
+    }
+  }
+
+  // Phone validation and sanitization (optional for updates)
+  if (data.phone !== undefined) {
+    if (data.phone && typeof data.phone === 'string' && data.phone.trim() !== '') {
+      const phoneValidation = validatePhone(data.phone);
+      if (!phoneValidation.isValid) {
+        errors.push({
+          field: 'phone',
+          message: 'Invalid phone number format',
+          code: 'INVALID_PHONE',
+        });
+      } else {
+        sanitizedData.phone = phoneValidation.sanitized;
+      }
+    } else {
+      sanitizedData.phone = null; // Allow clearing phone number
+    }
+  }
+
+  // Role validation (optional for updates)
+  if (data.role !== undefined) {
+    if (!data.role || typeof data.role !== 'string') {
+      errors.push({
+        field: 'role',
+        message: 'Role is required and must be a string',
+        code: 'REQUIRED_FIELD',
+      });
+    } else if (!validateUserRole(data.role)) {
+      errors.push({
+        field: 'role',
+        message: 'Invalid role. Must be ADMIN or AGENT',
+        code: 'INVALID_ROLE',
+      });
+    } else {
+      sanitizedData.role = data.role.toUpperCase();
+    }
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    sanitizedData: errors.length === 0 ? sanitizedData : undefined,
+  };
 }

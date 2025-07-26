@@ -61,13 +61,13 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
           
           {/* Price Badge */}
-          <div className="absolute top-4 right-4 bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg backdrop-blur-sm">
+          <div className="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg backdrop-blur-sm">
             {formatPrice(property.price)}
           </div>
           
           {/* Status Badges */}
           <div className="absolute top-4 left-4 flex flex-col space-y-2">
-            <span className="bg-white/95 backdrop-blur-sm text-red-800 text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+            <span className="bg-white/95 backdrop-blur-sm text-blue-800 text-xs font-semibold px-3 py-1 rounded-full shadow-md">
               {getListingTypeLabel(property.listingType)}
             </span>
             {property.isPinned && (
@@ -88,12 +88,12 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
         {/* Property Details */}
         <div className="p-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-1 group-hover:text-red-600 transition-colors duration-300">
+          <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-1 group-hover:text-blue-600 transition-colors duration-300">
             {property.title}
           </h3>
           
           <div className="flex items-center text-gray-600 text-sm mb-4">
-            <MapPin className="h-4 w-4 mr-2 flex-shrink-0 text-red-500" />
+            <MapPin className="h-4 w-4 mr-2 flex-shrink-0 text-blue-500" />
             <span className="line-clamp-1 font-medium">{formatAddress(property.address)}</span>
           </div>
 
@@ -105,18 +105,18 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           <div className="flex flex-wrap gap-2 sm:gap-3">
             {property.details.bedrooms > 0 && (
               <div className="flex items-center space-x-1 bg-gray-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg">
-                <Bed className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />
+                <Bed className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
                 <span className="text-xs sm:text-sm font-medium text-gray-700">{property.details.bedrooms}</span>
               </div>
             )}
             
             <div className="flex items-center space-x-1 bg-gray-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg">
-              <Bath className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />
+              <Bath className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
               <span className="text-xs sm:text-sm font-medium text-gray-700">{property.details.bathrooms}</span>
             </div>
             
             <div className="flex items-center space-x-1 bg-gray-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg">
-              <Square className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />
+              <Square className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
               <span className="text-xs sm:text-sm font-medium text-gray-700">{property.details.squareFootage}m²</span>
             </div>
           </div>
@@ -127,8 +127,8 @@ export default function PropertyCard({ property }: PropertyCardProps) {
               <span className="text-xs text-gray-500 font-medium">
                 ID: {property.id.slice(0, 8)}
               </span>
-              <span className="text-red-600 text-sm font-semibold group-hover:text-red-700 transition-colors duration-300">
-                Shiko Detajet →
+              <span className="text-blue-600 text-sm font-semibold group-hover:text-blue-700 transition-colors duration-300">
+                Kontakto Agjentin →
               </span>
             </div>
           </div>

@@ -16,25 +16,36 @@ export default function AdminLogin() {
     setError('');
 
     try {
-      // Rate limiting check
-      const clientId = 'admin-login'; // In production, use IP address
-      
-      // Simple authentication (in a real app, this would be server-side)
-      if (credentials.username === 'admin' && credentials.password === 'admin123') {
-        // Generate session token
-        const sessionToken = Math.random().toString(36).substr(2, 9);
-        
-        // Set session in localStorage and cookie (in a real app, use proper session management)
-        localStorage.setItem('adminSession', sessionToken);
-        document.cookie = `adminSession=${sessionToken}; path=/; max-age=86400; secure; samesite=strict`;
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: credentials.username, // Using username field as email
+          password: credentials.password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Store user data in localStorage
+        localStorage.setItem('adminSession', result.data.sessionToken);
+        localStorage.setItem('userData', JSON.stringify({
+          id: result.data.id,
+          name: result.data.name,
+          email: result.data.email,
+          role: result.data.role,
+        }));
         
         router.push('/admin/dashboard');
       } else {
-        setError('Emri i përdoruesit ose fjalëkalimi është i gabuar');
+        setError('Email ose fjalëkalimi është i gabuar');
         
         // Clear any existing session
         localStorage.removeItem('adminSession');
-        document.cookie = 'adminSession=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        localStorage.removeItem('userData');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -71,18 +82,18 @@ export default function AdminLogin() {
 
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Emri i Përdoruesit
+                Email
               </label>
               <div className="mt-1">
                 <input
                   id="username"
                   name="username"
-                  type="text"
+                  type="email"
                   required
                   value={credentials.username}
                   onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Shkruani emrin tuaj"
+                  placeholder="agent@example.com"
                 />
               </div>
             </div>
@@ -136,14 +147,14 @@ export default function AdminLogin() {
             </div>
           </div>
 
-          {/* Demo credentials info */}
+          {/* Login help */}
           <div className="mt-6 p-4 bg-blue-50 rounded-md">
             <h3 className="text-sm font-medium text-blue-800 mb-2">
-              Të dhëna për testim:
+              Ndihmë për hyrje:
             </h3>
             <div className="text-sm text-blue-700">
-              <p><strong>Përdoruesi:</strong> admin</p>
-              <p><strong>Fjalëkalimi:</strong> admin123</p>
+              <p>Përdorni email-in dhe fjalëkalimin që ju ka dhënë administratori.</p>
+              <p>Nëse keni probleme me hyrjen, kontaktoni administratorin.</p>
             </div>
           </div>
         </div>

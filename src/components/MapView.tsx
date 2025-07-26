@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Property } from '@/types';
 import { formatPrice } from '@/lib/utils';
-import { MapPin, AlertCircle, RefreshCw } from 'lucide-react';
+import { MapPin, AlertCircle, RefreshCw, Home, Navigation, Layers, Maximize2, Minimize2, Filter, Search } from 'lucide-react';
 import CreativeLoader from '@/components/CreativeLoader';
 
 interface MapViewProps {
@@ -29,6 +29,13 @@ export default function MapView({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [mapLayer, setMapLayer] = useState<'street' | 'satellite' | 'terrain'>('street');
+  const [showClusters, setShowClusters] = useState(true);
+  const [mapFilters, setMapFilters] = useState({
+    priceRange: 'all',
+    propertyType: 'all'
+  });
 
   const initializeMap = async () => {
     if (typeof window === 'undefined' || !mapRef.current) return;
@@ -124,7 +131,7 @@ export default function MapView({
     };
   }, [retryCount]);
 
-  // Update markers when properties change
+  // Update markers when properties or filters change
   useEffect(() => {
     if (!mapInstanceRef.current || typeof window === 'undefined') return;
 
@@ -142,11 +149,11 @@ export default function MapView({
         });
         markersRef.current = [];
 
-        // Add new markers
-        await addPropertyMarkers(L, mapInstanceRef.current, properties, onPropertySelect);
+        // Add new markers with filtered properties
+        await addPropertyMarkers(L, mapInstanceRef.current, filteredProperties, onPropertySelect);
 
-        // Fit bounds to show all properties
-        if (properties.length > 0 && markersRef.current.length > 0) {
+        // Fit bounds to show all filtered properties
+        if (filteredProperties.length > 0 && markersRef.current.length > 0) {
           try {
             const group = new L.featureGroup(markersRef.current);
             mapInstanceRef.current.fitBounds(group.getBounds().pad(0.1));
@@ -160,7 +167,7 @@ export default function MapView({
     };
 
     updateMarkers();
-  }, [properties, onPropertySelect]);
+  }, [properties, onPropertySelect, mapFilters]);
 
   // Highlight selected property
   useEffect(() => {
@@ -191,16 +198,16 @@ export default function MapView({
     props.forEach((property) => {
       const coords = property.address.coordinates;
       
-      // Create custom marker icon with Albanian styling
+      // Create custom marker icon with blue styling
       const markerIcon = L.divIcon({
         html: `
-          <div class="property-marker bg-red-600 text-white px-2 py-1 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:bg-red-700 transition-colors cursor-pointer">
+          <div class="property-marker bg-gradient-to-r from-blue-600 to-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-700 hover:to-blue-800 transition-all cursor-pointer transform hover:scale-105">
             ${formatPrice(property.price)}
           </div>
         `,
         className: 'custom-marker',
-        iconSize: [100, 32],
-        iconAnchor: [50, 32],
+        iconSize: [110, 36],
+        iconAnchor: [55, 36],
       });
 
       const marker = L.marker([coords.lat, coords.lng], { icon: markerIcon })
@@ -212,8 +219,8 @@ export default function MapView({
           <h3 class="font-semibold text-gray-900 mb-1 text-sm">${property.title}</h3>
           <p class="text-xs text-gray-600 mb-1">${property.address.street}</p>
           <div class="flex justify-between items-center">
-            <span class="font-bold text-red-600 text-sm">${formatPrice(property.price)}</span>
-            <span class="text-xs bg-gray-100 px-2 py-1 rounded">${property.details.propertyType}</span>
+            <span class="font-bold text-blue-600 text-sm">${formatPrice(property.price)}</span>
+            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${property.details.propertyType}</span>
           </div>
         </div>
       `;
@@ -226,21 +233,29 @@ export default function MapView({
         className: 'custom-tooltip'
       });
 
-      // Create detailed popup for click
+      // Create detailed popup for click with navigation
       const popupContent = `
-        <div class="p-3 min-w-[220px]">
+        <div class="p-4 min-w-[260px]">
           <h3 class="font-semibold text-gray-900 mb-2 text-sm">${property.title}</h3>
           <p class="text-xs text-gray-600 mb-2">${property.address.street}</p>
           <div class="flex justify-between items-center mb-2">
-            <span class="font-bold text-red-600 text-sm">${formatPrice(property.price)}</span>
-            <span class="text-xs bg-gray-100 px-2 py-1 rounded capitalize">${property.details.propertyType}</span>
+            <span class="font-bold text-blue-600 text-sm">${formatPrice(property.price)}</span>
+            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded capitalize">${property.details.propertyType}</span>
           </div>
           <div class="text-xs text-gray-600 mb-3">
             ${property.details.bedrooms > 0 ? `${property.details.bedrooms} dhoma • ` : ''}${property.details.bathrooms} banjo • ${property.details.squareFootage.toLocaleString()} m²
           </div>
-          <a href="/properties/${property.id}" class="inline-block bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition-colors">
-            Shiko Detajet
-          </a>
+          <div class="flex gap-2">
+            <a href="/properties/${property.id}" class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-3 py-2 rounded text-xs hover:from-blue-700 hover:to-blue-800 transition-all text-center font-medium">
+              📋 Detajet
+            </a>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}" target="_blank" class="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white px-3 py-2 rounded text-xs hover:from-green-700 hover:to-green-800 transition-all text-center font-medium">
+              🧭 Navigim
+            </a>
+          </div>
+          <button onclick="window.location.href='/'" class="w-full mt-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white px-3 py-2 rounded text-xs hover:from-gray-700 hover:to-gray-800 transition-all font-medium">
+            🏠 Kryesore
+          </button>
         </div>
       `;
 
@@ -278,13 +293,191 @@ export default function MapView({
     setRetryCount(prev => prev + 1);
   };
 
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
+  const changeMapLayer = (layer: 'street' | 'satellite' | 'terrain') => {
+    setMapLayer(layer);
+    if (mapInstanceRef.current) {
+      // Remove existing tile layers
+      mapInstanceRef.current.eachLayer((layer: any) => {
+        if (layer instanceof (window as any).L?.TileLayer) {
+          mapInstanceRef.current.removeLayer(layer);
+        }
+      });
+
+      // Add new tile layer based on selection
+      import('leaflet').then((L) => {
+        let tileUrl = '';
+        let attribution = '';
+        
+        switch (layer) {
+          case 'satellite':
+            tileUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+            attribution = 'Esri';
+            break;
+          case 'terrain':
+            tileUrl = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png';
+            attribution = 'OpenTopoMap';
+            break;
+          default:
+            tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            attribution = 'OpenStreetMap';
+        }
+
+        L.tileLayer(tileUrl, {
+          attribution,
+          maxZoom: 18,
+          timeout: 10000,
+        }).addTo(mapInstanceRef.current);
+      });
+    }
+  };
+
+  const resetMapView = () => {
+    if (mapInstanceRef.current && properties.length > 0) {
+      const mapCenter = center || calculateCenter(properties);
+      mapInstanceRef.current.setView(mapCenter, zoom);
+    }
+  };
+
+  const filteredProperties = properties.filter(property => {
+    if (mapFilters.priceRange !== 'all') {
+      const price = property.price;
+      switch (mapFilters.priceRange) {
+        case 'low':
+          if (price > 100000) return false;
+          break;
+        case 'medium':
+          if (price < 100000 || price > 300000) return false;
+          break;
+        case 'high':
+          if (price < 300000) return false;
+          break;
+      }
+    }
+
+    if (mapFilters.propertyType !== 'all') {
+      if (property.details.propertyType !== mapFilters.propertyType) return false;
+    }
+
+    return true;
+  });
+
   return (
-    <div className="relative">
+    <div className={`relative ${isFullscreen ? 'fixed inset-0 z-50 bg-white' : ''}`}>
       <div
         ref={mapRef}
-        style={{ height }}
+        style={{ height: isFullscreen ? '100vh' : height }}
         className="w-full rounded-lg shadow-md border border-gray-200 touch-pan-x touch-pan-y bg-gray-50"
       />
+
+      {/* Enhanced Map Controls */}
+      <div className="absolute top-3 right-3 flex flex-col gap-2 z-[1000]">
+        {/* Fullscreen Toggle */}
+        <button
+          onClick={toggleFullscreen}
+          className="bg-white hover:bg-blue-50 p-2 rounded-lg shadow-md border border-gray-200 transition-colors duration-200"
+          title={isFullscreen ? "Dil nga ekrani i plotë" : "Ekran i plotë"}
+        >
+          {isFullscreen ? (
+            <Minimize2 className="h-4 w-4 text-blue-600" />
+          ) : (
+            <Maximize2 className="h-4 w-4 text-blue-600" />
+          )}
+        </button>
+
+        {/* Map Layer Selector */}
+        <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+          <button
+            onClick={() => changeMapLayer('street')}
+            className={`p-2 w-full text-xs transition-colors ${
+              mapLayer === 'street' ? 'bg-blue-600 text-white' : 'hover:bg-blue-50 text-blue-600'
+            }`}
+            title="Harta e rrugëve"
+          >
+            🗺️
+          </button>
+          <button
+            onClick={() => changeMapLayer('satellite')}
+            className={`p-2 w-full text-xs transition-colors ${
+              mapLayer === 'satellite' ? 'bg-blue-600 text-white' : 'hover:bg-blue-50 text-blue-600'
+            }`}
+            title="Pamja satelitore"
+          >
+            🛰️
+          </button>
+          <button
+            onClick={() => changeMapLayer('terrain')}
+            className={`p-2 w-full text-xs transition-colors ${
+              mapLayer === 'terrain' ? 'bg-blue-600 text-white' : 'hover:bg-blue-50 text-blue-600'
+            }`}
+            title="Terreni"
+          >
+            🏔️
+          </button>
+        </div>
+
+        {/* Reset View Button */}
+        <button
+          onClick={resetMapView}
+          className="bg-white hover:bg-blue-50 p-2 rounded-lg shadow-md border border-gray-200 transition-colors duration-200"
+          title="Kthehu në pamjen fillestare"
+        >
+          <Home className="h-4 w-4 text-blue-600" />
+        </button>
+      </div>
+
+      {/* Mobile-Friendly Map Filters */}
+      <div className="absolute top-3 left-3 z-[1000]">
+        <div className="bg-white rounded-lg shadow-md border border-gray-200 p-3 max-w-xs">
+          <div className="flex items-center gap-2 mb-2">
+            <Filter className="h-4 w-4 text-blue-600" />
+            <span className="text-sm font-medium text-gray-700">Filtrat e Hartës</span>
+          </div>
+          
+          <div className="space-y-2">
+            {/* Price Range Filter */}
+            <div>
+              <label className="text-xs text-gray-600 block mb-1">Çmimi</label>
+              <select
+                value={mapFilters.priceRange}
+                onChange={(e) => setMapFilters(prev => ({ ...prev, priceRange: e.target.value }))}
+                className="w-full text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="all">Të gjitha</option>
+                <option value="low">Deri €100,000</option>
+                <option value="medium">€100,000 - €300,000</option>
+                <option value="high">Mbi €300,000</option>
+              </select>
+            </div>
+
+            {/* Property Type Filter */}
+            <div>
+              <label className="text-xs text-gray-600 block mb-1">Lloji</label>
+              <select
+                value={mapFilters.propertyType}
+                onChange={(e) => setMapFilters(prev => ({ ...prev, propertyType: e.target.value }))}
+                className="w-full text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="all">Të gjitha</option>
+                <option value="house">Shtëpi</option>
+                <option value="apartment">Apartament</option>
+                <option value="condo">Kondo</option>
+                <option value="townhouse">Shtëpi në Qytet</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Properties Count */}
+          <div className="mt-2 pt-2 border-t border-gray-200">
+            <span className="text-xs text-gray-600">
+              {filteredProperties.length} pasuri në hartë
+            </span>
+          </div>
+        </div>
+      </div>
       
       {/* Loading State */}
       {isLoading && (
@@ -304,7 +497,7 @@ export default function MapView({
             </p>
             <button
               onClick={handleRetry}
-              className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all"
             >
               <RefreshCw className="h-4 w-4 mr-2" />
               Provo Përsëri

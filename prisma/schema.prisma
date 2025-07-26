@@ -40,6 +40,10 @@ model Property {
   listingType    String // SALE, RENT
   isPinned       Boolean @default(false)
   
+  // Owner/Agent relationship
+  ownerId        String?
+  owner          User?    @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  
   // Timestamps
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
@@ -81,6 +85,9 @@ model User {
   
   // Authentication
   password  String
+  
+  // Relations
+  properties Property[]
   
   // Timestamps
   createdAt DateTime @default(now())

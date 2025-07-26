@@ -16,7 +16,6 @@ export default function Navigation() {
 
   const navigation = [
     { name: 'Kryesore', href: '/', icon: Home },
-    { name: 'Pasuritë', href: '/#properties', icon: Search },
     { name: 'Kontakti', href: '/#contact', icon: Phone },
   ];
 

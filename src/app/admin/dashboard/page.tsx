@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { Property } from '@/types';
 import { getProperties, deleteProperty } from '@/lib/data';
 import { formatPrice } from '@/lib/utils';
-import { Plus, Edit, Trash2, Eye, LogOut, MessageCircle, Search, Filter, X } from 'lucide-react';
+import { getCurrentUser, isAdmin, isAgent, clearSession } from '@/lib/auth-utils';
+import { Plus, Edit, Trash2, Eye, LogOut, MessageCircle, Search, Filter, X, User } from 'lucide-react';
 import CreativeLoader from '@/components/CreativeLoader';
 import DatabaseStatusMonitor from '@/components/DatabaseStatusMonitor';
 
@@ -16,6 +17,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [currentUser, setCurrentUser] = useState<unknown>(null);
+  const [userRole, setUserRole] = useState<'ADMIN' | 'AGENT' | null>(null);
   const [filters, setFilters] = useState({
     search: '',
     status: 'all',
@@ -33,17 +36,53 @@ export default function AdminDashboard() {
       return;
     }
 
+    // Get current user info
+    const user = getCurrentUser();
+    if (user) {
+      setCurrentUser(user);
+      setUserRole(user.role);
+    }
+
     // Load properties
     loadProperties();
   }, [router]);
 
   const loadProperties = async () => {
     try {
-      const data = await getProperties();
-      setAllProperties(data);
-      setProperties(data);
+      // Use role-based API endpoint
+      const sessionToken = localStorage.getItem('adminSession');
+      const response = await fetch('/api/properties/user', {
+        headers: {
+          'Authorization': `Bearer ${sessionToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch properties');
+      }
+
+      const result = await response.json();
+      if (result.success) {
+        setAllProperties(result.data);
+        setProperties(result.data);
+      } else {
+        console.error('Error from API:', result.error);
+        // Fallback to regular API if role-based fails
+        const data = await getProperties();
+        setAllProperties(data);
+        setProperties(data);
+      }
     } catch (error) {
       console.error('Error loading properties:', error);
+      // Fallback to regular API
+      try {
+        const data = await getProperties();
+        setAllProperties(data);
+        setProperties(data);
+      } catch (fallbackError) {
+        console.error('Fallback also failed:', fallbackError);
+      }
     } finally {
       setLoading(false);
     }
@@ -155,12 +194,28 @@ export default function AdminDashboard() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold text-white">
-                Paneli i Administrimit
+                {userRole === 'ADMIN' ? 'Paneli i Administrimit' : 'Paneli i Agjentit'}
               </h1>
-              <p className="text-blue-200">Menaxhoni pasuritë tuaja</p>
+              <p className="text-blue-200">
+                {userRole === 'ADMIN' ? 'Menaxhoni pasuritë tuaja' : `Mirë se erdhe, ${currentUser?.name || 'Agjent'}`}
+              </p>
+              {currentUser && (
+                <p className="text-blue-300 text-sm">
+                  {currentUser.email} • {userRole === 'ADMIN' ? 'Administrator' : 'Agjent'}
+                </p>
+              )}
             </div>
             <div className="flex items-center space-x-6">
-              <DatabaseStatusMonitor />
+              {userRole === 'ADMIN' && <DatabaseStatusMonitor />}
+              {userRole === 'ADMIN' && (
+                <Link
+                  href="/admin/agents"
+                  className="flex items-center text-blue-100 hover:text-white transition-colors duration-200"
+                >
+                  <User className="h-5 w-5 mr-2" />
+                  <span className="font-medium">Agjentët</span>
+                </Link>
+              )}
               <Link
                 href="/admin/inquiries"
                 className="flex items-center text-blue-100 hover:text-white transition-colors duration-200"
@@ -188,10 +243,12 @@ export default function AdminDashboard() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Database Status Panel */}
-        <div className="mb-8">
-          <DatabaseStatusMonitor showDetails={true} />
-        </div>
+        {/* Database Status Panel - Admin Only */}
+        {userRole === 'ADMIN' && (
+          <div className="mb-8">
+            <DatabaseStatusMonitor showDetails={true} />
+          </div>
+        )}
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

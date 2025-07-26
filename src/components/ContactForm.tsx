@@ -111,7 +111,7 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
   return (
     <div className="bg-white rounded-lg shadow-md p-6 sticky top-6">
       <div className="flex items-center mb-4">
-        <MessageCircle className="h-6 w-6 text-red-600 mr-2" />
+        <MessageCircle className="h-6 w-6 text-blue-600 mr-2" />
         <h3 className="text-xl font-semibold text-gray-900">Kontaktoni Agjentin</h3>
       </div>
       <p className="text-gray-600 mb-6">
