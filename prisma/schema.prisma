@@ -51,6 +51,19 @@ model Property {
   // Relations
   inquiries      Inquiry[]
   
+  // Indexes for search optimization
+  @@index([status])
+  @@index([price])
+  @@index([propertyType])
+  @@index([listingType])
+  @@index([city])
+  @@index([bedrooms])
+  @@index([bathrooms])
+  @@index([isPinned, createdAt])
+  @@index([status, price])
+  @@index([status, propertyType])
+  @@index([status, city])
+  
   @@map("properties")
 }
 

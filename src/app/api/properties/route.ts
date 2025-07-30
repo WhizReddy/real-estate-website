@@ -5,6 +5,10 @@ import { validatePropertyData } from "@/lib/validation";
 export async function GET() {
   try {
     const properties = await prisma.property.findMany({
+      // Temporarily removed owner relation until ownerId column is added
+      // include: {
+      //   owner: true, // Include agent/owner information
+      // },
       orderBy: {
         createdAt: "desc",
       },
@@ -38,6 +42,12 @@ export async function GET() {
       status: property.status.toLowerCase(),
       listingType: property.listingType.toLowerCase(),
       isPinned: property.isPinned,
+      agent: {
+        id: 'default-agent',
+        name: 'Real Estate Agent',
+        email: 'agent@realestate-tirana.al',
+        phone: '+355 69 123 4567',
+      },
       createdAt: property.createdAt.toISOString(),
       updatedAt: property.updatedAt.toISOString(),
     }));

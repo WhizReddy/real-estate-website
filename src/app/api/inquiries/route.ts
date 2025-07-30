@@ -93,7 +93,13 @@ export async function POST(request: NextRequest) {
     }
 
     const inquiry = await prisma.inquiry.create({
-      data: validatedData,
+      data: {
+        name: validatedData.name,
+        email: validatedData.email,
+        phone: validatedData.phone,
+        message: validatedData.message,
+        propertyId: validatedData.propertyId,
+      },
       include: {
         property: {
           select: {

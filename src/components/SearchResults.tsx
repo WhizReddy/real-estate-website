@@ -78,11 +78,11 @@ export default function SearchResults({
           
           {/* Load More Button */}
           {hasMore && onLoadMore && (
-            <div className="mt-12 text-center">
+            <div className="mt-8 sm:mt-12 text-center">
               <button
                 onClick={onLoadMore}
                 disabled={isLoadingMore}
-                className="inline-flex items-center px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center px-6 py-3 sm:px-8 sm:py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors touch-manipulation min-h-[44px]"
               >
                 {isLoadingMore ? (
                   <>

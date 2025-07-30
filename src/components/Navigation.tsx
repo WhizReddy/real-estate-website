@@ -84,10 +84,10 @@ export default function Navigation() {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-lg text-blue-100 hover:text-white hover:bg-blue-700/50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-400 transition-all duration-200"
-              aria-expanded="false"
+              className="inline-flex items-center justify-center p-3 rounded-lg text-blue-100 hover:text-white hover:bg-blue-700/50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-400 transition-all duration-200 touch-manipulation min-h-[44px] min-w-[44px]"
+              aria-expanded={isMenuOpen}
+              aria-label={isMenuOpen ? "Mbyll menunë" : "Hap menunë kryesore"}
             >
-              <span className="sr-only">Hap menunë kryesore</span>
               {isMenuOpen ? (
                 <X className="block h-6 w-6" aria-hidden="true" />
               ) : (

@@ -62,10 +62,7 @@ export default function SearchFilters({
     () => [...new Set(properties.map((p) => p.address.city))].sort(),
     [properties]
   );
-  const uniquePropertyTypes = useMemo(
-    () => [...new Set(properties.map((p) => p.details.propertyType))].sort(),
-    [properties]
-  );
+
   const uniqueAgents = useMemo(() => {
     const agentMap = new Map();
     properties.forEach((p) => {
@@ -88,8 +85,8 @@ export default function SearchFilters({
       if (!sortBy) return properties;
 
       return [...properties].sort((a, b) => {
-        let aValue: any;
-        let bValue: unknown;
+        let aValue: number | string;
+        let bValue: number | string;
 
         switch (sortBy) {
           case "price":
@@ -119,12 +116,14 @@ export default function SearchFilters({
 
         if (sortBy === "location") {
           // String comparison for location
-          const comparison = aValue.localeCompare(bValue);
+          const comparison = (aValue as string).localeCompare(bValue as string);
           return sortOrder === "asc" ? comparison : -comparison;
         } else {
           // Numeric comparison for price, date, size
-          if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
-          if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
+          const numA = aValue as number;
+          const numB = bValue as number;
+          if (numA < numB) return sortOrder === "asc" ? -1 : 1;
+          if (numA > numB) return sortOrder === "asc" ? 1 : -1;
           return 0;
         }
       });
@@ -217,15 +216,26 @@ export default function SearchFilters({
     []
   );
 
-  // Debounced effect to prevent excessive filtering
+  // Optimized debounced effect with performance monitoring
   useEffect(() => {
     const timeoutId = setTimeout(() => {
+      const startTime = performance.now();
+      
       const filtered = filterProperties(properties, filters);
       const sorted = sortProperties(
         filtered,
         filters.sortBy,
         filters.sortOrder
       );
+      
+      const endTime = performance.now();
+      const processingTime = endTime - startTime;
+      
+      // Log performance for large datasets
+      if (properties.length > 1000 && processingTime > 100) {
+        console.warn(`Slow filter operation: ${processingTime.toFixed(2)}ms for ${properties.length} properties`);
+      }
+      
       onFilteredResultsRef.current(sorted);
     }, 300); // 300ms debounce
 
@@ -294,13 +304,18 @@ export default function SearchFilters({
     <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 md:p-6 mb-4 sm:mb-6 md:mb-8">
       {/* Search Bar */}
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" />
+        <label htmlFor="property-search" className="sr-only">
+          Search properties
+        </label>
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
         <input
+          id="property-search"
           type="text"
           placeholder="Kërkoni pasuri..."
           value={filters.searchTerm}
           onChange={(e) => handleFilterChange("searchTerm", e.target.value)}
           className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          aria-label="Search properties by title, description, or location"
         />
       </div>
 
@@ -308,11 +323,14 @@ export default function SearchFilters({
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center text-gray-700 hover:text-blue-600 transition-colors"
+          className="flex items-center text-gray-700 hover:text-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
+          aria-expanded={isExpanded}
+          aria-controls="advanced-filters"
+          aria-label={isExpanded ? "Hide advanced filters" : "Show advanced filters"}
         >
-          <Filter className="h-5 w-5 mr-2" />
+          <Filter className="h-5 w-5 mr-2" aria-hidden="true" />
           <span className="font-medium">Filtrat e Avancuara</span>
-          <span className="ml-2 text-sm text-gray-500">
+          <span className="ml-2 text-sm text-gray-500" aria-hidden="true">
             {isExpanded ? "▲" : "▼"}
           </span>
         </button>
@@ -380,7 +398,12 @@ export default function SearchFilters({
 
       {/* Advanced Filters */}
       {isExpanded && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pt-4 border-t border-gray-200">
+        <div 
+          id="advanced-filters"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pt-4 border-t border-gray-200"
+          role="region"
+          aria-label="Advanced search filters"
+        >
           {/* Price Range */}
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-2">

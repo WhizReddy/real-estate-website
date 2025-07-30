@@ -25,4 +25,5 @@ import CreativeLoader from '@/components/CreativeLoader';
 interface EnhancedMapViewProps {
   properties: Property[];
   selectedProperty?: Property | null;
-  onPropertySelect?: (proper
+  onPropertySelect?: (property: Property) => void;
+}

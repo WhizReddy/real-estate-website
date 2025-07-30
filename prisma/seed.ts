@@ -1,6 +1,11 @@
 import { PrismaClient } from '@prisma/client';
-import { hashPassword } from '../src/lib/auth';
+import bcrypt from 'bcryptjs';
 import sampleProperties from '../src/data/sample-properties.json';
+
+// Simple password hashing function
+async function hashPassword(password: string): Promise<string> {
+  return await bcrypt.hash(password, 12);
+}
 
 const prisma = new PrismaClient();
 
@@ -78,8 +83,8 @@ async function main() {
         yearBuilt: property.details.yearBuilt,
         images: JSON.stringify(property.images),
         features: JSON.stringify(property.features),
-        status: property.status.toUpperCase() as any,
-        listingType: property.listingType.toUpperCase() as unknown,
+        status: property.status.toUpperCase() as string,
+        listingType: property.listingType.toUpperCase() as string,
         isPinned: property.isPinned,
         ownerId: assignedAgent.id, // Assign property to agent
       },

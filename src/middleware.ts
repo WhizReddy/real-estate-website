@@ -1,43 +1,45 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { withAuth } from "next-auth/middleware";
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // Protect admin routes
-  if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
-    // Check for admin session in cookies or headers
-    const adminSession = request.cookies.get('adminSession')?.value;
+export default withAuth(
+  function middleware() {
+    // Add security headers
+    const response = NextResponse.next();
     
-    if (!adminSession) {
-      // Redirect to login page
-      return NextResponse.redirect(new URL('/admin/login', request.url));
-    }
+    // Prevent clickjacking
+    response.headers.set('X-Frame-Options', 'DENY');
+    
+    // Prevent MIME type sniffing
+    response.headers.set('X-Content-Type-Options', 'nosniff');
+    
+    // Enable XSS protection
+    response.headers.set('X-XSS-Protection', '1; mode=block');
+    
+    // Referrer policy
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    
+    // Content Security Policy (basic) - Allow Google Fonts
+    response.headers.set(
+      'Content-Security-Policy',
+      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com;"
+    );
+
+    return response;
+  },
+  {
+    callbacks: {
+      authorized: ({ token, req }) => {
+        // Protect admin routes - allow both admin and agent roles
+        if (req.nextUrl.pathname.startsWith('/admin')) {
+          return token?.role === 'admin' || token?.role === 'agent';
+        }
+        
+        // Allow all other routes
+        return true;
+      },
+    },
   }
-
-  // Add security headers
-  const response = NextResponse.next();
-  
-  // Prevent clickjacking
-  response.headers.set('X-Frame-Options', 'DENY');
-  
-  // Prevent MIME type sniffing
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  
-  // Enable XSS protection
-  response.headers.set('X-XSS-Protection', '1; mode=block');
-  
-  // Referrer policy
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
-  // Content Security Policy (basic) - Allow Google Fonts
-  response.headers.set(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com;"
-  );
-
-  return response;
-}
+)
 
 export const config = {
   matcher: [

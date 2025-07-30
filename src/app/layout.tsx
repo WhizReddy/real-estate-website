@@ -3,7 +3,17 @@ import { Geist, Geist_Mono } from "next/font/google";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
 import ResourcePreloader from "@/components/ResourcePreloader";
 import { ToastProvider } from "@/components/Toast";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import PWAProvider from "@/components/PWAProvider";
+import PWAUpdateNotification from "@/components/PWAUpdateNotification";
+import { initializeErrorHandler } from "@/lib/errorHandler";
 import "./globals.css";
+
+// Initialize global error handler
+if (typeof window !== 'undefined') {
+  initializeErrorHandler();
+}
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -80,21 +90,52 @@ export default function RootLayout({
   return (
     <html lang="sq" data-scroll-behavior="smooth">
       <head>
-        <meta name="theme-color" content="#dc2626" />
+        <meta name="theme-color" content="#2563eb" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Pasuritë e Tiranës" />
+        <meta name="apple-mobile-web-app-title" content="Real Estate Tiranë" />
+        
+        {/* PWA Manifest */}
+        <link rel="manifest" href="/manifest.json" />
+        
+        {/* Apple Touch Icons */}
+        <link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.svg" />
+        <link rel="apple-touch-icon" sizes="96x96" href="/icons/icon-96x96.svg" />
+        <link rel="apple-touch-icon" sizes="128x128" href="/icons/icon-128x128.svg" />
+        <link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.svg" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.svg" />
+        <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.svg" />
+        <link rel="apple-touch-icon" sizes="384x384" href="/icons/icon-384x384.svg" />
+        <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.svg" />
+        
+        {/* Favicon */}
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" type="image/svg+xml" sizes="32x32" href="/icons/icon-128x128.svg" />
+        
+        {/* Preconnect to external domains */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="//tile.openstreetmap.org" />
+        
+        {/* Performance optimizations */}
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning={true}
       >
-        <ToastProvider>
-          <PerformanceMonitor />
-          <ResourcePreloader />
-          {children}
-        </ToastProvider>
+        <PWAProvider>
+          <ToastProvider>
+            <PerformanceMonitor />
+            <ResourcePreloader />
+            {children}
+            <PWAInstallPrompt />
+            <PWAUpdateNotification />
+          </ToastProvider>
+        </PWAProvider>
       </body>
     </html>
   );

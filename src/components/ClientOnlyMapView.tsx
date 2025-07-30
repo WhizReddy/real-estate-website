@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { Property } from '@/types';
 import CreativeLoader from '@/components/CreativeLoader';
+import MapErrorBoundary from '@/components/MapErrorBoundary';
 
 interface ClientOnlyMapViewProps {
   properties: Property[];
@@ -24,5 +25,9 @@ const MapView = dynamic(() => import('./MapView'), {
 });
 
 export default function ClientOnlyMapView(props: ClientOnlyMapViewProps) {
-  return <MapView {...props} />;
+  return (
+    <MapErrorBoundary fallbackHeight={props.height}>
+      <MapView {...props} />
+    </MapErrorBoundary>
+  );
 }

@@ -56,22 +56,33 @@ export default function ImageUploader({
         return;
       }
 
-      // Convert files to base64 URLs for preview (in a real app, upload to cloud storage)
+      // Upload files to Vercel Blob storage
       const newImageUrls: string[] = [];
       
       for (const file of validFiles) {
-        const reader = new FileReader();
-        const imageUrl = await new Promise<string>((resolve) => {
-          reader.onload = (e) => {
-            resolve(e.target?.result as string);
-          };
-          reader.readAsDataURL(file);
-        });
-        newImageUrls.push(imageUrl);
-      }
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
 
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+          const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to upload image');
+          }
+
+          const result = await response.json();
+          newImageUrls.push(result.url);
+        } catch (uploadError) {
+          console.error('Error uploading file:', file.name, uploadError);
+          setUploadError(`Gabim gjatë ngarkimit të ${file.name}: ${uploadError instanceof Error ? uploadError.message : 'Gabim i panjohur'}`);
+          setIsUploading(false);
+          return;
+        }
+      }
 
       onImagesChange([...images, ...newImageUrls]);
     } catch (error) {
@@ -91,7 +102,21 @@ export default function ImageUploader({
     disabled: isUploading || images.length >= maxImages
   });
 
-  const removeImage = (index: number) => {
+  const removeImage = async (index: number) => {
+    const imageUrl = images[index];
+    
+    // If it's a blob URL, delete it from storage
+    if (imageUrl && imageUrl.includes('blob.vercel-storage.com')) {
+      try {
+        await fetch(`/api/upload/delete?url=${encodeURIComponent(imageUrl)}`, {
+          method: 'DELETE',
+        });
+      } catch (error) {
+        console.error('Error deleting image from storage:', error);
+        // Continue with removal from UI even if deletion from storage fails
+      }
+    }
+    
     const newImages = images.filter((_, i) => i !== index);
     onImagesChange(newImages);
   };

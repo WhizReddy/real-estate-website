@@ -4,7 +4,7 @@ import { getProperty, getProperties } from "@/lib/data";
 import PropertyDetailClient from "@/components/PropertyDetailClient";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function generateStaticParams() {

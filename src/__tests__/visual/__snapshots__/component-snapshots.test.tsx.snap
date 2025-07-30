@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Component Visual Regression Tests MobileNavigation Component renders mobile navigation in closed state 1`] = `
+<button
+  aria-label="Open menu"
+  class="md:hidden fixed top-4 left-4 z-50 p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-gray-200 hover:bg-white transition-all duration-200 active:scale-95"
+>
+  <svg
+    aria-hidden="true"
+    class="lucide lucide-menu h-5 w-5 text-gray-700"
+    fill="none"
+    height="24"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M4 12h16"
+    />
+    <path
+      d="M4 18h16"
+    />
+    <path
+      d="M4 6h16"
+    />
+  </svg>
+</button>
+`;
+
+exports[`Component Visual Regression Tests MobileNavigation Component renders mobile navigation with custom logo 1`] = `
+<button
+  aria-label="Open menu"
+  class="md:hidden fixed top-4 left-4 z-50 p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-gray-200 hover:bg-white transition-all duration-200 active:scale-95"
+>
+  <svg
+    aria-hidden="true"
+    class="lucide lucide-menu h-5 w-5 text-gray-700"
+    fill="none"
+    height="24"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M4 12h16"
+    />
+    <path
+      d="M4 18h16"
+    />
+    <path
+      d="M4 6h16"
+    />
+  </svg>
+</button>
+`;
+
+exports[`Component Visual Regression Tests ResponsiveLayout Component renders responsive layout in full width mode 1`] = `
+<div
+  class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 pb-20 sm:pb-0 "
+>
+  <div
+    class="p-4"
+  >
+    Full Width Layout
+  </div>
+</div>
+`;
+
+exports[`Component Visual Regression Tests ResponsiveLayout Component renders responsive layout with header and footer 1`] = `
+<div
+  class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 pb-20 sm:pb-0 "
+>
+  <div
+    class="p-4"
+  >
+    Main Content
+  </div>
+</div>
+`;
+
+exports[`Component Visual Regression Tests ResponsiveLayout Component renders responsive layout with sidebar 1`] = `
+<div
+  class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 pb-20 sm:pb-0 "
+>
+  <div
+    class="p-4"
+  >
+    <h1>
+      Main Content
+    </h1>
+    <p>
+      This is the main content area.
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Component Visual Regression Tests ResponsiveLayout Component renders responsive layout without sidebar 1`] = `
+<div
+  class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 pb-20 sm:pb-0 "
+>
+  <div
+    class="p-4"
+  >
+    <h1>
+      Full Width Content
+    </h1>
+    <p>
+      This content takes the full width.
+    </p>
+  </div>
+</div>
+`;

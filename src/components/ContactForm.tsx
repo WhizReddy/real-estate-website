@@ -99,7 +99,7 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
           </p>
           <button
             onClick={() => setIsSubmitted(false)}
-            className="text-red-600 hover:text-red-800 font-medium"
+            className="text-blue-600 hover:text-blue-800 font-medium"
           >
             Dërgo një Mesazh Tjetër
           </button>
@@ -136,7 +136,7 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
                 message: 'Emri duhet të ketë të paktën 2 karaktere'
               }
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Emri dhe mbiemri juaj"
           />
           {errors.name && (
@@ -160,7 +160,7 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
                 message: 'Adresa e email-it nuk është e vlefshme',
               },
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="emri.juaj@email.com"
           />
           {errors.email && (
@@ -183,7 +183,7 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
                 message: 'Numri i telefonit nuk është i vlefshëm'
               }
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="+355 69 123 4567"
           />
           {errors.phone && (
@@ -206,7 +206,7 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
                 message: 'Mesazhi duhet të ketë të paktën 10 karaktere'
               }
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-vertical"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
             placeholder="Jam i interesuar për këtë pasuri. Ju lutem kontaktoni me më shumë informacion..."
           />
           {errors.message && (
@@ -225,7 +225,7 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 px-4 rounded-md hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
         >
           {isSubmitting ? (
             <>
@@ -246,15 +246,15 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
         <h4 className="font-semibold text-gray-900 mb-3">Informacione Kontakti</h4>
         <div className="text-sm text-gray-600 space-y-2">
           <div className="flex items-center">
-            <Mail className="h-4 w-4 mr-2 text-red-600" />
+            <Mail className="h-4 w-4 mr-2 text-blue-600" />
             <span>info@pasuritëtiranës.al</span>
           </div>
           <div className="flex items-center">
-            <Phone className="h-4 w-4 mr-2 text-red-600" />
+            <Phone className="h-4 w-4 mr-2 text-blue-600" />
             <span>+355 69 123 4567</span>
           </div>
           <div className="flex items-center">
-            <Clock className="h-4 w-4 mr-2 text-red-600" />
+            <Clock className="h-4 w-4 mr-2 text-blue-600" />
             <span>Hën-Pre: 9:00-18:00, Sht-Dje: 10:00-16:00</span>
           </div>
         </div>

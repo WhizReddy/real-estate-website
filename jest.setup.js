@@ -37,13 +37,34 @@ Object.defineProperty(window, 'scrollTo', {
   value: jest.fn(),
 })
 
+// Mock performance.now
+global.performance = {
+  ...global.performance,
+  now: jest.fn(() => Date.now()),
+  memory: {
+    usedJSHeapSize: 1000000,
+    totalJSHeapSize: 2000000,
+    jsHeapSizeLimit: 4000000,
+  }
+};
+
+// Mock navigator
+Object.defineProperty(navigator, 'onLine', {
+  writable: true,
+  value: true,
+});
+
+Object.defineProperty(navigator, 'connection', {
+  writable: true,
+  value: {
+    effectiveType: '4g',
+    downlink: 10,
+  },
+});
+
 // Mock console methods to reduce noise in tests
 global.console = {
   ...console,
-  // Uncomment to ignore specific console methods in tests
-  // log: jest.fn(),
-  // debug: jest.fn(),
-  // info: jest.fn(),
-  // warn: jest.fn(),
-  // error: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
 }

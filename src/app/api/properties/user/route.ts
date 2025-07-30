@@ -1,32 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
-    // Get session token from cookie or header
-    const sessionToken = request.cookies.get('adminSession')?.value || 
-                         request.headers.get('authorization')?.replace('Bearer ', '');
+    // Get session using NextAuth
+    const session = await getServerSession(authOptions);
 
-    if (!sessionToken) {
+    if (!session || !session.user) {
       return NextResponse.json(
-        { success: false, error: { code: "UNAUTHORIZED", message: "No session token" } },
+        { success: false, error: { code: "UNAUTHORIZED", message: "Not authenticated" } },
         { status: 401 }
       );
     }
 
-    // Extract user ID from session token (simple implementation)
-    // In production, you'd use proper JWT or session store
-    const userIdMatch = sessionToken.match(/session_([^_]+)_/);
-    if (!userIdMatch) {
-      return NextResponse.json(
-        { success: false, error: { code: "INVALID_SESSION", message: "Invalid session token" } },
-        { status: 401 }
-      );
-    }
+    const userId = session.user.id;
+    const userRole = session.user.role;
 
-    const userId = userIdMatch[1];
-
-    // Get user to check role
+    // Get user to verify they exist
     const user = await prisma.user.findUnique({
       where: { id: userId }
     });
@@ -40,24 +32,43 @@ export async function GET(request: NextRequest) {
 
     let properties;
 
-    if (user.role === 'ADMIN') {
+    if (user.role === 'admin' || userRole === 'admin') {
       // Admins can see all properties
       properties = await prisma.property.findMany({
+        // Temporarily removed owner relation until ownerId column is added
+        // include: {
+        //   owner: true, // Include agent/owner information
+        // },
         orderBy: {
           createdAt: 'desc'
         }
       });
     } else {
-      // For now, agents can see all properties too (until we implement ownership)
-      // In a real system, you'd filter by ownerId or agent assignment
-      properties = await prisma.property.findMany({
+      // Agents see properties assigned to them based on a consistent algorithm
+      // This simulates property ownership until we implement the full ownership system
+      const allProperties = await prisma.property.findMany({
+        // Temporarily removed owner relation until ownerId column is added
+        // include: {
+        //   owner: true, // Include agent/owner information
+        // },
         orderBy: {
           createdAt: 'desc'
         }
       });
       
-      // Limit to first few properties for agents as a demo
-      properties = properties.slice(0, Math.ceil(properties.length / 2));
+      // Get all agents to determine property assignment
+      const allAgents = await prisma.user.findMany({
+        where: { role: 'agent' },
+        orderBy: { createdAt: 'asc' }
+      });
+      
+      // Assign properties to agents in round-robin fashion based on property creation order
+      properties = allProperties.filter((property, index) => {
+        if (allAgents.length === 0) return false;
+        const assignedAgentIndex = index % allAgents.length;
+        const assignedAgent = allAgents[assignedAgentIndex];
+        return assignedAgent.id === userId;
+      });
     }
 
     // Transform properties to match the expected format

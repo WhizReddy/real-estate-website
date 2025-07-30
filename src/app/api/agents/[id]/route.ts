@@ -4,10 +4,10 @@ import { withAdminAuth } from "@/lib/auth-middleware";
 
 export const DELETE = withAdminAuth(async (
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) => {
   try {
-    const agentId = params.id;
+    const { id: agentId } = await params;
 
     if (!agentId) {
       return NextResponse.json(
@@ -124,14 +124,14 @@ export const DELETE = withAdminAuth(async (
       { status: 500 }
     );
   }
-}
+});
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const agentId = params.id;
+    const { id: agentId } = await params;
 
     if (!agentId) {
       return NextResponse.json(

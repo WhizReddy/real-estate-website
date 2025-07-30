@@ -56,7 +56,7 @@ export default function AgentsPage() {
         return;
       }
 
-      setAgents(data || []);
+      setAgents((data as Agent[]) || []);
     } catch (error) {
       logError('loadAgents', error, { endpoint: '/api/agents' });
       alert('Gabim në rrjet. Ju lutem kontrolloni lidhjen dhe rifreskoni faqen.');
@@ -98,7 +98,7 @@ export default function AgentsPage() {
       }
 
       // Add the new agent to the list
-      setAgents(prev => [...prev, data]);
+      setAgents(prev => [...prev, data as Agent]);
       setNewAgent({ name: '', email: '', phone: '', password: '', role: 'AGENT' });
       setShowAddForm(false);
       

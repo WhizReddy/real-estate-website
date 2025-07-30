@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Property } from '@/types';
 import { getProperties, deleteProperty } from '@/lib/data';
 import { formatPrice } from '@/lib/utils';
-import { getCurrentUser, isAdmin, isAgent, clearSession } from '@/lib/auth-utils';
+import { getCurrentUser, isAdmin, isAgent, clearSession, UserData } from '@/lib/auth-utils';
 import { Plus, Edit, Trash2, Eye, LogOut, MessageCircle, Search, Filter, X, User } from 'lucide-react';
 import CreativeLoader from '@/components/CreativeLoader';
 import DatabaseStatusMonitor from '@/components/DatabaseStatusMonitor';
@@ -17,7 +17,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [currentUser, setCurrentUser] = useState<unknown>(null);
+  const [currentUser, setCurrentUser] = useState<UserData | null>(null);
   const [userRole, setUserRole] = useState<'ADMIN' | 'AGENT' | null>(null);
   const [filters, setFilters] = useState({
     search: '',
@@ -201,7 +201,7 @@ export default function AdminDashboard() {
               </p>
               {currentUser && (
                 <p className="text-blue-300 text-sm">
-                  {currentUser.email} • {userRole === 'ADMIN' ? 'Administrator' : 'Agjent'}
+                  {currentUser?.email} • {userRole === 'ADMIN' ? 'Administrator' : 'Agjent'}
                 </p>
               )}
             </div>

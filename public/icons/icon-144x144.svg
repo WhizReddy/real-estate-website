@@ -1,7 +1,13 @@
-<svg width="144" height="144" xmlns="http://www.w3.org/2000/svg">
-  <rect width="144" height="144" fill="#dc2626"/>
-  <path d="M72 18L27 54v72h90V54L72 18z" fill="white"/>
-  <rect x="54" y="90" width="18" height="36" fill="#dc2626"/>
-  <rect x="90" y="72" width="18" height="18" fill="#dc2626"/>
-  <rect x="36" y="72" width="18" height="18" fill="#dc2626"/>
+<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg">
+  <rect width="144" height="144" fill="#2563eb" rx="14.4"/>
+  <g transform="translate(21.599999999999998, 21.599999999999998)">
+    <!-- House icon -->
+    <path d="M50.4 36 L72 21.599999999999998 L93.60000000000001 36 L93.60000000000001 86.39999999999999 L50.4 86.39999999999999 Z" 
+          fill="white" stroke="white" stroke-width="2"/>
+    <!-- Door -->
+    <rect x="64.8" y="64.8" width="14.4" height="21.599999999999998" fill="#2563eb"/>
+    <!-- Window -->
+    <rect x="57.6" y="50.4" width="11.52" height="11.52" fill="#2563eb"/>
+    <rect x="74.88" y="50.4" width="11.52" height="11.52" fill="#2563eb"/>
+  </g>
 </svg>

@@ -5,7 +5,7 @@ import { Home, MapPin, Key, Heart } from 'lucide-react';
 
 interface CreativeLoaderProps {
   message?: string;
-  type?: 'properties' | 'map' | 'images' | 'general';
+  type?: 'properties' | 'property' | 'map' | 'images' | 'general';
   size?: 'sm' | 'md' | 'lg';
 }
 

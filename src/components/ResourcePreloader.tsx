@@ -20,15 +20,16 @@ export default function ResourcePreloader() {
       document.head.appendChild(link);
     });
 
-    // Register service worker for caching
+    // Register service worker for caching - TEMPORARILY DISABLED
     if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
-      navigator.serviceWorker.register('/sw.js')
-        .then((registration) => {
-          console.log('SW registered: ', registration);
-        })
-        .catch((registrationError) => {
-          console.log('SW registration failed: ', registrationError);
-        });
+      console.log('SW registration disabled in ResourcePreloader.tsx');
+      // navigator.serviceWorker.register('/sw.js')
+      //   .then((registration) => {
+      //     console.log('SW registered: ', registration);
+      //   })
+      //   .catch((registrationError) => {
+      //     console.log('SW registration failed: ', registrationError);
+      //   });
     }
 
     // Optimize third-party scripts loading
@@ -45,7 +46,7 @@ export default function ResourcePreloader() {
     const loadScriptsOnce = () => {
       loadThirdPartyScripts();
       events.forEach(event => {
-        document.removeEventListener(event, loadScriptsOnce, { passive: true });
+        document.removeEventListener(event, loadScriptsOnce);
       });
     };
 

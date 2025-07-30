@@ -25,7 +25,7 @@ export interface Property {
   status: "active" | "inactive" | "pending" | "sold";
   listingType: "sale" | "rent"; // Për Shitje ose Me Qira
   isPinned: boolean; // Pin to main page
-  agent: {
+  agent?: {
     id: string;
     name: string;
     email: string;

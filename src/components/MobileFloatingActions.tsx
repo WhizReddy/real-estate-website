@@ -1,131 +1,96 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Phone, MessageCircle, MapPin, ArrowUp, Filter, Search } from 'lucide-react';
+import { useState } from "react";
+import { Search, Map, Filter, Phone, MessageCircle } from "lucide-react";
 
 interface MobileFloatingActionsProps {
-  onFilterToggle?: () => void;
-  onMapToggle?: () => void;
+  onFilterToggle: () => void;
+  onMapToggle: () => void;
   showMapToggle?: boolean;
 }
 
-export default function MobileFloatingActions({ 
-  onFilterToggle, 
-  onMapToggle, 
-  showMapToggle = false 
+export default function MobileFloatingActions({
+  onFilterToggle,
+  onMapToggle,
+  showMapToggle = true,
 }: MobileFloatingActionsProps) {
-  const [showScrollTop, setShowScrollTop] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const handleMainButtonClick = () => {
+    setIsExpanded(!isExpanded);
   };
 
-  const callPhone = () => {
-    window.location.href = 'tel:+35569123456';
-  };
-
-  const openWhatsApp = () => {
-    window.open('https://wa.me/35569123456?text=Përshëndetje! Jam i interesuar për pasuritë tuaja.', '_blank');
+  const handleActionClick = (action: () => void) => {
+    action();
+    setIsExpanded(false);
   };
 
   return (
-    <>
-      {/* Main Floating Action Button */}
-      <div className="fixed bottom-6 right-6 z-40 md:hidden">
-        <div className="flex flex-col items-end space-y-3">
-          {/* Secondary Actions */}
-          {isExpanded && (
-            <div className="flex flex-col space-y-3 animate-in slide-in-from-bottom-2 duration-300">
-              {/* Scroll to Top */}
-              {showScrollTop && (
-                <button
-                  onClick={scrollToTop}
-                  className="bg-gray-600 hover:bg-gray-700 text-white p-3 rounded-full shadow-lg transition-all duration-200 transform hover:scale-110"
-                  title="Kthehu lart"
-                >
-                  <ArrowUp className="h-5 w-5" />
-                </button>
-              )}
+    <div className="fixed bottom-6 right-6 z-40 md:hidden">
+      {/* Expanded Actions */}
+      {isExpanded && (
+        <div className="absolute bottom-16 right-0 space-y-3 animate-in slide-in-from-bottom-2 duration-200">
+          {/* Filter Button */}
+          <button
+            onClick={() => handleActionClick(onFilterToggle)}
+            className="flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all duration-200 hover:scale-110 active:scale-95"
+            style={{ touchAction: 'manipulation' }}
+          >
+            <Filter className="h-5 w-5" />
+          </button>
 
-              {/* Map Toggle */}
-              {showMapToggle && onMapToggle && (
-                <button
-                  onClick={onMapToggle}
-                  className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-full shadow-lg transition-all duration-200 transform hover:scale-110"
-                  title="Shiko hartën"
-                >
-                  <MapPin className="h-5 w-5" />
-                </button>
-              )}
-
-              {/* Filter Toggle */}
-              {onFilterToggle && (
-                <button
-                  onClick={onFilterToggle}
-                  className="bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-full shadow-lg transition-all duration-200 transform hover:scale-110"
-                  title="Filtrat"
-                >
-                  <Filter className="h-5 w-5" />
-                </button>
-              )}
-
-              {/* WhatsApp */}
-              <button
-                onClick={openWhatsApp}
-                className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full shadow-lg transition-all duration-200 transform hover:scale-110"
-                title="WhatsApp"
-              >
-                <MessageCircle className="h-5 w-5" />
-              </button>
-
-              {/* Phone */}
-              <button
-                onClick={callPhone}
-                className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-all duration-200 transform hover:scale-110"
-                title="Telefono"
-              >
-                <Phone className="h-5 w-5" />
-              </button>
-            </div>
+          {/* Map Button */}
+          {showMapToggle && (
+            <button
+              onClick={() => handleActionClick(onMapToggle)}
+              className="flex items-center justify-center w-12 h-12 bg-green-600 text-white rounded-full shadow-lg hover:bg-green-700 transition-all duration-200 hover:scale-110 active:scale-95"
+              style={{ touchAction: 'manipulation' }}
+            >
+              <Map className="h-5 w-5" />
+            </button>
           )}
 
-          {/* Main Toggle Button */}
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className={`bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white p-4 rounded-full shadow-xl transition-all duration-300 transform ${
-              isExpanded ? 'rotate-45 scale-110' : 'hover:scale-110'
-            }`}
-            title={isExpanded ? 'Mbyll' : 'Veprime të shpejta'}
+          {/* Call Button */}
+          <a
+            href="tel:+35569123456"
+            className="flex items-center justify-center w-12 h-12 bg-orange-600 text-white rounded-full shadow-lg hover:bg-orange-700 transition-all duration-200 hover:scale-110 active:scale-95"
+            style={{ touchAction: 'manipulation' }}
           >
-            {isExpanded ? (
-              <div className="h-6 w-6 flex items-center justify-center">
-                <div className="w-4 h-0.5 bg-white"></div>
-                <div className="w-0.5 h-4 bg-white absolute"></div>
-              </div>
-            ) : (
-              <Phone className="h-6 w-6" />
-            )}
-          </button>
+            <Phone className="h-5 w-5" />
+          </a>
+
+          {/* WhatsApp Button */}
+          <a
+            href="https://wa.me/35569123456"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center w-12 h-12 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition-all duration-200 hover:scale-110 active:scale-95"
+            style={{ touchAction: 'manipulation' }}
+          >
+            <MessageCircle className="h-5 w-5" />
+          </a>
         </div>
-      </div>
+      )}
+
+      {/* Main Action Button */}
+      <button
+        onClick={handleMainButtonClick}
+        className={`flex items-center justify-center w-14 h-14 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full shadow-lg transition-all duration-300 hover:scale-110 active:scale-95 ${
+          isExpanded ? 'rotate-45' : 'rotate-0'
+        }`}
+        style={{ touchAction: 'manipulation' }}
+        aria-label={isExpanded ? "Close actions" : "Open actions"}
+      >
+        <Search className={`h-6 w-6 transition-transform duration-300 ${isExpanded ? 'rotate-45' : 'rotate-0'}`} />
+      </button>
 
       {/* Backdrop */}
       {isExpanded && (
-        <div 
-          className="fixed inset-0 bg-black/20 z-30 md:hidden"
+        <div
+          className="fixed inset-0 bg-black/20 -z-10"
           onClick={() => setIsExpanded(false)}
         />
       )}
-    </>
+    </div>
   );
 }

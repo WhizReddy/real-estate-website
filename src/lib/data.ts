@@ -1,5 +1,4 @@
 import { Property, ContactInquiry } from '@/types';
-import sampleProperties from '@/data/sample-properties.json';
 import { sendInquiryEmail, sendConfirmationEmail } from './email';
 
 // Database-backed functions with proper API integration
@@ -9,7 +8,7 @@ const API_BASE_URL = typeof window !== 'undefined'
 
 export async function getProperties(): Promise<Property[]> {
   try {
-    // Always try to fetch from API first
+    // Fetch from database via API
     const response = await fetch(`${API_BASE_URL}/api/properties`, {
       cache: 'no-store', // Always get fresh data
     });
@@ -18,19 +17,33 @@ export async function getProperties(): Promise<Property[]> {
       const data = await response.json();
       return data.properties || [];
     } else {
-      console.warn('API response not OK:', response.status, response.statusText);
+      console.error('API response not OK:', response.status, response.statusText);
+      throw new Error(`Failed to fetch properties: ${response.status}`);
     }
   } catch (error) {
-    console.warn('Failed to fetch from API, falling back to sample data:', error);
+    console.error('Failed to fetch properties from database:', error);
+    throw error;
   }
-  
-  // Fallback to sample properties only if API fails
-  return sampleProperties as Property[];
 }
 
 export async function getActiveProperties(): Promise<Property[]> {
-  const properties = await getProperties();
-  return properties.filter(property => property.status === 'active');
+  try {
+    // Use dedicated active properties endpoint for better performance
+    const response = await fetch(`${API_BASE_URL}/api/properties/active`, {
+      cache: 'no-store',
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      return data.properties || [];
+    } else {
+      console.error('Failed to fetch active properties:', response.status);
+      throw new Error(`Failed to fetch active properties: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Failed to fetch active properties from database:', error);
+    throw error;
+  }
 }
 
 export async function getPinnedProperties(): Promise<Property[]> {
@@ -40,21 +53,22 @@ export async function getPinnedProperties(): Promise<Property[]> {
 
 export async function getProperty(id: string): Promise<Property | null> {
   try {
-    // Try to fetch from API first
+    // Fetch from database via API
     const response = await fetch(`${API_BASE_URL}/api/properties/${id}`, {
       cache: 'no-store',
     });
     
     if (response.ok) {
       return await response.json();
+    } else if (response.status === 404) {
+      return null; // Property not found
+    } else {
+      throw new Error(`Failed to fetch property: ${response.status}`);
     }
   } catch (error) {
-    console.warn('Failed to fetch property from API, falling back to sample data:', error);
+    console.error('Failed to fetch property from database:', error);
+    throw error;
   }
-  
-  // Fallback to sample properties for development
-  const properties = await getProperties();
-  return properties.find(property => property.id === id) || null;
 }
 
 export async function getPropertiesByStatus(status: Property['status']): Promise<Property[]> {
@@ -74,19 +88,44 @@ export async function searchProperties(filters: {
   bathrooms?: number;
   propertyType?: Property['details']['propertyType'];
   city?: string;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: string;
+  page?: number;
+  limit?: number;
 }): Promise<Property[]> {
-  const properties = await getProperties();
-  
-  return properties.filter(property => {
-    if (filters.minPrice && property.price < filters.minPrice) return false;
-    if (filters.maxPrice && property.price > filters.maxPrice) return false;
-    if (filters.bedrooms && property.details.bedrooms < filters.bedrooms) return false;
-    if (filters.bathrooms && property.details.bathrooms < filters.bathrooms) return false;
-    if (filters.propertyType && property.details.propertyType !== filters.propertyType) return false;
-    if (filters.city && !property.address.city.toLowerCase().includes(filters.city.toLowerCase())) return false;
+  try {
+    // Build query parameters
+    const params = new URLSearchParams();
     
-    return true;
-  });
+    if (filters.minPrice) params.append('minPrice', filters.minPrice.toString());
+    if (filters.maxPrice) params.append('maxPrice', filters.maxPrice.toString());
+    if (filters.bedrooms) params.append('bedrooms', filters.bedrooms.toString());
+    if (filters.bathrooms) params.append('bathrooms', filters.bathrooms.toString());
+    if (filters.propertyType) params.append('propertyType', filters.propertyType);
+    if (filters.city) params.append('city', filters.city);
+    if (filters.search) params.append('search', filters.search);
+    if (filters.sortBy) params.append('sortBy', filters.sortBy);
+    if (filters.sortOrder) params.append('sortOrder', filters.sortOrder);
+    if (filters.page) params.append('page', filters.page.toString());
+    if (filters.limit) params.append('limit', filters.limit.toString());
+    
+    // Use database search API for better performance
+    const response = await fetch(`${API_BASE_URL}/api/properties/search?${params.toString()}`, {
+      cache: 'no-store',
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      return data.properties || [];
+    } else {
+      console.error('Failed to search properties:', response.status);
+      throw new Error(`Failed to search properties: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Failed to search properties from database:', error);
+    throw error;
+  }
 }
 
 export async function saveProperty(property: Omit<Property, 'id' | 'createdAt' | 'updatedAt'>): Promise<Property> {
@@ -184,7 +223,7 @@ export async function deleteProperty(id: string): Promise<void> {
 
 export async function saveInquiry(inquiry: ContactInquiry): Promise<void> {
   try {
-    // Try to save to database via API first
+    // Save to database via API
     const response = await fetch(`${API_BASE_URL}/api/inquiries`, {
       method: 'POST',
       headers: {
@@ -216,62 +255,53 @@ export async function saveInquiry(inquiry: ContactInquiry): Promise<void> {
       }
       
       return;
-    }
-  } catch (error) {
-    console.warn('Failed to save inquiry to database, falling back to localStorage:', error);
-  }
-  
-  // Fallback to localStorage for development
-  try {
-    if (typeof window !== 'undefined') {
-      const existingInquiries = localStorage.getItem('inquiries');
-      const inquiries = existingInquiries ? JSON.parse(existingInquiries) : [];
-      inquiries.push(inquiry);
-      localStorage.setItem('inquiries', JSON.stringify(inquiries));
-      console.log('✅ Inquiry saved to localStorage as fallback');
-    }
-    
-    // Send emails even with fallback
-    const [agentEmailSent, confirmationEmailSent] = await Promise.allSettled([
-      sendInquiryEmail(inquiry),
-      sendConfirmationEmail(inquiry)
-    ]);
-    
-    // Log email results
-    if (agentEmailSent.status === 'fulfilled' && agentEmailSent.value) {
-      console.log('✅ Agent notification email sent successfully');
     } else {
-      console.warn('⚠️ Failed to send agent notification email');
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to save inquiry');
     }
-    
-    if (confirmationEmailSent.status === 'fulfilled' && confirmationEmailSent.value) {
-      console.log('✅ Customer confirmation email sent successfully');
-    } else {
-      console.warn('⚠️ Failed to send customer confirmation email');
-    }
-    
   } catch (error) {
     console.error('Error saving inquiry:', error);
-    throw new Error('Failed to save inquiry');
+    throw error;
   }
 }
 
 export async function getInquiries(): Promise<ContactInquiry[]> {
-  // In a real app, this would fetch from a database
   try {
-    if (typeof window !== 'undefined') {
-      const existingInquiries = localStorage.getItem('inquiries');
-      return existingInquiries ? JSON.parse(existingInquiries) : [];
+    // Fetch from database via API
+    const response = await fetch(`${API_BASE_URL}/api/inquiries`, {
+      cache: 'no-store',
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      return data.inquiries || [];
+    } else {
+      console.error('Failed to fetch inquiries:', response.status);
+      throw new Error(`Failed to fetch inquiries: ${response.status}`);
     }
-    return [];
   } catch (error) {
-    console.error('Error fetching inquiries:', error);
-    return [];
+    console.error('Failed to fetch inquiries from database:', error);
+    throw error;
   }
 }
 
 export async function getInquiriesForProperty(propertyId: string): Promise<ContactInquiry[]> {
-  const allInquiries = await getInquiries();
-  return allInquiries.filter(inquiry => inquiry.propertyId === propertyId);
+  try {
+    // Use API filtering for better performance
+    const response = await fetch(`${API_BASE_URL}/api/inquiries?propertyId=${propertyId}`, {
+      cache: 'no-store',
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      return data.inquiries || [];
+    } else {
+      console.error('Failed to fetch inquiries for property:', response.status);
+      throw new Error(`Failed to fetch inquiries for property: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Failed to fetch inquiries for property from database:', error);
+    throw error;
+  }
 }
 

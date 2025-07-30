@@ -43,6 +43,12 @@ export async function GET(
       status: property.status.toLowerCase(),
       listingType: property.listingType.toLowerCase(),
       isPinned: property.isPinned,
+      agent: {
+        id: 'default-agent',
+        name: 'Real Estate Agent',
+        email: 'agent@realestate-tirana.al',
+        phone: '+355 69 123 4567',
+      },
       createdAt: property.createdAt.toISOString(),
       updatedAt: property.updatedAt.toISOString()
     };
@@ -115,6 +121,12 @@ export async function PUT(
       status: property.status.toLowerCase(),
       listingType: property.listingType.toLowerCase(),
       isPinned: property.isPinned,
+      agent: {
+        id: 'default-agent',
+        name: 'Real Estate Agent',
+        email: 'agent@realestate-tirana.al',
+        phone: '+355 69 123 4567',
+      },
       createdAt: property.createdAt.toISOString(),
       updatedAt: property.updatedAt.toISOString()
     };

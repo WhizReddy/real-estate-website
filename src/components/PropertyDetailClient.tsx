@@ -1,19 +1,35 @@
 'use client';
 
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import { Property } from '@/types';
 import ImageGallery from '@/components/ImageGallery';
-import ClientOnlyMapView from '@/components/ClientOnlyMapView';
+import PropertyDetailMap from '@/components/PropertyDetailMap';
+import NeighborhoodInfo from '@/components/NeighborhoodInfo';
+import ViewOnMapButton, { ViewOnMapFAB } from '@/components/ViewOnMapButton';
 import ContactForm from '@/components/ContactForm';
 import Layout from '@/components/Layout';
 import StructuredData from '@/components/StructuredData';
-import { ArrowLeft, MapPin, Home, Bed, Bath, Square, Calendar, Euro, Star } from 'lucide-react';
+import { ArrowLeft, MapPin, Home, Bed, Bath, Square, Calendar, Euro, Star, Navigation, Map } from 'lucide-react';
 
 interface PropertyDetailClientProps {
   property: Property;
 }
 
 export default function PropertyDetailClient({ property }: PropertyDetailClientProps) {
+  const [nearbyProperties, setNearbyProperties] = useState<Property[]>([]);
+  const [activeMapTab, setActiveMapTab] = useState<'location' | 'neighborhood'>('location');
+  const [showMobileMap, setShowMobileMap] = useState(false);
+
+  // Mock nearby properties (in real app, this would come from an API)
+  useEffect(() => {
+    // Simulate fetching nearby properties
+    const mockNearbyProperties: Property[] = [
+      // This would be fetched from your API based on the current property's location
+    ];
+    setNearbyProperties(mockNearbyProperties);
+  }, [property.id]);
+
   const formatPrice = (price: number) => {
     // Use a consistent format that works the same on server and client
     return `€${price.toLocaleString('en-US')}`;
@@ -65,7 +81,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
             <div className="lg:col-span-2 space-y-8">
               {/* Image Gallery */}
               <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                <ImageGallery images={property.images} alt={property.title} />
+                <ImageGallery images={property.images} title={property.title} />
               </div>
 
               {/* Property Details */}
@@ -164,15 +180,78 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                 </div>
               </div>
 
-              {/* Map */}
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  📍 Lokacioni
-                </h3>
-                <ClientOnlyMapView 
-                  properties={[property]} 
-                  height="400px"
-                />
+              {/* Enhanced Map and Location Section */}
+              <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                {/* Map Tabs */}
+                <div className="border-b border-gray-200">
+                  <div className="flex">
+                    <button
+                      onClick={() => setActiveMapTab('location')}
+                      className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${
+                        activeMapTab === 'location'
+                          ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        Location & Map
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => setActiveMapTab('neighborhood')}
+                      className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${
+                        activeMapTab === 'neighborhood'
+                          ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <Home className="h-4 w-4" />
+                        Neighborhood
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Map Content */}
+                {activeMapTab === 'location' && (
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        📍 Property Location
+                      </h3>
+                      <div className="flex gap-2">
+                        <ViewOnMapButton 
+                          property={property} 
+                          variant="outline" 
+                          size="sm"
+                        />
+                        <a
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${property.address.coordinates.lat},${property.address.coordinates.lng}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-green-600 border border-green-600 rounded-lg hover:bg-green-50 transition-colors"
+                        >
+                          <Navigation className="h-4 w-4" />
+                          Directions
+                        </a>
+                      </div>
+                    </div>
+                    <PropertyDetailMap 
+                      property={property}
+                      nearbyProperties={nearbyProperties}
+                      height="500px"
+                      showNeighborhood={true}
+                      showDirections={true}
+                    />
+                  </div>
+                )}
+
+                {/* Neighborhood Content */}
+                {activeMapTab === 'neighborhood' && (
+                  <NeighborhoodInfo property={property} />
+                )}
               </div>
             </div>
 
@@ -185,6 +264,9 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
             </div>
           </div>
         </div>
+
+        {/* Mobile Floating Action Button */}
+        <ViewOnMapFAB property={property} className="lg:hidden" />
       </div>
     </Layout>
   );

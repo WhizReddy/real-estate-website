@@ -1,14 +1,15 @@
 {
-  "name": "Pasuritë e Tiranës",
-  "short_name": "Pasuritë",
-  "description": "Platforma më e mirë për blerjen dhe qiranë e pasurive të patundshme në Tiranë dhe Shqipëri",
+  "name": "Real Estate Explorer",
+  "short_name": "RealEstate",
+  "description": "Find your perfect home with our comprehensive real estate platform",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#dc2626",
+  "theme_color": "#2563eb",
   "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
   "categories": ["business", "lifestyle"],
-  "lang": "sq",
   "icons": [
     {
       "src": "/icons/icon-72x72.svg",
@@ -59,20 +60,68 @@
       "purpose": "maskable any"
     }
   ],
+  "shortcuts": [
+    {
+      "name": "Search Properties",
+      "short_name": "Search",
+      "description": "Search for properties",
+      "url": "/search",
+      "icons": [
+        {
+          "src": "/icons/search-action.svg",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Map View",
+      "short_name": "Map",
+      "description": "View properties on map",
+      "url": "/map",
+      "icons": [
+        {
+          "src": "/icons/map-action.svg",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Favorites",
+      "short_name": "Favorites",
+      "description": "View saved properties",
+      "url": "/favorites",
+      "icons": [
+        {
+          "src": "/icons/heart-action.svg",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
   "screenshots": [
     {
       "src": "/screenshots/desktop-home.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Home page showing property listings"
+      "label": "Home page on desktop"
     },
     {
       "src": "/screenshots/mobile-home.png",
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Mobile view of property listings"
+      "label": "Home page on mobile"
+    },
+    {
+      "src": "/screenshots/mobile-map.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Map view on mobile"
     }
   ]
 }

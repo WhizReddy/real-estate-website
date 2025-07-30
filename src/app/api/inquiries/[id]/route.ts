@@ -10,11 +10,12 @@ const InquiryUpdateSchema = z.object({
 // GET /api/inquiries/[id] - Get a single inquiry
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const inquiry = await prisma.inquiry.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         property: {
           select: {
@@ -48,9 +49,10 @@ export async function GET(
 // PUT /api/inquiries/[id] - Update an inquiry (mainly for status updates)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     
     // Validate the request body
@@ -58,7 +60,7 @@ export async function PUT(
 
     // Check if inquiry exists
     const existingInquiry = await prisma.inquiry.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingInquiry) {
@@ -69,7 +71,7 @@ export async function PUT(
     }
 
     const updatedInquiry = await prisma.inquiry.update({
-      where: { id: params.id },
+      where: { id },
       data: validatedData,
       include: {
         property: {
@@ -104,12 +106,13 @@ export async function PUT(
 // DELETE /api/inquiries/[id] - Delete an inquiry
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Check if inquiry exists
     const existingInquiry = await prisma.inquiry.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingInquiry) {
@@ -120,7 +123,7 @@ export async function DELETE(
     }
 
     await prisma.inquiry.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json(

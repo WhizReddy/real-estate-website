@@ -1,0 +1,62 @@
+[
+  {
+    "id": "agent-001",
+    "name": "Arben Kelmendi",
+    "email": "arben@pasurite-tiranes.al",
+    "phone": "+355 69 123 4567",
+    "photo": "/images/agents/arben-kelmendi.jpg",
+    "bio": "Specialist në pasuritë e qendrës së Tiranës me mbi 8 vjet përvojë. Ekspert në apartamente moderne dhe investime të pasurive.",
+    "specialties": ["Apartamente", "Investime", "Qendra e Tiranës", "Pasuritë Luksoze"],
+    "createdAt": "2023-01-15T10:00:00.000Z"
+  },
+  {
+    "id": "agent-002", 
+    "name": "Elona Hoxha",
+    "email": "elona@pasurite-tiranes.al",
+    "phone": "+355 69 234 5678",
+    "photo": "/images/agents/elona-hoxha.jpg",
+    "bio": "Specialiste në shtëpi familjare dhe zona periferike. Ndihmoj familjet të gjejnë shtëpinë e ëndrrave në ambiente të qeta.",
+    "specialties": ["Shtëpi Familjare", "Zone Periferike", "Kashar", "Durrës"],
+    "createdAt": "2023-02-01T09:00:00.000Z"
+  },
+  {
+    "id": "agent-003",
+    "name": "Gentian Rama",
+    "email": "gentian@pasurite-tiranes.al", 
+    "phone": "+355 69 345 6789",
+    "photo": "/images/agents/gentian-rama.jpg",
+    "bio": "Ekspert në vila luksoze dhe pasuritë premium. Specializohem në klientë VIP dhe transaksione të mëdha.",
+    "specialties": ["Vila Luksoze", "Pasuritë Premium", "Klientë VIP", "Investime të Mëdha"],
+    "createdAt": "2023-03-10T11:00:00.000Z"
+  },
+  {
+    "id": "agent-004",
+    "name": "Mirela Duka",
+    "email": "mirela@pasurite-tiranes.al",
+    "phone": "+355 69 456 7890", 
+    "photo": "/images/agents/mirela-duka.jpg",
+    "bio": "Specialiste në pasuritë me qira dhe investimet afatshkurtra. Ndihmoj pronarët të maksimizojnë të ardhurat nga pasuritë.",
+    "specialties": ["Qira", "Investime Afatshkurtra", "Menaxhim Pasurie", "Apartamente"],
+    "createdAt": "2023-04-05T13:00:00.000Z"
+  },
+  {
+    "id": "agent-005",
+    "name": "Klajdi Shehu",
+    "email": "klajdi@pasurite-tiranes.al",
+    "phone": "+355 69 567 8901",
+    "photo": "/images/agents/klajdi-shehu.jpg", 
+    "bio": "Specialist në pasuritë komerciale dhe bizneset. Ndihmoj sipërmarrësit të gjejnë hapësirat e duhura për biznesin e tyre.",
+    "specialties": ["Pasuritë Komerciale", "Biznese", "Zyra", "Dyqane"],
+    "createdAt": "2023-05-20T15:00:00.000Z"
+  },
+  {
+    "id": "agent-006",
+    "name": "Anxhela Tafa",
+    "email": "anxhela@pasurite-tiranes.al",
+    "phone": "+355 69 678 9012",
+    "photo": "/images/agents/anxhela-tafa.jpg",
+    "bio": "Specialiste në pasuritë bregdetare dhe turizmin. Ekspert në Durrës, Vlorë dhe zonat turistike.",
+    "specialties": ["Pasuritë Bregdetare", "Turizëm", "Durrës", "Vlorë"],
+    "createdAt": "2023-06-15T12:00:00.000Z"
+  }
+]
