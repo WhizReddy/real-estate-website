@@ -10,9 +10,16 @@ import PWAUpdateNotification from "@/components/PWAUpdateNotification";
 import { initializeErrorHandler } from "@/lib/errorHandler";
 import "./globals.css";
 
-// Initialize global error handler
+// Initialize global error handler and web vitals
 if (typeof window !== 'undefined') {
   initializeErrorHandler();
+  
+  // Initialize web vitals tracking
+  import('@/lib/web-vitals').then(({ initWebVitals }) => {
+    initWebVitals();
+  }).catch(() => {
+    // Silently fail if web-vitals is not available
+  });
 }
 
 const geistSans = Geist({

@@ -20,26 +20,15 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 365, // 1 year
   },
   
-  // Performance optimizations for faster compilation
+  // Performance optimizations
   compress: true,
   poweredByHeader: false,
   generateEtags: true,
   
-  // Experimental features for better performance
+  // Experimental features for Next.js 15
   experimental: {
     optimizeCss: true,
     optimizePackageImports: ['lucide-react', '@prisma/client', 'leaflet'],
-    webVitalsAttribution: ['CLS', 'LCP'],
-  },
-  
-  // Turbopack configuration (stable in Next.js 15)
-  turbopack: {
-    rules: {
-      '*.svg': {
-        loaders: ['@svgr/webpack'],
-        as: '*.js',
-      },
-    },
   },
   
   // Headers for better caching and security

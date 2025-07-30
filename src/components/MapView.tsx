@@ -268,16 +268,16 @@ export default function MapView({
             continue;
           }
           
-          // Create optimized marker icon with better performance
+          // Create mobile-friendly marker icon
           const markerIcon = L.divIcon({
             html: `
-              <div class="property-marker bg-gradient-to-r from-blue-600 to-blue-700 text-white px-2 py-1 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-700 hover:to-blue-800 transition-all cursor-pointer transform hover:scale-105">
+              <div class="property-marker bg-gradient-to-r from-blue-600 to-blue-700 text-white px-2 py-1 rounded-lg text-xs font-semibold shadow-lg border-2 border-white cursor-pointer">
                 ${formatPrice(property.price)}
               </div>
             `,
             className: 'custom-marker',
-            iconSize: [100, 32],
-            iconAnchor: [50, 32],
+            iconSize: [80, 28],
+            iconAnchor: [40, 28],
           });
 
           const marker = L.marker([coords.lat, coords.lng], { 
@@ -304,37 +304,33 @@ export default function MapView({
             });
           }
 
-          // Enhanced popup with smooth animations
+          // Mobile-friendly popup with essential info only
           const popupContent = `
-            <div class="p-4 min-w-[260px] animate-fadeIn">
-              <h3 class="font-semibold text-gray-900 mb-2 text-sm">${property.title}</h3>
-              <p class="text-xs text-gray-600 mb-2">${property.address.street}</p>
+            <div class="p-3 min-w-[200px] max-w-[250px] animate-fadeIn">
+              <h3 class="font-semibold text-gray-900 mb-2 text-sm line-clamp-2">${property.title}</h3>
               <div class="flex justify-between items-center mb-2">
                 <span class="font-bold text-blue-600 text-sm">${formatPrice(property.price)}</span>
-                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded capitalize">${property.details.propertyType}</span>
+                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${property.details.propertyType}</span>
               </div>
               <div class="text-xs text-gray-600 mb-3">
                 ${property.details.bedrooms > 0 ? `${property.details.bedrooms} dhoma • ` : ''}${property.details.bathrooms} banjo • ${property.details.squareFootage.toLocaleString()} m²
               </div>
-              <div class="flex gap-2 mb-2">
-                <a href="/properties/${property.id}" class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-3 py-2 rounded text-xs hover:from-blue-700 hover:to-blue-800 transition-all text-center font-medium">
+              <div class="flex gap-1 mb-2">
+                <a href="/properties/${property.id}" class="flex-1 bg-blue-600 text-white px-2 py-2 rounded text-xs text-center font-medium touch-manipulation">
                   📋 Detajet
                 </a>
-                <a href="https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}" target="_blank" class="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white px-3 py-2 rounded text-xs hover:from-green-700 hover:to-green-800 transition-all text-center font-medium">
+                <a href="https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}" target="_blank" class="flex-1 bg-green-600 text-white px-2 py-2 rounded text-xs text-center font-medium touch-manipulation">
                   🧭 Navigim
                 </a>
               </div>
-              <div class="flex gap-2 mb-2">
-                <button onclick="navigator.share ? navigator.share({title: '${property.title}', text: 'Shiko këtë pasuri: ${property.title}', url: window.location.origin + '/properties/${property.id}'}) : navigator.clipboard.writeText(window.location.origin + '/properties/${property.id}').then(() => alert('Linku u kopjua!'))" class="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 text-white px-3 py-2 rounded text-xs hover:from-purple-700 hover:to-purple-800 transition-all text-center font-medium">
+              <div class="flex gap-1">
+                <button onclick="navigator.share ? navigator.share({title: '${property.title}', text: 'Shiko këtë pasuri: ${property.title}', url: window.location.origin + '/properties/${property.id}'}) : navigator.clipboard.writeText(window.location.origin + '/properties/${property.id}').then(() => alert('Linku u kopjua!'))" class="flex-1 bg-purple-600 text-white px-2 py-2 rounded text-xs text-center font-medium touch-manipulation">
                   📤 Ndaj
                 </button>
-                <button onclick="window.open('tel:+35569123456', '_self')" class="flex-1 bg-gradient-to-r from-orange-600 to-orange-700 text-white px-3 py-2 rounded text-xs hover:from-orange-700 hover:to-orange-800 transition-all text-center font-medium">
-                  📞 Telefono
+                <button onclick="window.open('tel:+35569123456', '_self')" class="flex-1 bg-orange-600 text-white px-2 py-2 rounded text-xs text-center font-medium touch-manipulation">
+                  📞 Tel
                 </button>
               </div>
-              <button onclick="window.location.href='/'" class="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white px-3 py-2 rounded text-xs hover:from-gray-700 hover:to-gray-800 transition-all font-medium">
-                🏠 Kryesore
-              </button>
             </div>
           `;
 
@@ -476,12 +472,12 @@ export default function MapView({
       {/* Mobile-Optimized Map Controls */}
       <div className="absolute top-2 right-2 flex flex-col gap-1 z-[1000]">
 
-        {/* Map Layer Selector */}
-        <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+        {/* Map Layer Selector - Smaller for mobile */}
+        <div className="bg-white rounded-md shadow-md border border-gray-200 overflow-hidden">
           <button
             onClick={() => changeMapLayer('street')}
-            className={`p-2 w-full text-xs transition-colors ${
-              mapLayer === 'street' ? 'bg-blue-600 text-white' : 'hover:bg-blue-50 text-blue-600'
+            className={`p-1.5 w-full text-xs transition-colors ${
+              mapLayer === 'street' ? 'bg-blue-600 text-white' : 'text-blue-600'
             }`}
             title="Harta e rrugëve"
           >
@@ -489,8 +485,8 @@ export default function MapView({
           </button>
           <button
             onClick={() => changeMapLayer('satellite')}
-            className={`p-2 w-full text-xs transition-colors ${
-              mapLayer === 'satellite' ? 'bg-blue-600 text-white' : 'hover:bg-blue-50 text-blue-600'
+            className={`p-1.5 w-full text-xs transition-colors ${
+              mapLayer === 'satellite' ? 'bg-blue-600 text-white' : 'text-blue-600'
             }`}
             title="Pamja satelitore"
           >
@@ -498,8 +494,8 @@ export default function MapView({
           </button>
           <button
             onClick={() => changeMapLayer('terrain')}
-            className={`p-2 w-full text-xs transition-colors ${
-              mapLayer === 'terrain' ? 'bg-blue-600 text-white' : 'hover:bg-blue-50 text-blue-600'
+            className={`p-1.5 w-full text-xs transition-colors ${
+              mapLayer === 'terrain' ? 'bg-blue-600 text-white' : 'text-blue-600'
             }`}
             title="Terreni"
           >
@@ -507,13 +503,13 @@ export default function MapView({
           </button>
         </div>
 
-        {/* Reset View Button */}
+        {/* Reset View Button - Smaller */}
         <button
           onClick={resetMapView}
-          className="bg-white hover:bg-blue-50 p-2 rounded-lg shadow-md border border-gray-200 transition-colors duration-200"
+          className="bg-white p-1.5 rounded-md shadow-md border border-gray-200 transition-colors duration-200"
           title="Kthehu në pamjen fillestare"
         >
-          <Home className="h-4 w-4 text-blue-600" />
+          <Home className="h-3 w-3 text-blue-600" />
         </button>
 
         {/* Fullscreen Toggle Button */}
@@ -579,10 +575,10 @@ export default function MapView({
               alert('Geolocation nuk është i mbështetur nga shfletuesi juaj.');
             }
           }}
-          className="bg-white hover:bg-blue-50 p-2 rounded-lg shadow-md border border-gray-200 transition-colors duration-200"
+          className="bg-white p-1.5 rounded-md shadow-md border border-gray-200 transition-colors duration-200"
           title="Shko te lokacioni im"
         >
-          <svg className="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="h-3 w-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
