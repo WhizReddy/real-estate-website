@@ -10,28 +10,42 @@ import StructuredData from "@/components/StructuredData";
 import CreativeLoader from "@/components/CreativeLoader";
 import MobileFloatingActions from "@/components/MobileFloatingActions";
 import MobileSearchModal from "@/components/MobileSearchModal";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Home as HomeIcon, BarChart3, MapPin, Map } from "lucide-react";
+import { createDynamicImport, DefaultLoadingComponent, DynamicImportErrorFallback, logChunkError } from "@/lib/dynamicImport";
 
-// Dynamically import interactive components to prevent SSR issues
-const DynamicSearchFilters = dynamic(
+// Enhanced dynamic imports with retry mechanism for chunk loading failures
+const DynamicSearchFilters = createDynamicImport(
   () => import("@/components/SearchFilters"),
   {
     ssr: false,
     loading: () => (
-      <div className="h-32 bg-white rounded-lg shadow-md animate-pulse"></div>
+      <div className="h-32 bg-white rounded-lg shadow-md animate-pulse flex items-center justify-center">
+        <div className="flex items-center space-x-2">
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+          <span className="text-gray-500 text-sm">Loading search filters...</span>
+        </div>
+      </div>
     ),
+    retryAttempts: 3,
+    onError: (error) => logChunkError(error, 'SearchFilters'),
   }
 );
 
-const DynamicSearchResults = dynamic(
+const DynamicSearchResults = createDynamicImport(
   () => import("@/components/SearchResults"),
   {
     ssr: false,
     loading: () => (
-      <div className="h-96 bg-white rounded-lg shadow-md animate-pulse"></div>
+      <div className="h-96 bg-white rounded-lg shadow-md animate-pulse flex items-center justify-center">
+        <div className="flex items-center space-x-2">
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+          <span className="text-gray-500 text-sm">Loading search results...</span>
+        </div>
+      </div>
     ),
+    retryAttempts: 3,
+    onError: (error) => logChunkError(error, 'SearchResults'),
   }
 );
 

@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Output configuration for better chunk handling
+  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
+  
+  // Transpile packages that might cause chunk loading issues
+  transpilePackages: ['leaflet', 'react-leaflet'],
+  
   images: {
     remotePatterns: [
       {
@@ -25,10 +31,63 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   generateEtags: true,
   
-  // Experimental features for Next.js 15
+  // Experimental features for Next.js 15 with Turbopack optimizations
   experimental: {
     optimizeCss: true,
-    optimizePackageImports: ['lucide-react', '@prisma/client', 'leaflet'],
+    optimizePackageImports: ['lucide-react', '@prisma/client'],
+  },
+  
+  // Turbopack specific configurations (moved from experimental.turbo)
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+    resolveAlias: {
+      '@': './src',
+    },
+  },
+  
+  // Webpack configuration for fallback when Turbopack fails
+  webpack: (config, { dev, isServer }) => {
+    // Fix for chunk loading issues
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
+    
+    // Optimize chunk splitting
+    if (!dev) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+              priority: 10,
+            },
+            common: {
+              name: 'common',
+              minChunks: 2,
+              chunks: 'all',
+              priority: 5,
+              reuseExistingChunk: true,
+            },
+          },
+        },
+      };
+    }
+    
+    return config;
   },
   
   // Headers for better caching and security

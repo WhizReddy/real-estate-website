@@ -18,10 +18,10 @@ export default withAuth(
     // Referrer policy
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     
-    // Content Security Policy (basic) - Allow Google Fonts
+    // Content Security Policy - Allow chunk loading and Google Fonts
     response.headers.set(
       'Content-Security-Policy',
-      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com;"
+      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com; connect-src 'self' https:; worker-src 'self' blob:;"
     );
 
     return response;
