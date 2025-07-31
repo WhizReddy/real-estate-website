@@ -127,7 +127,7 @@ jest.mock('@/components/SearchResults', () => {
   };
 });
 
-jest.mock('@/components/ClientOnlyMapView', () => {
+jest.mock('@/components/SimpleMapView', () => {
   return function MockMapView({ properties }: any) {
     return (
       <div data-testid="map-view">

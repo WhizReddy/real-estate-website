@@ -128,7 +128,7 @@ const MockMapView = ({ properties }: any) => (
 
 jest.mock('@/components/SearchFilters', () => MockSearchFilters);
 jest.mock('@/components/SearchResults', () => MockSearchResults);
-jest.mock('@/components/ClientOnlyMapView', () => MockMapView);
+jest.mock('@/components/SimpleMapView', () => MockMapView);
 
 jest.mock('@/components/Layout', () => {
   return function MockLayout({ children }: any) {

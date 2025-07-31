@@ -30,7 +30,7 @@ jest.mock('@/components/SearchResults', () => {
   };
 });
 
-jest.mock('@/components/ClientOnlyMapView', () => {
+jest.mock('@/components/SimpleMapView', () => {
   return function MockMapView() {
     return <div data-testid="map-view">Map View</div>;
   };
