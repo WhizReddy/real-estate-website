@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getProperties } from "@/lib/data";
 import { Property } from "@/types";
 // Removed direct imports - using dynamic imports instead
-import ClientOnlyMapView from "@/components/ClientOnlyMapView";
+import SimpleMapView from "@/components/SimpleMapView";
 import Layout from "@/components/Layout";
 import StructuredData from "@/components/StructuredData";
 import CreativeLoader from "@/components/CreativeLoader";
@@ -272,7 +272,7 @@ export default function Home() {
                   </Link>
                 </div>
                 <div className="map-container">
-                  <ClientOnlyMapView
+                  <SimpleMapView
                     properties={filteredProperties.slice(0, 10)}
                     height="600px"
                   />
@@ -321,7 +321,7 @@ export default function Home() {
                   </button>
                 </div>
                 <div className="mobile-map">
-                  <ClientOnlyMapView
+                  <SimpleMapView
                     properties={filteredProperties.slice(0, 3)}
                     height="300px"
                   />
@@ -493,7 +493,7 @@ export default function Home() {
                 </button>
               </div>
               <div className="flex-1">
-                <ClientOnlyMapView
+                <SimpleMapView
                   properties={filteredProperties.slice(0, 8)}
                   height="100%"
                 />

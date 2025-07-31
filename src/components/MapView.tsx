@@ -42,7 +42,7 @@ export default function MapView({
   const networkError = useNetworkError();
 
   const [mapLayer, setMapLayer] = useState<'street' | 'satellite' | 'terrain'>('street');
-  const [showClusters, setShowClusters] = useState(true);
+  // Removed clustering functionality
   const [mapFilters, setMapFilters] = useState({
     priceRange: 'all',
     propertyType: 'all'
@@ -65,8 +65,7 @@ export default function MapView({
         )
       ]) as any;
 
-      // Note: Marker clustering disabled to avoid dependency issues
-      setShowClusters(false);
+      // Note: Using simple layer groups instead of clustering
 
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
