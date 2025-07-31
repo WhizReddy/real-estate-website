@@ -8,21 +8,28 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  const properties = await getProperties();
-  return properties.map((property) => ({
-    id: property.id,
-  }));
+  try {
+    const properties = await getProperties();
+    return properties.map((property) => ({
+      id: property.id,
+    }));
+  } catch (error) {
+    console.warn('Failed to generate static params during build:', error);
+    // Return empty array to allow build to continue
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const property = await getProperty(id);
+  try {
+    const { id } = await params;
+    const property = await getProperty(id);
 
-  if (!property) {
-    return {
-      title: "Pasuria nuk u gjet",
-    };
-  }
+    if (!property) {
+      return {
+        title: "Pasuria nuk u gjet",
+      };
+    }
 
   const description = `${property.details.propertyType} për ${
     property.listingType === "sale" ? "shitje" : "qira"
@@ -75,6 +82,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `/properties/${property.id}`,
     },
   };
+  } catch (error) {
+    console.warn('Failed to generate metadata during build:', error);
+    return {
+      title: "Pasuria nuk u gjet",
+      description: "Pasuria që kërkoni nuk është e disponueshme.",
+    };
+  }
 }
 
 export default async function PropertyDetail({ params }: Props) {

@@ -4,7 +4,9 @@ import { sendInquiryEmail, sendConfirmationEmail } from './email';
 // Database-backed functions with proper API integration
 const API_BASE_URL = typeof window !== 'undefined' 
   ? '' // Client-side: use relative URLs
-  : process.env.NEXTAUTH_URL || 'http://localhost:3000'; // Server-side: use full URL
+  : process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : process.env.NEXTAUTH_URL || 'http://localhost:3000'; // Server-side: use full URL
 
 export async function getProperties(): Promise<Property[]> {
   try {
