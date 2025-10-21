@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Property } from '@/types';
-import { getProperties, getUserProperties, deleteProperty } from '@/lib/data';
 import { formatPrice } from '@/lib/utils';
 import { getCurrentUser, isAdmin, isAgent, clearSession, UserData } from '@/lib/auth-utils';
 import { Plus, Edit, Trash2, Eye, LogOut, MessageCircle, Search, Filter, X, User } from 'lucide-react';
@@ -28,6 +27,7 @@ export default function AdminDashboard() {
   });
   const router = useRouter();
 
+
   useEffect(() => {
     // Check authentication
     const isAuthenticated = localStorage.getItem('adminSession');
@@ -42,36 +42,34 @@ export default function AdminDashboard() {
       setCurrentUser(user);
       setUserRole(user.role);
     }
-
-    // Load properties
-    loadProperties();
   }, [router]);
 
-  const loadProperties = async () => {
-    try {
-      let data = [];
-      if (userRole === 'ADMIN') {
-        data = await getProperties();
-      } else if (userRole === 'AGENT') {
-        // Fetch only agent's own properties
-        const response = await fetch('/api/properties/user', { cache: 'no-store' });
-        if (response.ok) {
-          const result = await response.json();
-          data = result.data || [];
-        } else {
-          data = [];
+  useEffect(() => {
+    if (!userRole) return;
+    const loadProperties = async () => {
+      try {
+        let data: Property[] = [];
+        if (userRole === 'ADMIN') {
+          const res = await fetch('/api/properties', { cache: 'no-store' });
+          const json = await res.json();
+          data = json.properties || [];
+        } else if (userRole === 'AGENT') {
+          const res = await fetch('/api/properties/user', { cache: 'no-store' });
+          const json = await res.json();
+          data = json.data || [];
         }
+        setAllProperties(data);
+        setProperties(data);
+      } catch (error) {
+        console.error('Error loading properties:', error);
+        setAllProperties([]);
+        setProperties([]);
+      } finally {
+        setLoading(false);
       }
-      setAllProperties(data);
-      setProperties(data);
-    } catch (error) {
-      console.error('Error loading properties:', error);
-      setAllProperties([]);
-      setProperties([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    loadProperties();
+  }, [userRole]);
 
   // Get unique values for filter options
   const uniqueCities = [...new Set(allProperties.map(p => p.address.city))].sort();
@@ -153,7 +151,7 @@ export default function AdminDashboard() {
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteProperty(id);
+      await fetch(`/api/properties/${id}`, { method: 'DELETE' });
       // Update both filtered and all properties
       setAllProperties(prev => prev.filter(p => p.id !== id));
       setProperties(prev => prev.filter(p => p.id !== id));
@@ -435,14 +433,10 @@ export default function AdminDashboard() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  let data: Property[] = [];
-                  if (userRole === 'ADMIN') {
-                    data = await getProperties();
-                  } else if (userRole === 'AGENT') {
-                    data = await getUserProperties();
-                  }
-                  setAllProperties(data);
-                  setProperties(data);
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Pasuria
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Lokacioni
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getProperties } from '@/lib/data';
 import Layout from '@/components/Layout';
 import PropertyGrid from '@/components/PropertyGrid';
 import SearchFilters from '@/components/SearchFilters';
@@ -16,10 +15,12 @@ export default function PropertiesPage() {
   useEffect(() => {
     const loadProperties = async () => {
       try {
-        const allProperties = await getProperties();
+        const res = await fetch('/api/properties', { cache: 'no-store' });
+        const data = await res.json();
+        const allProperties = data.properties || [];
         // Filter out sold properties
         const activeProperties = allProperties.filter(
-          property => property.status === 'active' || property.status === 'pending'
+          (property: any) => property.status === 'active' || property.status === 'pending'
         );
         setProperties(activeProperties);
         setFilteredProperties(activeProperties);

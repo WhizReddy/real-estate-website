@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getProperties } from "@/lib/data";
 import { Property } from "@/types";
 import dynamic from "next/dynamic";
 import Layout from "@/components/Layout";
@@ -11,7 +10,7 @@ import MobileFloatingActions from "@/components/MobileFloatingActions";
 import MobileSearchModal from "@/components/MobileSearchModal";
 import Link from "next/link";
 import { Home as HomeIcon, BarChart3, MapPin, Map } from "lucide-react";
-import { createDynamicImport, DefaultLoadingComponent, DynamicImportErrorFallback, logChunkError } from "@/lib/dynamicImport";
+import { createDynamicImport, logChunkError } from "@/lib/dynamicImport";
 
 // Force dynamic rendering to avoid SSR issues with Leaflet
 export const runtime = 'edge'; // Use edge runtime or 'nodejs'
@@ -79,24 +78,18 @@ export default function Home() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [showMobileMap, setShowMobileMap] = useState(false);
-  const [isMapUpdating, setIsMapUpdating] = useState(false);
+  // Removed isMapUpdating as it was unused
 
   useEffect(() => {
     const loadProperties = async () => {
       try {
-        const properties = await getProperties();
-        // Filter out sold properties from the main page
-        const activeProperties = properties.filter(
-          (property) =>
-            property.status === "active" || property.status === "pending"
-        );
-
-        // Limit initial load to prevent overwhelming the page
+        const res = await fetch("/api/properties/active", { cache: "no-store" });
+        if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
+        const data = await res.json();
+        const activeProperties: Property[] = data.properties || [];
         const limitedProperties = activeProperties.slice(0, MAX_INITIAL_LOAD);
-
         setAllProperties(activeProperties);
         setFilteredProperties(limitedProperties);
-        // Show first page of properties
         setDisplayedProperties(limitedProperties.slice(0, PROPERTIES_PER_PAGE));
       } catch (error) {
         console.error("Error loading properties:", error);
@@ -104,22 +97,13 @@ export default function Home() {
         setIsLoading(false);
       }
     };
-
     loadProperties();
   }, []);
 
   const handleFilteredResults = useCallback((filtered: Property[]) => {
-    // Show map updating indicator
-    setIsMapUpdating(true);
-    
     setFilteredProperties(filtered);
     setDisplayedProperties(filtered.slice(0, PROPERTIES_PER_PAGE));
     setCurrentPage(1);
-    
-    // Hide map updating indicator after a short delay
-    setTimeout(() => {
-      setIsMapUpdating(false);
-    }, 500);
   }, []);
 
   const loadMoreProperties = useCallback(() => {
@@ -148,7 +132,7 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+  <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <CreativeLoader type="properties" size="lg" />
       </div>
     );
@@ -158,9 +142,9 @@ export default function Home() {
     <Layout variant="homepage">
       <StructuredData type="website" />
       <StructuredData type="organization" />
-      <div className="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <div className="bg-linear-to-br from-slate-50 to-blue-50 min-h-screen">
         {/* Royal Blue Hero Section */}
-        <section className="relative bg-gradient-to-br from-blue-800 via-blue-700 to-blue-600 overflow-hidden">
+  <section className="relative bg-linear-to-br from-blue-800 via-blue-700 to-blue-600 overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="absolute inset-0 opacity-20">
@@ -182,7 +166,7 @@ export default function Home() {
                 </div>
                 <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
                   Gjeni Shtëpinë e{" "}
-                  <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                  <span className="bg-linear-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
                     Ëndrrave
                   </span>{" "}
                   Tuaja
@@ -319,7 +303,7 @@ export default function Home() {
                 <div className="mt-4">
                   <Link
                     href="/map"
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium text-sm gpu-accelerated"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium text-sm gpu-accelerated"
                   >
                     <Map className="h-4 w-4" />
                     Shiko Hartën e Plotë
@@ -355,7 +339,7 @@ export default function Home() {
                   </p>
                   <button
                     onClick={() => setShowMobileMap(true)}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium text-sm mobile-button gpu-accelerated"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium text-sm mobile-button gpu-accelerated"
                   >
                     <Map className="h-4 w-4" />
                     Hap Hartën e Plotë
@@ -369,7 +353,7 @@ export default function Home() {
         {/* Contact Section */}
         <section
           id="contact"
-          className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 mobile-contact py-12 sm:py-16"
+          className="bg-linear-to-br from-blue-900 via-blue-800 to-indigo-900 mobile-contact py-12 sm:py-16"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 sm:mb-12">
@@ -384,7 +368,7 @@ export default function Home() {
 
             <div className="grid mobile-contact-grid md:grid-cols-3 gap-6 sm:gap-8">
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center gpu-accelerated complex-shadow">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-linear-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
                     className="w-8 h-8 text-white"
                     fill="none"
@@ -412,7 +396,7 @@ export default function Home() {
               </div>
 
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center gpu-accelerated complex-shadow">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-linear-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
                     className="w-8 h-8 text-white"
                     fill="none"
@@ -438,7 +422,7 @@ export default function Home() {
               </div>
 
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center gpu-accelerated complex-shadow">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-linear-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
                     className="w-8 h-8 text-white"
                     fill="none"
@@ -491,7 +475,7 @@ export default function Home() {
         {showMobileMap && (
           <div className="fixed inset-0 z-50 bg-white md:hidden">
             <div className="flex flex-col h-full">
-              <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-linear-to-r from-blue-600 to-blue-700">
                 <h2 className="text-lg font-semibold text-white">
                   Harta e Pasurive
                 </h2>

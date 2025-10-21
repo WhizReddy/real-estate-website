@@ -1,4 +1,4 @@
-
+import "server-only";
 import { Property, ContactInquiry } from '@/types';
 import { sendInquiryEmail, sendConfirmationEmail } from './email';
 
@@ -11,24 +11,27 @@ const API_BASE_URL = typeof window !== 'undefined'
 
 export async function getProperties(): Promise<Property[]> {
   try {
-    // Fetch from database via API
     const response = await fetch(`${API_BASE_URL}/api/properties`, {
-      cache: 'no-store', // Always get fresh data
+      cache: 'no-store',
     });
-    
-
-
-
-
-
+    if (response.ok) {
+      const data = await response.json();
+      return data.properties || [];
+    } else {
+      console.error('Failed to fetch properties:', response.status);
+      throw new Error(`Failed to fetch properties: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Failed to fetch properties from database:', error);
+    throw error;
+  }
+}
 
 export async function getActiveProperties(): Promise<Property[]> {
   try {
-    // Use dedicated active properties endpoint for better performance
     const response = await fetch(`${API_BASE_URL}/api/properties/active`, {
       cache: 'no-store',
     });
-    
     if (response.ok) {
       const data = await response.json();
       return data.properties || [];
@@ -49,15 +52,13 @@ export async function getPinnedProperties(): Promise<Property[]> {
 
 export async function getProperty(id: string): Promise<Property | null> {
   try {
-    // Fetch from database via API
     const response = await fetch(`${API_BASE_URL}/api/properties/${id}`, {
       cache: 'no-store',
     });
-    
     if (response.ok) {
       return await response.json();
     } else if (response.status === 404) {
-      return null; // Property not found
+      return null;
     } else {
       throw new Error(`Failed to fetch property: ${response.status}`);
     }
@@ -91,9 +92,7 @@ export async function searchProperties(filters: {
   limit?: number;
 }): Promise<Property[]> {
   try {
-    // Build query parameters
     const params = new URLSearchParams();
-    
     if (filters.minPrice) params.append('minPrice', filters.minPrice.toString());
     if (filters.maxPrice) params.append('maxPrice', filters.maxPrice.toString());
     if (filters.bedrooms) params.append('bedrooms', filters.bedrooms.toString());
@@ -105,12 +104,10 @@ export async function searchProperties(filters: {
     if (filters.sortOrder) params.append('sortOrder', filters.sortOrder);
     if (filters.page) params.append('page', filters.page.toString());
     if (filters.limit) params.append('limit', filters.limit.toString());
-    
-    // Use database search API for better performance
+
     const response = await fetch(`${API_BASE_URL}/api/properties/search?${params.toString()}`, {
       cache: 'no-store',
     });
-    
     if (response.ok) {
       const data = await response.json();
       return data.properties || [];
@@ -128,9 +125,7 @@ export async function saveProperty(property: Omit<Property, 'id' | 'createdAt' |
   try {
     const response = await fetch(`${API_BASE_URL}/api/properties`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         title: property.title,
         description: property.description,
@@ -155,28 +150,19 @@ export async function saveProperty(property: Omit<Property, 'id' | 'createdAt' |
     });
 
     const result = await response.json();
-
     if (!response.ok) {
-      // Handle validation errors with detailed feedback
       if (result.error?.code === 'VALIDATION_ERROR') {
         const errorMessages = Object.values(result.error.details).join(', ');
         throw new Error(`Validation failed: ${errorMessages}`);
       }
-      
-      // Handle other API errors
       throw new Error(result.error?.message || 'Failed to save property');
     }
-
-    // Return the property data from the success response
     return result.data;
   } catch (error) {
     console.error('Error saving property:', error);
-    
-    // Provide more specific error messages
     if (error instanceof Error) {
       throw error;
     }
-    
     throw new Error('Failed to save property');
   }
 }
@@ -185,16 +171,12 @@ export async function updateProperty(id: string, updates: Partial<Property>): Pr
   try {
     const response = await fetch(`${API_BASE_URL}/api/properties/${id}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates),
     });
-
     if (!response.ok) {
       throw new Error('Failed to update property');
     }
-
     return await response.json();
   } catch (error) {
     console.error('Error updating property:', error);
@@ -207,7 +189,6 @@ export async function deleteProperty(id: string): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/api/properties/${id}`, {
       method: 'DELETE',
     });
-
     if (!response.ok) {
       throw new Error('Failed to delete property');
     }
@@ -219,37 +200,17 @@ export async function deleteProperty(id: string): Promise<void> {
 
 export async function saveInquiry(inquiry: ContactInquiry): Promise<void> {
   try {
-    // Save to database via API
     const response = await fetch(`${API_BASE_URL}/api/inquiries`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(inquiry),
     });
-
     if (response.ok) {
-      console.log('✅ Inquiry saved to database successfully');
-      
-      // Send emails
-      const [agentEmailSent, confirmationEmailSent] = await Promise.allSettled([
+      // Send emails in parallel (best-effort)
+      await Promise.allSettled([
         sendInquiryEmail(inquiry),
-        sendConfirmationEmail(inquiry)
+        sendConfirmationEmail(inquiry),
       ]);
-      
-      // Log email results
-      if (agentEmailSent.status === 'fulfilled' && agentEmailSent.value) {
-        console.log('✅ Agent notification email sent successfully');
-      } else {
-        console.warn('⚠️ Failed to send agent notification email');
-      }
-      
-      if (confirmationEmailSent.status === 'fulfilled' && confirmationEmailSent.value) {
-        console.log('✅ Customer confirmation email sent successfully');
-      } else {
-        console.warn('⚠️ Failed to send customer confirmation email');
-      }
-      
       return;
     } else {
       const errorData = await response.json();
@@ -263,11 +224,9 @@ export async function saveInquiry(inquiry: ContactInquiry): Promise<void> {
 
 export async function getInquiries(): Promise<ContactInquiry[]> {
   try {
-    // Fetch from database via API
     const response = await fetch(`${API_BASE_URL}/api/inquiries`, {
       cache: 'no-store',
     });
-    
     if (response.ok) {
       const data = await response.json();
       return data.inquiries || [];
@@ -283,11 +242,9 @@ export async function getInquiries(): Promise<ContactInquiry[]> {
 
 export async function getInquiriesForProperty(propertyId: string): Promise<ContactInquiry[]> {
   try {
-    // Use API filtering for better performance
     const response = await fetch(`${API_BASE_URL}/api/inquiries?propertyId=${propertyId}`, {
       cache: 'no-store',
     });
-    
     if (response.ok) {
       const data = await response.json();
       return data.inquiries || [];

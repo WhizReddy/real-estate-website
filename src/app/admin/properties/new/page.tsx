@@ -2,15 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { Property } from "@/types";
-import { generateId, getCurrentTimestamp } from "@/lib/utils";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import ImageUploader from "@/components/ImageUploader";
 import InteractiveMapView from "@/components/InteractiveMapView";
-import { saveProperty } from "@/lib/data";
-import { validateFormField } from "@/lib/validation";
 
 interface PropertyFormData {
   title: string;
@@ -38,10 +33,6 @@ export default function NewProperty() {
   const [featureInput, setFeatureInput] = useState("");
   const [featuresList, setFeaturesList] = useState<string[]>([]);
   const [propertyImages, setPropertyImages] = useState<string[]>([]);
-  const [validationErrors, setValidationErrors] = useState<
-    Record<string, string>
-  >({});
-  const [isDirty, setIsDirty] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const router = useRouter();
 
@@ -52,7 +43,6 @@ export default function NewProperty() {
     setValue,
     watch,
     reset,
-    getValues,
   } = useForm<PropertyFormData>({
     defaultValues: {
       city: "Tiranë",
@@ -74,21 +64,12 @@ export default function NewProperty() {
     }
   }, [router]);
 
-  // Real-time validation handler
-  const handleFieldValidation = (fieldName: string, value: unknown) => {
-    const error = validateFormField(fieldName, value);
-    setValidationErrors((prev) => ({
-      ...prev,
-      [fieldName]: error ? error.message : "",
-    }));
-  };
 
   // Track form changes
   useEffect(() => {
     const hasChanges =
       formIsDirty || featuresList.length > 0 || propertyImages.length > 0;
-    setHasUnsavedChanges(hasChanges);
-    setIsDirty(hasChanges);
+  setHasUnsavedChanges(hasChanges);
   }, [formIsDirty, featuresList.length, propertyImages.length]);
 
   // Warn user about unsaved changes when leaving the page
@@ -111,9 +92,7 @@ export default function NewProperty() {
     reset();
     setFeaturesList([]);
     setPropertyImages([]);
-    setValidationErrors({});
-    setHasUnsavedChanges(false);
-    setIsDirty(false);
+  setHasUnsavedChanges(false);
   };
 
   // Handle navigation with unsaved changes warning
@@ -143,7 +122,6 @@ export default function NewProperty() {
 
   const onSubmit = async (data: PropertyFormData) => {
     setIsSubmitting(true);
-
     try {
       // Validate required images
       if (propertyImages.length === 0) {
@@ -151,28 +129,22 @@ export default function NewProperty() {
         setIsSubmitting(false);
         return;
       }
-
+      // FLATTENED propertyData for API
       const propertyData = {
         title: data.title,
         description: data.description,
         price: Number(data.price),
-        address: {
-          street: data.street,
-          city: data.city,
-          state: data.state,
-          zipCode: data.zipCode,
-          coordinates: {
-            lat: Number(data.lat),
-            lng: Number(data.lng),
-          },
-        },
-        details: {
-          bedrooms: Number(data.bedrooms),
-          bathrooms: Number(data.bathrooms),
-          squareFootage: Number(data.squareFootage),
-          propertyType: data.propertyType,
-          yearBuilt: data.yearBuilt ? Number(data.yearBuilt) : undefined,
-        },
+        street: data.street,
+        city: data.city,
+        state: data.state,
+        zipCode: data.zipCode,
+        latitude: Number(data.lat),
+        longitude: Number(data.lng),
+        bedrooms: Number(data.bedrooms),
+        bathrooms: Number(data.bathrooms),
+        squareFootage: Number(data.squareFootage),
+        propertyType: data.propertyType,
+        yearBuilt: data.yearBuilt ? Number(data.yearBuilt) : undefined,
         images: propertyImages,
         features: featuresList,
         status: data.status,
@@ -181,7 +153,16 @@ export default function NewProperty() {
       };
 
       // Save to database using the API
-      const savedProperty = await saveProperty(propertyData);
+      const response = await fetch("/api/properties", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(propertyData),
+      });
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.error?.message || "Failed to save property");
+      }
+  // const savedProperty = await response.json();
 
       // Reset form state after successful submission
       resetForm();
@@ -222,9 +203,9 @@ export default function NewProperty() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+  <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl">
+  <header className="bg-linear-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center">
             <button
@@ -244,10 +225,10 @@ export default function NewProperty() {
           {/* Basic Information */}
           <div className="bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-linear-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">1</span>
               </div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-linear-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent">
                 Informacione Bazë
               </h2>
             </div>
@@ -329,10 +310,10 @@ export default function NewProperty() {
           {/* Images */}
           <div className="bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-linear-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">2</span>
               </div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-linear-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent">
                 Imazhet e Pasurisë *
               </h2>
             </div>
@@ -347,10 +328,10 @@ export default function NewProperty() {
           {/* Address */}
           <div className="bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-500 rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-linear-to-r from-blue-400 to-blue-500 rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">3</span>
               </div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-linear-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent">
                 Adresa dhe Lokacioni
               </h2>
             </div>
@@ -474,10 +455,10 @@ export default function NewProperty() {
           {/* Property Details */}
           <div className="bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-300 to-blue-400 rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-linear-to-r from-blue-300 to-blue-400 rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">4</span>
               </div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-linear-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent">
                 Detajet e Pasurisë
               </h2>
             </div>
@@ -588,7 +569,7 @@ export default function NewProperty() {
           {/* Features */}
           <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-linear-to-r from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">5</span>
               </div>
               <h2 className="text-2xl font-bold text-gray-900">
