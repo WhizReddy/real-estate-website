@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
 import ResourcePreloader from "@/components/ResourcePreloader";
 import { ToastProvider } from "@/components/Toast";
@@ -14,16 +13,6 @@ import "./globals.css";
 if (typeof window !== 'undefined') {
   initializeErrorHandler();
 }
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: {
@@ -124,7 +113,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className="font-sans antialiased"
         suppressHydrationWarning={true}
       >
         <PWAProvider>

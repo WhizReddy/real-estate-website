@@ -3,22 +3,27 @@ import { notFound } from "next/navigation";
 import { getProperty, getProperties } from "@/lib/data";
 import PropertyDetailClient from "@/components/PropertyDetailClient";
 
+// Disable static generation to avoid Leaflet SSR issues
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+
 interface Props {
   params: Promise<{ id: string }>;
 }
 
-export async function generateStaticParams() {
-  try {
-    const properties = await getProperties();
-    return properties.map((property) => ({
-      id: property.id,
-    }));
-  } catch (error) {
-    console.warn('Failed to generate static params during build:', error);
-    // Return empty array to allow build to continue
-    return [];
-  }
-}
+// Commenting out static params generation to avoid build-time Leaflet issues
+// export async function generateStaticParams() {
+//   try {
+//     const properties = await getProperties();
+//     return properties.map((property) => ({
+//       id: property.id,
+//     }));
+//   } catch (error) {
+//     console.warn('Failed to generate static params during build:', error);
+//     // Return empty array to allow build to continue
+//     return [];
+//   }
+// }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {

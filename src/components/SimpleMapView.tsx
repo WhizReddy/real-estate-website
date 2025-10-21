@@ -62,6 +62,15 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
         setIsLoading(true);
         setError(null);
 
+        // Dynamically load Leaflet CSS if not already loaded
+        if (!document.getElementById('leaflet-css')) {
+          const link = document.createElement('link');
+          link.id = 'leaflet-css';
+          link.rel = 'stylesheet';
+          link.href = '/leaflet.css';
+          document.head.appendChild(link);
+        }
+
         const L = await import('leaflet');
         
         // Create custom marker icon to fix display issues
@@ -145,39 +154,73 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
           return coords.lat && coords.lng && !isNaN(coords.lat) && !isNaN(coords.lng);
         });
 
+        const markers: any[] = [];
+
         validProperties.forEach(property => {
           try {
             const coords = property.address.coordinates;
             // Use the custom icon for the marker
             const marker = L.marker([coords.lat, coords.lng], { icon: customIcon }).addTo(map);
             
+            // Improved popup with better styling
             marker.bindPopup(`
-              <div class="p-3 min-w-[200px]">
-                <h3 class="font-bold text-sm mb-2">${property.title}</h3>
-                <p class="text-blue-600 font-semibold mb-2">${formatPrice(property.price)}</p>
-                <div class="text-xs text-gray-600 mb-2">
-                  ${property.details.bedrooms} dhoma • ${property.details.bathrooms} banjo • ${property.details.squareFootage}m²
+              <div style="min-width: 240px; max-width: 280px; padding: 12px;">
+                <div style="margin-bottom: 8px;">
+                  <h3 style="font-weight: 700; font-size: 15px; line-height: 1.3; margin: 0 0 8px 0; color: #1f2937;">${property.title}</h3>
+                  <p style="font-weight: 600; font-size: 16px; color: #2563eb; margin: 0 0 8px 0;">${formatPrice(property.price)}</p>
                 </div>
-                <a href="/properties/${property.id}" class="inline-block bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors">
-                  Shiko Detajet
-                </a>
+                <div style="display: flex; gap: 8px; font-size: 12px; color: #6b7280; margin-bottom: 10px; flex-wrap: wrap;">
+                  <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">🛏️ ${property.details.bedrooms} dhoma</span>
+                  <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">🚿 ${property.details.bathrooms} banjo</span>
+                  <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">📐 ${property.details.squareFootage}m²</span>
+                </div>
+                <div style="margin-top: 12px;">
+                  <a 
+                    href="/properties/${property.id}" 
+                    style="
+                      display: inline-block;
+                      background: #2563eb;
+                      color: white;
+                      padding: 8px 16px;
+                      border-radius: 6px;
+                      text-decoration: none;
+                      font-size: 13px;
+                      font-weight: 500;
+                      transition: background 0.2s;
+                      width: 100%;
+                      text-align: center;
+                    "
+                    onmouseover="this.style.background='#1d4ed8'"
+                    onmouseout="this.style.background='#2563eb'"
+                  >
+                    Shiko Detajet →
+                  </a>
+                </div>
               </div>
-            `);
+            `, {
+              maxWidth: 300,
+              className: 'custom-popup'
+            });
+
+            markers.push(marker);
           } catch (markerError) {
             console.warn('Error adding marker for property:', property.id, markerError);
           }
         });
 
-        // Fit bounds if we have properties
-        if (validProperties.length > 0) {
-          try {
-            const group = new L.featureGroup(map.getLayers().filter((layer: any) => layer instanceof L.Marker));
-            if (group.getLayers().length > 0) {
-              map.fitBounds(group.getBounds().pad(0.1));
+        // Fit bounds if we have properties (with delay to ensure map is ready)
+        if (markers.length > 0) {
+          setTimeout(() => {
+            try {
+              if (markers.length > 0) {
+                const group = L.featureGroup(markers);
+                // Use flyToBounds instead of fitBounds to avoid animation issues
+                map.fitBounds(group.getBounds().pad(0.1), { animate: false, maxZoom: 15 });
+              }
+            } catch (boundsError) {
+              console.warn('Error fitting bounds:', boundsError);
             }
-          } catch (boundsError) {
-            console.warn('Error fitting bounds:', boundsError);
-          }
+          }, 100);
         }
 
         mapInstanceRef.current = map;
@@ -231,7 +274,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
       <div
         ref={mapRef}
         style={{ height }}
-        className="w-full rounded-lg border border-gray-200"
+        className="w-full rounded-lg border border-gray-200 overflow-hidden"
       />
       {isLoading && (
         <div className="absolute inset-0 bg-gray-100 flex items-center justify-center rounded-lg">

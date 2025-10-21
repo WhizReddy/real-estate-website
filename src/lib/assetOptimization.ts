@@ -40,10 +40,12 @@ export function lazyLoadAssets() {
   if (typeof window === 'undefined') return;
 
   // Lazy load Leaflet CSS and JS only when needed
+  // Note: Leaflet is loaded directly in map components to avoid SSR issues
+  // This function is kept for future use with other assets
   const loadLeafletAssets = () => {
     return Promise.all([
       // import('leaflet/dist/leaflet.css'), // CSS imports not supported in dynamic imports
-      import('leaflet'),
+      // import('leaflet'), // Commented out to prevent server-side bundling
     ]);
   };
 

@@ -30,8 +30,7 @@ const AccessibleButton = forwardRef<HTMLButtonElement, AccessibleButtonProps>(
     'aria-labelledby': ariaLabelledBy,
     'aria-describedby': ariaDescribedBy,
     'aria-expanded': ariaExpanded,
-    'aria-selected': ariaSelected,
-    'aria-checked': ariaChecked,
+    
     'aria-disabled': ariaDisabled,
     'aria-hidden': ariaHidden,
     ...props
@@ -63,9 +62,7 @@ const AccessibleButton = forwardRef<HTMLButtonElement, AccessibleButtonProps>(
         aria-labelledby={ariaLabelledBy}
         aria-describedby={ariaDescribedBy}
         aria-expanded={ariaExpanded}
-        aria-selected={ariaSelected}
-        aria-checked={ariaChecked}
-        aria-disabled={ariaDisabled || isDisabled}
+        aria-disabled={ariaDisabled}
         aria-hidden={ariaHidden}
         style={{ touchAction: 'manipulation' }}
         {...props}

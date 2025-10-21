@@ -332,7 +332,13 @@ export function validatePropertyData(data: any): ValidationResult {
     });
   } else {
     const validImages = data.images.filter((img: any) => {
-      return typeof img === 'string' && (img.startsWith('http') || img.startsWith('data:'));
+      return (
+        typeof img === 'string' && (
+          img.startsWith('http') ||
+          img.startsWith('data:') ||
+          img.startsWith('/uploads/')
+        )
+      );
     });
     
     if (validImages.length === 0) {

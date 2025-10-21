@@ -41,7 +41,7 @@ export class PerformanceMonitor {
   }
 
   static getAllStats() {
-    const stats: Record<string, any> = {};
+    const stats: Record<string, { count: number; average: number; min: number; max: number }> = {};
     for (const [name] of this.measurements) {
       stats[name] = this.getStats(name);
     }
@@ -54,41 +54,53 @@ export class PerformanceMonitor {
 }
 
 // Debounce utility for search optimization
-export function debounce<T extends (...args: any[]) => any>(
-  func: T,
+export function debounce<TArgs extends unknown[]>(
+  func: (...args: TArgs) => void,
   wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout;
-  
-  return (...args: Parameters<T>) => {
+): (...args: TArgs) => void {
+  let timeout: ReturnType<typeof setTimeout>;
+
+  return (...args: TArgs) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => func(...args), wait);
   };
 }
 
 // Throttle utility for scroll events
-export function throttle<T extends (...args: any[]) => any>(
-  func: T,
+export function throttle<TArgs extends unknown[]>(
+  func: (...args: TArgs) => void,
   limit: number
-): (...args: Parameters<T>) => void {
-  let inThrottle: boolean;
-  
-  return (...args: Parameters<T>) => {
+): (...args: TArgs) => void {
+  let inThrottle = false;
+
+  return (...args: TArgs) => {
     if (!inThrottle) {
       func(...args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      setTimeout(() => {
+        inThrottle = false;
+      }, limit);
     }
   };
 }
 
 // Memory usage monitoring
+type PerformanceWithMemory = Performance & {
+  memory: {
+    usedJSHeapSize: number;
+    totalJSHeapSize: number;
+    jsHeapSizeLimit: number;
+  };
+};
+
 export function getMemoryUsage() {
-  if ('memory' in performance) {
+  const perf = performance as Performance | PerformanceWithMemory;
+  if ('memory' in perf) {
+    const mem = (perf as PerformanceWithMemory).memory;
     return {
-      usedJSHeapSize: (performance as any).memory.usedJSHeapSize,
-      totalJSHeapSize: (performance as any).memory.totalJSHeapSize,
-      jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit
+      usedJSHeapSize: mem.usedJSHeapSize,
+      totalJSHeapSize: mem.totalJSHeapSize,
+      jsHeapSizeLimit: mem.jsHeapSizeLimit,
     };
   }
   return null;
@@ -156,12 +168,16 @@ export async function runPerformanceTests() {
     const filterTime = filterEnd();
     
     // Test sorting performance
-    const sortEnd = PerformanceMonitor.startMeasurement(`sort-${size}`);
-    const sorted = [...filtered].sort((a, b) => b.price - a.price);
-    const sortTime = sortEnd();
+  const sortEnd = PerformanceMonitor.startMeasurement(`sort-${size}`);
+  const sorted = [...filtered].sort((a, b) => b.price - a.price);
+  const sortTime = sortEnd();
     
     console.log(`  Filter: ${filterTime.toFixed(2)}ms (${filtered.length} results)`);
     console.log(`  Sort: ${sortTime.toFixed(2)}ms`);
+    // Access sorted to avoid unused variable warning and provide a useful snippet
+    if (sorted.length > 0) {
+      console.log(`  Top price: ${sorted[0].price}`);
+    }
     
     // Memory usage
     const memory = getMemoryUsage();

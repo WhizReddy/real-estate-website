@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Property } from '@/types';
-import { getProperties, deleteProperty } from '@/lib/data';
+import { getProperties, getUserProperties, deleteProperty } from '@/lib/data';
 import { formatPrice } from '@/lib/utils';
 import { getCurrentUser, isAdmin, isAgent, clearSession, UserData } from '@/lib/auth-utils';
 import { Plus, Edit, Trash2, Eye, LogOut, MessageCircle, Search, Filter, X, User } from 'lucide-react';
@@ -49,40 +49,25 @@ export default function AdminDashboard() {
 
   const loadProperties = async () => {
     try {
-      // Use role-based API endpoint
-      const sessionToken = localStorage.getItem('adminSession');
-      const response = await fetch('/api/properties/user', {
-        headers: {
-          'Authorization': `Bearer ${sessionToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch properties');
+      let data = [];
+      if (userRole === 'ADMIN') {
+        data = await getProperties();
+      } else if (userRole === 'AGENT') {
+        // Fetch only agent's own properties
+        const response = await fetch('/api/properties/user', { cache: 'no-store' });
+        if (response.ok) {
+          const result = await response.json();
+          data = result.data || [];
+        } else {
+          data = [];
+        }
       }
-
-      const result = await response.json();
-      if (result.success) {
-        setAllProperties(result.data);
-        setProperties(result.data);
-      } else {
-        console.error('Error from API:', result.error);
-        // Fallback to regular API if role-based fails
-        const data = await getProperties();
-        setAllProperties(data);
-        setProperties(data);
-      }
+      setAllProperties(data);
+      setProperties(data);
     } catch (error) {
       console.error('Error loading properties:', error);
-      // Fallback to regular API
-      try {
-        const data = await getProperties();
-        setAllProperties(data);
-        setProperties(data);
-      } catch (fallbackError) {
-        console.error('Fallback also failed:', fallbackError);
-      }
+      setAllProperties([]);
+      setProperties([]);
     } finally {
       setLoading(false);
     }
@@ -450,10 +435,14 @@ export default function AdminDashboard() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Pasuria
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  let data: Property[] = [];
+                  if (userRole === 'ADMIN') {
+                    data = await getProperties();
+                  } else if (userRole === 'AGENT') {
+                    data = await getUserProperties();
+                  }
+                  setAllProperties(data);
+                  setProperties(data);
                     Lokacioni
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">

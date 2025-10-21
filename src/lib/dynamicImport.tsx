@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic';
-import { ComponentType } from 'react';
+import { ComponentType, ReactElement } from 'react';
 
 interface DynamicImportOptions {
   ssr?: boolean;
-  loading?: () => JSX.Element;
+  loading?: () => ReactElement;
   retryAttempts?: number;
   retryDelay?: number;
   onError?: (error: Error) => void;
@@ -39,8 +39,8 @@ export function createDynamicImport<T = any>(
     for (let attempt = 1; attempt <= retryAttempts; attempt++) {
       try {
         // Attempt to load the component
-        const module = await importFn();
-        return module;
+        const loadedModule = await importFn();
+        return loadedModule;
       } catch (error) {
         lastError = error as Error;
         

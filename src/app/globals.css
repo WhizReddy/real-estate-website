@@ -1,409 +1,165 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base styles */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Force light mode for form inputs to ensure readability */
-input, textarea, select {
-  background-color: #ffffff !important;
-  color: #1f2937 !important;
-  border-color: #d1d5db !important;
-}
-
-input:focus, textarea:focus, select:focus {
-  background-color: #ffffff !important;
-  color: #1f2937 !important;
-  border-color: #2563eb !important;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
-}
-
-/* Ensure placeholder text is visible */
-input::placeholder, textarea::placeholder {
-  color: #6b7280 !important;
-  opacity: 1 !important;
-}
-
-/* Fix admin panel background to ensure proper contrast */
-.admin-panel {
-  background-color: #f9fafb !important;
-  color: #1f2937 !important;
+* {
+  box-sizing: border-box;
 }
 
 /* Performance optimizations */
+.property-grid,
+.property-card,
+.search-filter,
+.map-container {
+  contain: layout style paint;
+}
+
+img {
+  content-visibility: auto;
+}
+
+/* Animations */
 @keyframes shimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
 
-/* Optimize font loading */
-@font-face {
-  font-display: swap;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Reduce layout shift */
-.property-grid {
-  contain: layout style paint;
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
 }
 
-/* Optimize images */
-img {
-  content-visibility: auto;
-  loading: lazy;
-}
-
-/* Critical CSS for above-the-fold */
-.hero-gradient {
-  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-  will-change: transform;
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Performance improvements */
-* {
-  box-sizing: border-box;
-}
-
-/* Optimize rendering */
-.property-card, .search-filter, .map-container {
-  contain: layout style paint;
-  will-change: auto;
-}
-
-/* Lazy loading placeholders */
 .loading-placeholder {
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
-/* Optimize critical path */
-.above-fold {
-  contain: layout style;
-}
-
-/* Reduce paint complexity */
-.complex-shadow {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-/* GPU acceleration for smooth animations */
-.gpu-accelerated {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-}
-
-/* Optimize scrolling performance */
-.scroll-container {
-  -webkit-overflow-scrolling: touch;
-  overflow-scrolling: touch;
-}
-
-/* Reduce reflows */
-.fixed-dimensions {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16/9;
-}
-
-/* Optimize text rendering */
-body {
-  text-rendering: optimizeSpeed;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Mobile-first responsive improvements */
-@media (max-width: 768px) {
-  /* Improve touch targets */
-  button, a, input, select, textarea {
-    min-height: 44px;
-    min-width: 44px;
-  }
-  
-  /* Better mobile typography */
-  body {
-    font-size: 16px; /* Prevent zoom on iOS */
-    line-height: 1.5;
-  }
-  
-  /* Improve form inputs on mobile */
-  input, select, textarea {
-    font-size: 16px; /* Prevent zoom on iOS */
-    padding: 12px 16px;
-    border-radius: 8px;
-  }
-  
-  /* Better mobile spacing */
-  .mobile-spacing {
-    padding: 16px;
-  }
-  
-  /* Optimize mobile cards */
-  .property-card {
-    margin-bottom: 16px;
-  }
-  
-  /* Mobile-friendly buttons */
-  .mobile-button {
-    padding: 12px 24px;
-    font-size: 16px;
-    border-radius: 8px;
-    touch-action: manipulation;
-  }
-  
-  /* Mobile hero optimizations */
-  .hero-section {
-    padding: 60px 16px 40px;
-  }
-  
-  .hero-title {
-    font-size: 2.5rem;
-    line-height: 1.1;
-    margin-bottom: 1rem;
-  }
-  
-  .hero-subtitle {
-    font-size: 1.125rem;
-    line-height: 1.4;
-  }
-  
-  /* Mobile grid optimizations */
-  .mobile-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
-  /* Mobile navigation */
-  .mobile-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    border-top: 1px solid #e5e7eb;
-    padding: 12px 16px;
-    z-index: 50;
-  }
-  
-  /* Mobile search optimizations */
-  .mobile-search {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: white;
-    z-index: 60;
-    overflow-y: auto;
-  }
-  
-  /* Mobile map optimizations */
-  .mobile-map {
-    height: 300px;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  
-  /* Mobile property cards */
-  .mobile-property-card {
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 16px;
-  }
-  
-  .mobile-property-image {
-    height: 200px;
-    object-fit: cover;
-  }
-  
-  /* Mobile contact section */
-  .mobile-contact {
-    padding: 40px 16px;
-  }
-  
-  .mobile-contact-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-}
-
-/* Touch device optimizations */
-@media (hover: none) and (pointer: coarse) {
-  /* Remove hover effects on touch devices */
-  .hover-effect:hover {
-    transform: none;
-  }
-  
-  /* Larger touch targets */
-  button, a {
-    padding: 12px 16px;
-  }
-}
-
-/* CRITICAL: Force correct homepage background - override any red styling */
-html, body {
-  background-color: #ffffff !important;
-}
-
-/* Force blue gradient background on homepage */
-.bg-gradient-to-br {
-  background: linear-gradient(to bottom right, #f8fafc, #dbeafe) !important;
-}
-
-/* Override any potential red backgrounds */
-* {
-  background-color: inherit !important;
-}
-
-/* Specifically target any red classes and override them */
-.bg-red-50, .bg-red-100, .bg-red-200, .bg-red-300, .bg-red-400, .bg-red-500, .bg-red-600, .bg-red-700, .bg-red-800, .bg-red-900 {
-  background-color: #f8fafc !important;
-}
-
-/* Ensure hero section has correct blue gradient */
-.hero-gradient {
-  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%) !important;
-}
-
-/* Force blue background class for homepage */
-.force-blue-bg {
-  background-color: #f8fafc !important;
-}
-
-.force-blue-bg * {
-  background-color: inherit !important;
-}
-
-/* Override any red styling that might be injected */
-.force-blue-bg .bg-red-50,
-.force-blue-bg .bg-red-100,
-.force-blue-bg .bg-red-200,
-.force-blue-bg .bg-red-300,
-.force-blue-bg .bg-red-400,
-.force-blue-bg .bg-red-500,
-.force-blue-bg .bg-red-600,
-.force-blue-bg .bg-red-700,
-.force-blue-bg .bg-red-800,
-.force-blue-bg .bg-red-900 {
-  background-color: #f8fafc !important;
-}
-
-/* Tablet-specific styles */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .tablet-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Desktop optimizations */
-@media (min-width: 1025px) {
-  .desktop-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Optimize animations */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-/* Custom utilities */
-.line-clamp-1 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-}
-
-.line-clamp-2 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}/*
- Leaflet CSS - Import leaflet styles */
-@import 'leaflet/dist/leaflet.css';
-
-/* Custom marker styles */
-.custom-marker, .custom-marker-full {
+/* Leaflet marker styles */
+.custom-marker,
+.custom-marker-full {
   background: transparent !important;
   border: none !important;
 }
 
-.property-marker, .property-marker-full {
+.property-marker,
+.property-marker-full {
   position: relative;
   z-index: 100;
 }
 
-.property-marker:hover, .property-marker-full:hover {
+.property-marker:hover,
+.property-marker-full:hover {
   z-index: 200;
 }
 
-/* Map popup styles */
+/* Ensure map container doesn't have sticky positioning */
+.leaflet-container {
+  position: relative !important;
+  z-index: 0 !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Override all Leaflet pane z-indexes to keep them below navigation */
+.leaflet-pane {
+  z-index: 1 !important;
+}
+
+.leaflet-tile-pane {
+  z-index: 1 !important;
+}
+
+.leaflet-overlay-pane {
+  z-index: 2 !important;
+}
+
+.leaflet-shadow-pane {
+  z-index: 3 !important;
+}
+
+.leaflet-marker-pane {
+  z-index: 4 !important;
+}
+
+.leaflet-tooltip-pane {
+  z-index: 5 !important;
+}
+
+.leaflet-popup-pane {
+  z-index: 6 !important;
+}
+
+/* Ensure controls stay reasonable */
+.leaflet-control-zoom,
+.leaflet-control-attribution,
+.leaflet-control-layers,
+.leaflet-bar {
+  z-index: 10 !important;
+}
+
+/* Ensure navigation stays above map */
+nav[class*="sticky"] {
+  z-index: 100 !important;
+}
+
 .leaflet-popup-content-wrapper {
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 0;
 }
 
 .leaflet-popup-content {
   margin: 0;
   line-height: 1.4;
+  padding: 0;
 }
 
-.custom-tooltip, .custom-tooltip-full {
+.leaflet-popup-tip {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.custom-popup .leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.custom-tooltip,
+.custom-tooltip-full,
+.custom-tooltip-mobile {
   background: white !important;
   border: 1px solid #e5e7eb !important;
   border-radius: 8px !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
 }
 
-.custom-tooltip .leaflet-tooltip-content, 
+.custom-tooltip .leaflet-tooltip-content,
 .custom-tooltip-full .leaflet-tooltip-content,
 .custom-tooltip-mobile .leaflet-tooltip-content {
   margin: 0 !important;
   padding: 0 !important;
 }
 
-/* Mobile-friendly tooltip styling */
-.custom-tooltip-mobile {
-  background: white !important;
-  border: 1px solid #e5e7eb !important;
-  border-radius: 6px !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-  font-size: 11px !important;
-}
-
-/* Marker Cluster Styles */
+/* Marker clusters */
 .marker-cluster-small {
   background-color: rgba(37, 99, 235, 0.6);
 }
@@ -439,12 +195,32 @@ html, body {
   font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
-/* Fade in animation for popups */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  button, a, input, select, textarea {
+    min-height: 44px;
+  }
+  
+  body {
+    font-size: 16px;
+  }
+  
+  input, select, textarea {
+    font-size: 16px;
+  }
 }
 
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-out;
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
 }

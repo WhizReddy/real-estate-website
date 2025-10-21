@@ -110,6 +110,8 @@ export default function PropertyDetailMap({
         doubleClickZoom: true,
         dragging: true,
         touchZoom: true,
+        maxBounds: null,
+        maxBoundsViscosity: 0.0,
       });
 
       // Add tile layer
@@ -120,9 +122,21 @@ export default function PropertyDetailMap({
       L.tileLayer(tileUrl, {
         attribution: mapLayer === 'satellite' ? 'Esri' : 'OpenStreetMap',
         maxZoom: 18,
+        minZoom: 10,
+        tileSize: 256,
+        keepBuffer: 2,
+        updateWhenZooming: false,
+        updateWhenIdle: true,
       }).addTo(map);
 
       mapInstanceRef.current = map;
+
+      // Force map to invalidate size after a short delay to ensure proper rendering
+      setTimeout(() => {
+        if (map) {
+          map.invalidateSize();
+        }
+      }, 100);
 
       // Add main property marker
       addPropertyMarker(L, map, property);
@@ -367,15 +381,15 @@ export default function PropertyDetailMap({
   }
 
   return (
-    <div className={`relative ${isFullscreen ? 'fixed inset-0 z-50 bg-white' : ''} ${className}`}>
+    <div className={`${isFullscreen ? 'fixed inset-0 z-[200] bg-white' : 'relative'} ${className}`}>
       <div
         ref={mapRef}
         style={{ height: isFullscreen ? '100vh' : height }}
-        className={`w-full ${isFullscreen ? '' : 'rounded-lg shadow-md border border-gray-200'} touch-pan-x touch-pan-y bg-gray-50`}
+        className={`w-full ${isFullscreen ? '' : 'rounded-lg shadow-md border border-gray-200 overflow-hidden'} touch-pan-x touch-pan-y bg-gray-50`}
       />
 
       {/* Map Controls */}
-      <div className="absolute top-3 right-3 flex flex-col gap-2 z-[1000]">
+      <div className={`absolute top-3 right-3 flex flex-col gap-2 ${isFullscreen ? 'z-[1000]' : 'z-10'}`}>
         {/* Fullscreen Toggle */}
         <button
           onClick={toggleFullscreen}
@@ -416,7 +430,7 @@ export default function PropertyDetailMap({
 
       {/* Directions Button */}
       {showDirections && (
-        <div className="absolute bottom-3 right-3 z-[1000]">
+        <div className={`absolute bottom-3 right-3 ${isFullscreen ? 'z-[1000]' : 'z-10'}`}>
           <a
             href={`https://www.google.com/maps/dir/?api=1&destination=${property.address.coordinates.lat},${property.address.coordinates.lng}`}
             target="_blank"
@@ -441,7 +455,7 @@ export default function PropertyDetailMap({
 
       {/* Neighborhood Legend */}
       {showNeighborhood && showNearbyPlaces && !isLoading && !error && (
-        <div className="absolute bottom-3 left-3 bg-white rounded-lg shadow-md border border-gray-200 p-3 max-w-xs z-[1000]">
+        <div className={`absolute bottom-3 left-3 bg-white rounded-lg shadow-md border border-gray-200 p-3 max-w-xs ${isFullscreen ? 'z-[1000]' : 'z-10'}`}>
           <h4 className="font-semibold text-gray-900 mb-2 text-sm">Nearby Places</h4>
           <div className="space-y-1 text-xs">
             <div className="flex items-center gap-2">

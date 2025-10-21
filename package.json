@@ -24,6 +24,7 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
+    "seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
     "db:reset": "prisma db push --force-reset && npm run db:seed",
     "create-admin": "node scripts/create-admin.js",
@@ -43,6 +44,7 @@
     "@vercel/postgres": "^0.10.0",
     "bcryptjs": "^3.0.2",
     "critters": "^0.0.23",
+    "dotenv": "^17.2.3",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.525.0",
     "next": "15.4.1",
@@ -57,7 +59,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.1.15",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
@@ -69,7 +71,7 @@
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
     "prisma": "^5.22.0",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.1.15",
     "tsx": "^4.7.0",
     "typescript": "^5"
   },

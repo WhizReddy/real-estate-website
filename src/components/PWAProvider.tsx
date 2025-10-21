@@ -69,21 +69,17 @@ export default function PWAProvider({ children }: PWAProviderProps) {
       if ('serviceWorker' in navigator) {
         const registrations = await navigator.serviceWorker.getRegistrations();
         for (const registration of registrations) {
-          console.log('Unregistering existing service worker:', registration);
           await registration.unregister();
         }
-        console.log('All service workers unregistered');
         
         // Also clear all caches
         if ('caches' in window) {
           const cacheNames = await caches.keys();
           for (const cacheName of cacheNames) {
             if (cacheName.includes('real-estate')) {
-              console.log('Deleting cache:', cacheName);
               await caches.delete(cacheName);
             }
           }
-          console.log('All real-estate caches cleared');
         }
       }
     } catch (error) {
@@ -93,7 +89,7 @@ export default function PWAProvider({ children }: PWAProviderProps) {
     // Register service worker - TEMPORARILY DISABLED to fix navigation issues
     // TODO: Re-enable after fixing service worker offline redirect logic
     try {
-      console.log('Service Worker registration temporarily disabled');
+      // Service Worker registration is disabled in development
       // const registration = await registerSW({
       //   onUpdate: (reg) => {
       //     PWAUpdateManager.init(reg);

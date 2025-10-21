@@ -1,3 +1,4 @@
+
 import { Property, ContactInquiry } from '@/types';
 import { sendInquiryEmail, sendConfirmationEmail } from './email';
 
@@ -15,18 +16,11 @@ export async function getProperties(): Promise<Property[]> {
       cache: 'no-store', // Always get fresh data
     });
     
-    if (response.ok) {
-      const data = await response.json();
-      return data.properties || [];
-    } else {
-      console.error('API response not OK:', response.status, response.statusText);
-      throw new Error(`Failed to fetch properties: ${response.status}`);
-    }
-  } catch (error) {
-    console.error('Failed to fetch properties from database:', error);
-    throw error;
-  }
-}
+
+
+
+
+
 
 export async function getActiveProperties(): Promise<Property[]> {
   try {

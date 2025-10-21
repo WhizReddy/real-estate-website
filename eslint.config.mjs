@@ -9,7 +9,7 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
-const eslintConfig = [
+export default [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
     rules: {
@@ -25,6 +25,16 @@ const eslintConfig = [
       "react/jsx-no-undef": "error", // Keep this as error since it indicates missing components
     },
   },
+  {
+    files: ["**/__tests__/**", "**/*.test.*", "**/*.spec.*"],
+    rules: {
+      // Tests often use flexible types and raw img tags for snapshots
+      "@typescript-eslint/no-explicit-any": "off",
+      "@next/next/no-img-element": "off",
+      "@typescript-eslint/no-require-imports": "off",
+      "react/no-unescaped-entities": "off",
+      // Allow some a11y leniency in tests
+      "jsx-a11y/role-supports-aria-props": "off",
+    },
+  },
 ];
-
-export default eslintConfig;

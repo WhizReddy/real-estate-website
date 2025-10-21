@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { put } from '@vercel/blob';
+import { writeFile, mkdir } from 'fs/promises';
+import { join } from 'path';
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,23 +35,40 @@ export async function POST(request: NextRequest) {
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 15);
     const extension = file.name.split('.').pop() || 'jpg';
-    const filename = `property-images/${timestamp}-${randomString}.${extension}`;
+    const filename = `${timestamp}-${randomString}.${extension}`;
 
-    // Upload to Vercel Blob
-    const blob = await put(filename, file, {
-      access: 'public',
-    });
+    // Convert file to buffer
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    // Ensure uploads directory exists
+    const uploadsDir = join(process.cwd(), 'public', 'uploads', 'properties');
+    try {
+      await mkdir(uploadsDir, { recursive: true });
+    } catch {
+      // Directory might already exist, ignore error
+    }
+
+    // Write file to public/uploads/properties directory
+    const filePath = join(uploadsDir, filename);
+    await writeFile(filePath, buffer);
+
+    // Return URL relative to public directory
+    const url = `/uploads/properties/${filename}`;
 
     return NextResponse.json({
       success: true,
-      url: blob.url,
+      url: url,
       filename: filename,
     });
   } catch (error) {
     console.error('Error uploading file:', error);
     return NextResponse.json(
-      { error: 'Failed to upload file' },
+      { error: 'Failed to upload file', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
 }
+
+// Set runtime to nodejs for fs access
+export const runtime = 'nodejs';

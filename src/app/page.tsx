@@ -3,8 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { getProperties } from "@/lib/data";
 import { Property } from "@/types";
-// Removed direct imports - using dynamic imports instead
-import SimpleMapView from "@/components/SimpleMapView";
+import dynamic from "next/dynamic";
 import Layout from "@/components/Layout";
 import StructuredData from "@/components/StructuredData";
 import CreativeLoader from "@/components/CreativeLoader";
@@ -13,6 +12,23 @@ import MobileSearchModal from "@/components/MobileSearchModal";
 import Link from "next/link";
 import { Home as HomeIcon, BarChart3, MapPin, Map } from "lucide-react";
 import { createDynamicImport, DefaultLoadingComponent, DynamicImportErrorFallback, logChunkError } from "@/lib/dynamicImport";
+
+// Force dynamic rendering to avoid SSR issues with Leaflet
+export const runtime = 'edge'; // Use edge runtime or 'nodejs'
+export const dynamicParams = true;
+
+// Dynamically import map component to avoid SSR issues with Leaflet
+const SimpleMapView = dynamic(
+  () => import("@/components/SimpleMapView"),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="h-64 bg-gray-100 rounded-lg animate-pulse flex items-center justify-center">
+        <div className="text-gray-500">Loading map...</div>
+      </div>
+    )
+  }
+);
 
 // Enhanced dynamic imports with retry mechanism for chunk loading failures
 const DynamicSearchFilters = createDynamicImport(
@@ -139,19 +155,12 @@ export default function Home() {
   }
 
   return (
-    <Layout variant="homepage" className="force-blue-bg">
+    <Layout variant="homepage">
       <StructuredData type="website" />
       <StructuredData type="organization" />
-      <div 
-        className="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen" 
-        style={{
-          backgroundColor: '#f8fafc !important',
-          background: 'linear-gradient(to bottom right, #f8fafc, #dbeafe) !important',
-          color: 'inherit !important'
-        }}
-      >
+      <div className="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
         {/* Royal Blue Hero Section */}
-        <section className="relative hero-gradient overflow-hidden above-fold">
+        <section className="relative bg-gradient-to-br from-blue-800 via-blue-700 to-blue-600 overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="absolute inset-0 opacity-20">

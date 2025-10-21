@@ -4,8 +4,8 @@ const nextConfig: NextConfig = {
   // Output configuration for better chunk handling
   output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
   
-  // Transpile packages that might cause chunk loading issues
-  transpilePackages: ['leaflet', 'react-leaflet'],
+  // Don't transpile leaflet - it should only run client-side
+  transpilePackages: [],
   
   images: {
     remotePatterns: [
@@ -52,6 +52,22 @@ const nextConfig: NextConfig = {
   
   // Webpack configuration for fallback when Turbopack fails
   webpack: (config, { dev, isServer }) => {
+    if (isServer) {
+      // Don't try to bundle leaflet on the server
+      // It should only load client-side via dynamic import
+      if (Array.isArray(config.externals)) {
+        config.externals.push('leaflet', 'react-leaflet', /^leaflet\//);
+      } else if (typeof config.externals === 'function') {
+        const originalExternals = config.externals;
+        config.externals = async (context, request, callback) => {
+          if (request === 'leaflet' || request === 'react-leaflet' || request?.startsWith('leaflet/')) {
+            return callback();
+          }
+          return originalExternals(context, request, callback);
+        };
+      }
+    }
+    
     // Fix for chunk loading issues
     if (!isServer) {
       config.resolve.fallback = {
@@ -59,31 +75,6 @@ const nextConfig: NextConfig = {
         fs: false,
         net: false,
         tls: false,
-      };
-    }
-    
-    // Optimize chunk splitting
-    if (!dev) {
-      config.optimization = {
-        ...config.optimization,
-        splitChunks: {
-          chunks: 'all',
-          cacheGroups: {
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendors',
-              chunks: 'all',
-              priority: 10,
-            },
-            common: {
-              name: 'common',
-              minChunks: 2,
-              chunks: 'all',
-              priority: 5,
-              reuseExistingChunk: true,
-            },
-          },
-        },
       };
     }
     
