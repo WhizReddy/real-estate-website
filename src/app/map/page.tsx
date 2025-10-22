@@ -342,8 +342,6 @@ export default function MapPage() {
           <div className="flex-1 relative">
             <DynamicFullMapView
               properties={filteredProperties}
-              filters={filters}
-              onFilterChange={handleFilterChange}
               onPropertySelect={handlePropertySelect}
               selectedProperty={selectedProperty}
             />

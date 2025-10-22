@@ -7,6 +7,12 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import matchers from '@testing-library/jest-dom/matchers';
+
+// Extend jest expect with @testing-library/jest-dom matchers (types + runtime)
+expect.extend(matchers);
+import type { MockedFunction } from 'jest-mock';
 
 // Mock all necessary modules
 jest.mock('next-auth/react', () => ({
@@ -36,7 +42,7 @@ const SignInPage = () => (
 );
 
 jest.mock('@/lib/data', () => ({
-  getProperties: jest.fn().mockResolvedValue([
+  getProperties: (jest.fn().mockResolvedValue([
     {
       id: '1',
       title: 'Luxury Apartment in Tirana',
@@ -85,7 +91,7 @@ jest.mock('@/lib/data', () => ({
       createdAt: '2024-01-02',
       updatedAt: '2024-01-02',
     },
-  ]),
+  ]) as any),
 }));
 
 // Mock components that might cause issues
@@ -156,9 +162,9 @@ jest.mock('@/lib/performance-monitor', () => ({
   trackAuthFlow: jest.fn(),
 }));
 
-const mockSignIn = signIn as jest.MockedFunction<typeof signIn>;
-const mockGetSession = getSession as jest.MockedFunction<typeof getSession>;
-const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
+const mockSignIn = signIn as unknown as MockedFunction<typeof signIn>;
+const mockGetSession = getSession as unknown as MockedFunction<typeof getSession>;
+const mockUseRouter = useRouter as unknown as MockedFunction<typeof useRouter>;
 
 describe('Complete User Flows', () => {
   const mockPush = jest.fn();

@@ -4,18 +4,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { Property } from '@/types';
 import { 
   Search, 
-  Filter, 
-  MapPin, 
   DollarSign, 
-  Home, 
-  Bed, 
-  Bath, 
-  Square,
-  Calendar,
-  X,
   ChevronDown,
   ChevronUp,
-  Sliders,
   Target,
   Bookmark,
   Sparkles,
@@ -195,6 +186,28 @@ export default function MapSearchFilters({
     };
   };
 
+  // Sync initial range filters with actual data whenever the properties list changes
+  useEffect(() => {
+    if (!properties || properties.length === 0) return;
+    const priceValues = properties.map(p => p.price);
+    const sizeValues = properties.map(p => p.details.squareFootage);
+    const yearValues = properties.map(p => p.details.yearBuilt || new Date().getFullYear());
+
+    const priceMin = Math.min(...priceValues);
+    const priceMax = Math.max(...priceValues);
+    const sizeMin = Math.min(...sizeValues);
+    const sizeMax = Math.max(...sizeValues);
+    const yearMin = Math.min(...yearValues);
+    const yearMax = Math.max(...yearValues);
+
+    setFilters(prev => ({
+      ...prev,
+      priceRange: { min: priceMin, max: priceMax },
+      squareFootage: { min: sizeMin, max: sizeMax },
+      yearBuilt: { min: yearMin, max: yearMax }
+    }));
+  }, [properties]);
+
   // Filter properties based on current filter state
   const filterProperties = useCallback((filterState: FilterState) => {
     let filtered = properties;
@@ -302,6 +315,7 @@ export default function MapSearchFilters({
   }, [filters, filterProperties, onFilteredPropertiesChange]);
 
   // Handle filter changes
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateFilter = (key: keyof FilterState, value: any) => {
     setFilters(prev => ({
       ...prev,

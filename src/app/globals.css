@@ -122,6 +122,22 @@ nav[class*="sticky"] {
   z-index: 100 !important;
 }
 
+/* Map UI overlays (ensure above Leaflet panes) */
+.map-controls-overlay {
+  position: absolute !important;
+  z-index: 8000 !important; /* below filters and details */
+}
+
+.map-filters-overlay {
+  position: absolute !important;
+  z-index: 9000 !important; /* above controls, below details */
+}
+
+.map-details-overlay {
+  position: absolute !important;
+  z-index: 10000 !important; /* always on top */
+}
+
 .leaflet-popup-content-wrapper {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

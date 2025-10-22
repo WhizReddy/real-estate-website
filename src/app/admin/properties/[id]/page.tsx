@@ -3,8 +3,13 @@ import { getProperty } from '@/lib/data';
 import PropertyDetailMap from '@/components/PropertyDetailMap';
 import { Suspense } from 'react';
 
-export default async function PropertyDetailPage({ params }: { params: { id: string } }) {
-  const property = await getProperty(params.id);
+interface Props {
+  params: Promise<{ id: string }>
+}
+
+export default async function PropertyDetailPage({ params }: Props) {
+  const { id } = await params;
+  const property = await getProperty(id);
   if (!property) return notFound();
 
   return (

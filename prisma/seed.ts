@@ -22,7 +22,7 @@ async function main() {
 
   // Create admin user
   const adminPassword = await hashPassword('admin123');
-  const adminUser = await prisma.user.create({
+  await prisma.user.create({
     data: {
       email: 'admin@pasuritetiranes.com',
       name: 'Administrator',
@@ -80,12 +80,12 @@ async function main() {
         bedrooms: property.details.bedrooms,
         bathrooms: property.details.bathrooms,
         squareFootage: property.details.squareFootage,
-        propertyType: property.details.propertyType.toUpperCase() as any,
+  propertyType: property.details.propertyType.toUpperCase(),
         yearBuilt: property.details.yearBuilt,
         images: JSON.stringify(property.images),
         features: JSON.stringify(property.features),
-        status: property.status.toUpperCase() as string,
-        listingType: property.listingType.toUpperCase() as string,
+  status: property.status.toUpperCase(),
+  listingType: property.listingType.toUpperCase(),
         isPinned: property.isPinned,
         ownerId: assignedAgent.id, // Assign property to agent
       },

@@ -9,46 +9,29 @@ import {
   RefreshCw, 
   Home, 
   Navigation,
-  ExternalLink,
   Phone,
   Mail,
   Bed,
   Bath,
   Square,
   Calendar,
-  X,
-  Filter,
-  Search
+  X
 } from 'lucide-react';
 import CreativeLoader from '@/components/CreativeLoader';
-import MapSearchFilters from '@/components/MapSearchFilters';
 import LocationSearch from '@/components/LocationSearch';
 import Link from 'next/link';
+import Image from 'next/image';
 
-interface MapFilters {
-  priceRange: {
-    min: number;
-    max: number;
-  };
-  propertyType: string[];
-  bedrooms: number[];
-  bathrooms: number[];
-  location: string;
-  features: string[];
-}
+// MapFilters removed as filters UI has been simplified and props are no longer used
 
 interface FullMapViewProps {
   properties: Property[];
-  filters: MapFilters;
-  onFilterChange: (filters: MapFilters) => void;
   onPropertySelect: (property: Property) => void;
   selectedProperty?: Property | null;
 }
 
 export default function FullMapView({
   properties,
-  filters,
-  onFilterChange,
   onPropertySelect,
   selectedProperty,
 }: FullMapViewProps) {
@@ -61,11 +44,7 @@ export default function FullMapView({
   const [mapLayer, setMapLayer] = useState<'street' | 'satellite' | 'terrain'>('street');
   const [showPropertyDetails, setShowPropertyDetails] = useState(false);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>(properties);
-  const [showFilters, setShowFilters] = useState(false);
-  const [locationSearchRadius, setLocationSearchRadius] = useState<{
-    center: { lat: number; lng: number };
-    radius: number;
-  } | null>(null);
+  // Location search circle is drawn directly on the map; no local state needed
 
   const initializeMap = async () => {
     if (typeof window === 'undefined' || !mapRef.current) return;
@@ -114,6 +93,12 @@ export default function FullMapView({
         markerZoomAnimation: true,
         maxBoundsViscosity: 1.0,
       });
+
+      // Move default zoom controls to bottom-left to avoid overlapping the top-left search/filters
+      try {
+        // Leaflet adds zoomControl when zoomControl: true; reposition it after map init
+        map.zoomControl?.setPosition('bottomleft');
+      } catch {}
 
       // Add tile layer
       addTileLayer(L, map, mapLayer);
@@ -164,6 +149,19 @@ export default function FullMapView({
       }
     };
   }, [retryCount]);
+
+  // When the details panel opens/closes, reserve space on the right and reflow the map
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+    try {
+      mapInstanceRef.current.invalidateSize();
+    } catch {}
+  }, [selectedProperty, showPropertyDetails]);
+
+  // Keep filteredProperties in sync with incoming properties (filters removed for simplicity)
+  useEffect(() => {
+    setFilteredProperties(properties);
+  }, [properties]);
 
   // Update markers when filtered properties change
   useEffect(() => {
@@ -396,22 +394,12 @@ export default function FullMapView({
     setRetryCount(prev => prev + 1);
   };
 
-  // Handle filtered properties change
-  const handleFilteredPropertiesChange = (filtered: Property[]) => {
-    setFilteredProperties(filtered);
-  };
-
   // Handle location search
   const handleLocationSearch = (location: {
     address: string;
     coordinates: { lat: number; lng: number };
     radius: number;
   }) => {
-    setLocationSearchRadius({
-      center: location.coordinates,
-      radius: location.radius
-    });
-
     // Center map on searched location
     if (mapInstanceRef.current) {
       mapInstanceRef.current.setView([location.coordinates.lat, location.coordinates.lng], 14);
@@ -426,7 +414,7 @@ export default function FullMapView({
         });
 
         // Add new search circle
-        const circle = L.circle([location.coordinates.lat, location.coordinates.lng], {
+        L.circle([location.coordinates.lat, location.coordinates.lng], {
           radius: location.radius * 1000, // Convert km to meters
           fillColor: '#3b82f6',
           fillOpacity: 0.1,
@@ -440,8 +428,6 @@ export default function FullMapView({
 
   // Clear location search
   const handleClearLocationSearch = () => {
-    setLocationSearchRadius(null);
-    
     // Remove search radius circle
     if (mapInstanceRef.current) {
       mapInstanceRef.current.eachLayer((layer: any) => {
@@ -454,102 +440,75 @@ export default function FullMapView({
 
   return (
     <div className="relative h-full w-full">
-      {/* Search and Filters Panel */}
-  <div className="absolute top-4 left-4 z-1000 max-w-md">
-        {/* Location Search */}
-        <div className="mb-4">
-          <LocationSearch
-            onLocationSelect={handleLocationSearch}
-            onClear={handleClearLocationSearch}
-            placeholder="Search for properties near..."
-            className="w-full"
-          />
-        </div>
-
-        {/* Advanced Filters Toggle */}
-        <div className="mb-4">
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-              showFilters
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            <Filter className="h-4 w-4" />
-            Advanced Filters
-            {filteredProperties.length !== properties.length && (
-              <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                {filteredProperties.length}
-              </span>
-            )}
-          </button>
-        </div>
-
-        {/* Advanced Filters Panel */}
-        {showFilters && (
-          <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
-            <MapSearchFilters
-              properties={properties}
-              onFilteredPropertiesChange={handleFilteredPropertiesChange}
-              onSearchLocationChange={(location) => console.log('Location search:', location)}
-              className="w-full"
-            />
-          </div>
-        )}
+    {/* Search (simplified) */}
+    <div className="absolute left-4 top-4 z-1000 map-filters-overlay max-w-xs sm:max-w-sm w-full">
+      <div className="bg-white/95 backdrop-blur rounded-lg shadow border border-gray-200 p-2">
+        <LocationSearch
+          onLocationSelect={handleLocationSearch}
+          onClear={handleClearLocationSearch}
+          placeholder="Kërko pranë një vendndodhjeje..."
+          className="w-full"
+        />
       </div>
+    </div>
 
       <div
         ref={mapRef}
         className="h-full w-full bg-gray-50"
+        style={{ marginRight: selectedProperty && showPropertyDetails ? '20rem' : 0 }}
       />
 
-      {/* Map Controls */}
-  <div className="absolute top-4 right-4 flex flex-col gap-2 z-1000">
-        {/* Map Layer Selector */}
-        <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+    {/* Map Controls */}
+    <div
+      className="absolute right-4 top-4 z-1000 map-controls-overlay"
+      style={{ right: selectedProperty && showPropertyDetails ? '22rem' : '1rem' }}
+    >
+      <div className="flex items-center gap-2">
+        {/* Compact Layer Toggle */}
+        <div className="bg-white rounded-md shadow border border-gray-200 p-1 flex items-center gap-1">
           <button
             onClick={() => changeMapLayer('street')}
-            className={`p-3 w-full text-xs transition-colors ${
-              mapLayer === 'street' ? 'bg-blue-600 text-white' : 'hover:bg-blue-50 text-blue-600'
+            className={`px-2 py-1 text-[11px] rounded-sm transition-colors ${
+              mapLayer === 'street' ? 'bg-blue-600 text-white' : 'text-blue-600 hover:bg-blue-50'
             }`}
-            title="Harta e rrugëve"
+            title="Rrugë"
           >
             🗺️ Rrugë
           </button>
           <button
             onClick={() => changeMapLayer('satellite')}
-            className={`p-3 w-full text-xs transition-colors ${
-              mapLayer === 'satellite' ? 'bg-blue-600 text-white' : 'hover:bg-blue-50 text-blue-600'
+            className={`px-2 py-1 text-[11px] rounded-sm transition-colors ${
+              mapLayer === 'satellite' ? 'bg-blue-600 text-white' : 'text-blue-600 hover:bg-blue-50'
             }`}
-            title="Pamja satelitore"
+            title="Satelit"
           >
             🛰️ Satelit
           </button>
           <button
             onClick={() => changeMapLayer('terrain')}
-            className={`p-3 w-full text-xs transition-colors ${
-              mapLayer === 'terrain' ? 'bg-blue-600 text-white' : 'hover:bg-blue-50 text-blue-600'
+            className={`px-2 py-1 text-[11px] rounded-sm transition-colors ${
+              mapLayer === 'terrain' ? 'bg-blue-600 text-white' : 'text-blue-600 hover:bg-blue-50'
             }`}
-            title="Terreni"
+            title="Teren"
           >
             🏔️ Teren
           </button>
         </div>
 
-        {/* Reset View Button */}
+        {/* Compact Reset Button */}
         <button
           onClick={resetMapView}
-          className="bg-white hover:bg-blue-50 p-3 rounded-lg shadow-md border border-gray-200 transition-colors duration-200"
-          title="Kthehu në pamjen fillestare"
+          className="bg-white hover:bg-blue-50 p-2 rounded-md shadow border border-gray-200 transition-colors"
+          title="Rivendos pamjen"
         >
-          <Home className="h-4 w-4 text-blue-600" />
+          <Home className="h-3 w-3 text-blue-600" />
         </button>
       </div>
+    </div>
 
       {/* Property Details Sidebar */}
-      {selectedProperty && showPropertyDetails && (
-  <div className="absolute top-0 right-0 w-80 h-full bg-white shadow-xl border-l border-gray-200 z-1001 overflow-y-auto">
+    {selectedProperty && showPropertyDetails && (
+  <div className="absolute top-0 right-0 w-80 h-full bg-white shadow-xl border-l border-gray-200 z-1001 map-details-overlay overflow-y-auto">
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">Detajet e Pasurisë</h3>
@@ -568,11 +527,14 @@ export default function FullMapView({
           <div className="p-4 space-y-4">
             {/* Property Images */}
             {selectedProperty.images.length > 0 && (
-              <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
-                <img
+              <div className="relative aspect-video bg-gray-200 rounded-lg overflow-hidden">
+                <Image
                   src={selectedProperty.images[0]}
                   alt={selectedProperty.title}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 320px"
+                  className="object-cover"
+                  priority
                 />
               </div>
             )}
@@ -733,11 +695,6 @@ export default function FullMapView({
       {!isLoading && !hasError && filteredProperties.length > 0 && (
         <div className="absolute bottom-4 left-4 bg-white bg-opacity-90 rounded-lg px-3 py-2 text-sm text-gray-600 shadow-md">
           📍 {filteredProperties.length} pasuri në hartë • Kliko në marker për detaje
-          {filteredProperties.length !== properties.length && (
-            <span className="ml-2 text-blue-600 font-medium">
-              (filtered from {properties.length})
-            </span>
-          )}
         </div>
       )}
     </div>
