@@ -1,4 +1,3 @@
-import "server-only";
 import { Property, ContactInquiry } from '@/types';
 import { sendInquiryEmail, sendConfirmationEmail } from './email';
 

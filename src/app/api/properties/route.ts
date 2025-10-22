@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 import { validatePropertyData } from "@/lib/validation";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { resolveAuthenticatedDbUser } from "@/lib/serverAuth";
 
 export async function GET() {
   try {
@@ -62,14 +66,28 @@ export async function GET() {
   }
 }
 
+
 export async function POST(request: NextRequest) {
   try {
+    // Resolve authenticated user (NextAuth session or custom cookie)
+    const { user: dbUser } = await resolveAuthenticatedDbUser(request);
+    const session = await getServerSession(authOptions);
+    console.log('🔐 Session during property creation:', {
+      hasSession: !!session,
+      userId: session?.user?.id,
+      userEmail: session?.user?.email,
+      userRole: session?.user?.role,
+      resolvedDbUserId: dbUser?.id,
+    });
+
+    const ownerIdToUse: string | undefined = dbUser?.id;
     const data = await request.json();
 
     // Use comprehensive validation and sanitization
     const validationResult = validatePropertyData(data);
 
     if (!validationResult.isValid) {
+      console.warn('❌ Validation errors during property creation:', validationResult.errors);
       const errorDetails: Record<string, string> = {};
       validationResult.errors.forEach(error => {
         errorDetails[error.field] = error.message;
@@ -110,7 +128,17 @@ export async function POST(request: NextRequest) {
       status: validationResult.sanitizedData.status.toUpperCase(),
       listingType: validationResult.sanitizedData.listingType.toUpperCase(),
       isPinned: validationResult.sanitizedData.isPinned,
+      // If user is logged in AND maps to a real DB user, associate property with agent/user
+      ...(ownerIdToUse ? { ownerId: ownerIdToUse } : {}),
     };
+
+    // For logging, safely read ownerId if present on the object
+    const logOwnerId = (sanitizedData as { ownerId?: string }).ownerId;
+    console.log('📝 Creating property with data:', {
+      hasOwnerId: !!logOwnerId,
+      ownerId: logOwnerId,
+      title: sanitizedData.title,
+    });
 
     const property = await prisma.property.create({
       data: sanitizedData,
@@ -144,6 +172,7 @@ export async function POST(request: NextRequest) {
       status: property.status.toLowerCase(),
       listingType: property.listingType.toLowerCase(),
       isPinned: property.isPinned,
+      ownerId: property.ownerId,
       createdAt: property.createdAt.toISOString(),
       updatedAt: property.updatedAt.toISOString(),
     };

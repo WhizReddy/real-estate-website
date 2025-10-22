@@ -77,7 +77,7 @@ img {
   z-index: 0 !important;
   overflow: hidden !important;
   width: 100% !important;
-  height: 100% !important;
+  /* Don't force height here; let the inline style or parent control it to avoid 0-height maps */
 }
 
 /* Override all Leaflet pane z-indexes to keep them below navigation */

@@ -3,10 +3,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ContactInquiry } from '@/types';
-import { saveInquiry } from '@/lib/data';
 import { generateId, getCurrentTimestamp } from '@/lib/utils';
 import { sanitizeInquiryData, isValidEmail, isValidPhone, contactFormLimiter } from '@/lib/security';
-import { useToast } from '@/components/Toast';
 import { Mail, Phone, Clock, MessageCircle, User, Send } from 'lucide-react';
 
 interface ContactFormProps {
@@ -25,7 +23,7 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const { showToast } = useToast();
+  // toast notifications can be wired later if needed
   
   const {
     register,
@@ -73,7 +71,16 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
         createdAt: getCurrentTimestamp(),
       };
 
-      await saveInquiry(inquiry);
+      // Submit inquiry via API (client-safe)
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(inquiry),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Failed to submit inquiry: ${res.status}`);
+      }
       setIsSubmitted(true);
       reset();
     } catch (error) {
@@ -95,7 +102,7 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Mesazhi u Dërgua!</h3>
           <p className="text-gray-600 mb-4">
-            Faleminderit për interesimin tuaj për këtë pasuri. Do t'ju kontaktojmë së shpejti.
+            Faleminderit për interesimin tuaj për këtë pasuri. Do t&#39;ju kontaktojmë së shpejti.
           </p>
           <button
             onClick={() => setIsSubmitted(false)}
@@ -115,8 +122,8 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
         <h3 className="text-xl font-semibold text-gray-900">Kontaktoni Agjentin</h3>
       </div>
       <p className="text-gray-600 mb-6">
-        Jeni të interesuar për <span className="font-medium text-gray-900">{propertyTitle}</span>? 
-        Dërgoni një mesazh dhe do t'ju kthejmë përgjigje.
+  Jeni të interesuar për <span className="font-medium text-gray-900">{propertyTitle}</span>? 
+  Dërgoni një mesazh dhe do t&#39;ju kthejmë përgjigje.
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -225,7 +232,7 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 px-4 rounded-md hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+          className="w-full bg-linear-to-r from-blue-600 to-blue-700 text-white py-2 px-4 rounded-md hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
         >
           {isSubmitting ? (
             <>

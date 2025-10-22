@@ -1,75 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { resolveAuthenticatedDbUser } from "@/lib/serverAuth";
 
 export async function GET(request: NextRequest) {
   try {
-    // Get session using NextAuth
-    const session = await getServerSession(authOptions);
+    // Try to resolve user via NextAuth, then fall back to custom adminSession cookie
+    const { user: dbUser } = await resolveAuthenticatedDbUser(request);
 
-    if (!session || !session.user) {
-      return NextResponse.json(
-        { success: false, error: { code: "UNAUTHORIZED", message: "Not authenticated" } },
-        { status: 401 }
-      );
+    if (!dbUser) {
+      // Gracefully return empty list for unknown user to avoid 404s on dashboards
+      return NextResponse.json({ success: true, data: [], userRole: null });
     }
 
-    const userId = session.user.id;
-    const userRole = session.user.role;
+    // Role check (case-insensitive) — rely ONLY on resolved DB user, ignore any stale NextAuth session
+    const isAdmin = (dbUser.role || '').toUpperCase() === 'ADMIN';
 
-    // Get user to verify they exist
-    const user = await prisma.user.findUnique({
-      where: { id: userId }
+    // Admin: all properties; Agent: only their own
+    const properties = await prisma.property.findMany({
+      where: isAdmin ? undefined : { ownerId: dbUser.id },
+      orderBy: { createdAt: 'desc' }
     });
-
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: { code: "USER_NOT_FOUND", message: "User not found" } },
-        { status: 404 }
-      );
-    }
-
-    let properties;
-
-    if (user.role === 'admin' || userRole === 'admin') {
-      // Admins can see all properties
-      properties = await prisma.property.findMany({
-        // Temporarily removed owner relation until ownerId column is added
-        // include: {
-        //   owner: true, // Include agent/owner information
-        // },
-        orderBy: {
-          createdAt: 'desc'
-        }
-      });
-    } else {
-      // Agents see properties assigned to them based on a consistent algorithm
-      // This simulates property ownership until we implement the full ownership system
-      const allProperties = await prisma.property.findMany({
-        // Temporarily removed owner relation until ownerId column is added
-        // include: {
-        //   owner: true, // Include agent/owner information
-        // },
-        orderBy: {
-          createdAt: 'desc'
-        }
-      });
-      
-      // Get all agents to determine property assignment
-      const allAgents = await prisma.user.findMany({
-        where: { role: 'agent' },
-        orderBy: { createdAt: 'asc' }
-      });
-      
-      // Assign properties to agents in round-robin fashion based on property creation order
-      properties = allProperties.filter((property, index) => {
-        if (allAgents.length === 0) return false;
-        const assignedAgentIndex = index % allAgents.length;
-        const assignedAgent = allAgents[assignedAgentIndex];
-        return assignedAgent.id === userId;
-      });
-    }
 
     // Transform properties to match the expected format
     const transformedProperties = properties.map(property => ({
@@ -100,9 +50,9 @@ export async function GET(request: NextRequest) {
       listingType: property.listingType.toLowerCase() as "sale" | "rent",
       isPinned: property.isPinned,
       agent: {
-        id: user.id,
-        name: user.name || 'Unknown Agent',
-        email: user.email,
+        id: dbUser.id,
+        name: dbUser.name || 'Unknown Agent',
+        email: dbUser.email,
         phone: '', // Not stored in user table
         photo: undefined
       },
@@ -113,7 +63,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: transformedProperties,
-      userRole: user.role
+      userRole: dbUser.role
     });
 
   } catch (error) {

@@ -51,6 +51,9 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
   }, []);
 
   useEffect(() => {
+    if (!Array.isArray(properties) || properties.length === 0) {
+      console.warn('SimpleMapView: No properties to display on map.', properties);
+    }
     const initMap = async () => {
       // Ensure we have a valid container
       if (!mapRef.current) return;
@@ -227,6 +230,10 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
         setIsMapReady(true);
         setIsLoading(false);
         setError(null);
+        // Force map to recalculate size after mount and after properties change
+        setTimeout(() => {
+          if (map) map.invalidateSize();
+        }, 200);
 
       } catch (error) {
         console.error('Map initialization error:', error);
@@ -259,6 +266,13 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
     }
   }, [retryCount]);
 
+  if (!Array.isArray(properties) || properties.length === 0) {
+    return (
+      <div className="w-full h-64 flex items-center justify-center bg-gray-100 rounded-lg border border-gray-200">
+        <span className="text-gray-500 text-sm">Nuk ka pasuri për të shfaqur në hartë.</span>
+      </div>
+    );
+  }
   if (error) {
     return (
       <MapFallback 
@@ -268,7 +282,6 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
       />
     );
   }
-
   return (
     <div className="relative">
       <div

@@ -129,6 +129,10 @@ export default function FullMapView({
             const group = new L.featureGroup(markersRef.current);
             map.fitBounds(group.getBounds().pad(0.1));
           }
+          // Ensure correct sizing after initial render
+          setTimeout(() => {
+            try { map.invalidateSize(); } catch {}
+          }, 0);
           
           setIsLoading(false);
         } catch (error) {
@@ -269,83 +273,100 @@ export default function FullMapView({
   const addPropertyMarkers = async (L: any, map: any, props: Property[]) => {
     // Performance optimization: batch marker creation and validate coordinates
     const validProperties = props.filter((property) => {
-      const coords = property.address.coordinates;
-      if (!coords.lat || !coords.lng || isNaN(coords.lat) || isNaN(coords.lng)) {
-        console.warn('Invalid coordinates for property:', property.id);
+      try {
+        if (!property || !property.address || !property.address.coordinates) return false;
+        const coords = property.address.coordinates;
+        if (
+          typeof coords.lat !== 'number' ||
+          typeof coords.lng !== 'number' ||
+          isNaN(coords.lat) ||
+          isNaN(coords.lng) ||
+          coords.lat === 0 ||
+          coords.lng === 0
+        ) {
+          console.warn('Invalid coordinates for property:', property.id);
+          return false;
+        }
+        if (!property.title || !property.price || !property.details) return false;
+        return true;
+      } catch (err) {
+        console.warn('Error validating property for map:', property, err);
         return false;
       }
-      return true;
     });
 
     validProperties.forEach((property) => {
-      const coords = property.address.coordinates;
-      
-      // Create custom marker icon with enhanced styling
-      const markerIcon = L.divIcon({
-        html: `
-          <div class="property-marker-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-700 hover:to-blue-800 transition-all cursor-pointer transform hover:scale-105 z-10">
-            ${formatPrice(property.price)}
+      try {
+        const coords = property.address.coordinates;
+        // Create custom marker icon with enhanced styling
+        const markerIcon = L.divIcon({
+          html: `
+            <div class="property-marker-full bg-linear-to-r from-blue-600 to-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-700 hover:to-blue-800 transition-all cursor-pointer transform hover:scale-105 z-10">
+              ${formatPrice(property.price)}
+            </div>
+          `,
+          className: 'custom-marker-full',
+          iconSize: [120, 40],
+          iconAnchor: [60, 40],
+        });
+
+        const marker = L.marker([coords.lat, coords.lng], { icon: markerIcon })
+          .addTo(map);
+
+        // Create enhanced tooltip for hover
+        const tooltipContent = `
+          <div class="p-3 min-w-[200px] max-w-[280px]">
+            <h3 class="font-semibold text-gray-900 mb-2 text-sm">${property.title}</h3>
+            <p class="text-xs text-gray-600 mb-2">${property.address.street}, ${property.address.city}</p>
+            <div class="flex justify-between items-center mb-2">
+              <span class="font-bold text-blue-600 text-sm">${formatPrice(property.price)}</span>
+              <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded capitalize">${property.details.propertyType}</span>
+            </div>
+            <div class="flex items-center gap-3 text-xs text-gray-600">
+              <span class="flex items-center gap-1">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 2L3 7v11h4v-6h6v6h4V7l-7-5z"/>
+                </svg>
+                ${property.details.bedrooms} dhoma
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8 2v2H6V2H4v2H2v2h2v10h2V6h2V4H6V2h2z"/>
+                </svg>
+                ${property.details.bathrooms} banjo
+              </span>
+              <span>${property.details.squareFootage ? property.details.squareFootage.toLocaleString() : ''} m²</span>
+            </div>
           </div>
-        `,
-        className: 'custom-marker-full',
-        iconSize: [120, 40],
-        iconAnchor: [60, 40],
-      });
+        `;
 
-      const marker = L.marker([coords.lat, coords.lng], { icon: markerIcon })
-        .addTo(map);
+        marker.bindTooltip(tooltipContent, {
+          permanent: false,
+          direction: 'top',
+          offset: [0, -15],
+          className: 'custom-tooltip-full'
+        });
 
-      // Create enhanced tooltip for hover
-      const tooltipContent = `
-        <div class="p-3 min-w-[200px] max-w-[280px]">
-          <h3 class="font-semibold text-gray-900 mb-2 text-sm">${property.title}</h3>
-          <p class="text-xs text-gray-600 mb-2">${property.address.street}, ${property.address.city}</p>
-          <div class="flex justify-between items-center mb-2">
-            <span class="font-bold text-blue-600 text-sm">${formatPrice(property.price)}</span>
-            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded capitalize">${property.details.propertyType}</span>
-          </div>
-          <div class="flex items-center gap-3 text-xs text-gray-600">
-            <span class="flex items-center gap-1">
-              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 2L3 7v11h4v-6h6v6h4V7l-7-5z"/>
-              </svg>
-              ${property.details.bedrooms} dhoma
-            </span>
-            <span class="flex items-center gap-1">
-              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M8 2v2H6V2H4v2H2v2h2v10h2V6h2V4H6V2h2z"/>
-              </svg>
-              ${property.details.bathrooms} banjo
-            </span>
-            <span>${property.details.squareFootage.toLocaleString()} m²</span>
-          </div>
-        </div>
-      `;
+        // Add click handler for property selection
+        marker.on('click', () => {
+          onPropertySelect(property);
+        });
 
-      marker.bindTooltip(tooltipContent, {
-        permanent: false,
-        direction: 'top',
-        offset: [0, -15],
-        className: 'custom-tooltip-full'
-      });
+        // Show tooltip on hover
+        marker.on('mouseover', function() {
+          this.openTooltip();
+        });
 
-      // Add click handler for property selection
-      marker.on('click', () => {
-        onPropertySelect(property);
-      });
+        marker.on('mouseout', function() {
+          this.closeTooltip();
+        });
 
-      // Show tooltip on hover
-      marker.on('mouseover', function() {
-        this.openTooltip();
-      });
-
-      marker.on('mouseout', function() {
-        this.closeTooltip();
-      });
-
-      markersRef.current.push(marker);
+        markersRef.current.push(marker);
+      } catch (err) {
+        console.warn('Error creating marker for property:', property, err);
+      }
     });
-  };
+  }
 
   const changeMapLayer = (layer: 'street' | 'satellite' | 'terrain') => {
     setMapLayer(layer);
@@ -434,7 +455,7 @@ export default function FullMapView({
   return (
     <div className="relative h-full w-full">
       {/* Search and Filters Panel */}
-      <div className="absolute top-4 left-4 z-[1000] max-w-md">
+  <div className="absolute top-4 left-4 z-1000 max-w-md">
         {/* Location Search */}
         <div className="mb-4">
           <LocationSearch
@@ -484,7 +505,7 @@ export default function FullMapView({
       />
 
       {/* Map Controls */}
-      <div className="absolute top-4 right-4 flex flex-col gap-2 z-[1000]">
+  <div className="absolute top-4 right-4 flex flex-col gap-2 z-1000">
         {/* Map Layer Selector */}
         <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
           <button
@@ -528,7 +549,7 @@ export default function FullMapView({
 
       {/* Property Details Sidebar */}
       {selectedProperty && showPropertyDetails && (
-        <div className="absolute top-0 right-0 w-80 h-full bg-white shadow-xl border-l border-gray-200 z-[1001] overflow-y-auto">
+  <div className="absolute top-0 right-0 w-80 h-full bg-white shadow-xl border-l border-gray-200 z-1001 overflow-y-auto">
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">Detajet e Pasurisë</h3>
@@ -598,11 +619,11 @@ export default function FullMapView({
             </div>
 
             {/* Property Features */}
-            {selectedProperty.features.length > 0 && (
+            {Array.isArray(selectedProperty.features) && selectedProperty.features.length > 0 && (
               <div>
                 <h5 className="font-semibold text-gray-900 mb-2">Karakteristikat</h5>
                 <div className="flex flex-wrap gap-2">
-                  {selectedProperty.features.map((feature, index) => (
+                  {selectedProperty.features.filter(f => typeof f === 'string' && f.trim().length > 0).map((feature, index) => (
                     <span
                       key={index}
                       className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
@@ -650,7 +671,7 @@ export default function FullMapView({
             <div className="space-y-2 pt-4 border-t border-gray-200">
               <Link
                 href={`/properties/${selectedProperty.id}`}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
               >
                 📋 Shiko Detajet e Plota
               </Link>
@@ -658,7 +679,7 @@ export default function FullMapView({
                 href={`https://www.google.com/maps/dir/?api=1&destination=${selectedProperty.address.coordinates.lat},${selectedProperty.address.coordinates.lng}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 transition-all font-medium"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 transition-all font-medium"
               >
                 <Navigation className="h-4 w-4" />
                 Navigim
@@ -670,7 +691,7 @@ export default function FullMapView({
 
       {/* Loading State */}
       {isLoading && (
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-green-50 bg-opacity-95 flex items-center justify-center">
+  <div className="absolute inset-0 bg-linear-to-br from-blue-50 to-green-50 bg-opacity-95 flex items-center justify-center">
           <CreativeLoader type="map" size="lg" />
         </div>
       )}
@@ -686,7 +707,7 @@ export default function FullMapView({
             </p>
             <button
               onClick={handleRetry}
-              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all"
+              className="inline-flex items-center px-4 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all"
             >
               <RefreshCw className="h-4 w-4 mr-2" />
               Provo Përsëri

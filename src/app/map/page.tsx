@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getProperties } from "@/lib/data";
 import { Property } from "@/types";
 import Layout from "@/components/Layout";
 import StructuredData from "@/components/StructuredData";
 import CreativeLoader from "@/components/CreativeLoader";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import dynamic from "next/dynamic";
-import { ArrowLeft, Filter, Search, MapPin, Home, Navigation } from "lucide-react";
+import { ArrowLeft, Filter, Search, MapPin } from "lucide-react";
 import Link from "next/link";
 
 // Dynamically import the FullMapView component
@@ -17,7 +16,7 @@ const DynamicFullMapView = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-screen w-full bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center">
+      <div className="h-screen w-full bg-linear-to-br from-blue-50 to-green-50 flex items-center justify-center">
         <CreativeLoader type="map" size="lg" />
       </div>
     ),
@@ -56,13 +55,10 @@ export default function MapPage() {
   useEffect(() => {
     const loadProperties = async () => {
       try {
-        const properties = await getProperties();
-        // Filter out sold properties
-        const activeProperties = properties.filter(
-          (property) =>
-            property.status === "active" || property.status === "pending"
-        );
-
+        const res = await fetch('/api/properties/active', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
+        const data = await res.json();
+        const activeProperties: Property[] = data.properties || [];
         setAllProperties(activeProperties);
         setFilteredProperties(activeProperties);
       } catch (error) {
@@ -71,7 +67,6 @@ export default function MapPage() {
         setIsLoading(false);
       }
     };
-
     loadProperties();
   }, []);
 
@@ -145,7 +140,7 @@ export default function MapPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <CreativeLoader type="properties" size="lg" />
       </div>
     );

@@ -129,6 +129,10 @@ export default function NewProperty() {
         setIsSubmitting(false);
         return;
       }
+      // Filter features: remove empty and duplicate entries
+      const filteredFeatures = Array.from(
+        new Set(featuresList.map(f => f.trim()).filter(f => f.length > 0))
+      );
       // FLATTENED propertyData for API
       const propertyData = {
         title: data.title,
@@ -146,12 +150,13 @@ export default function NewProperty() {
         propertyType: data.propertyType,
         yearBuilt: data.yearBuilt ? Number(data.yearBuilt) : undefined,
         images: propertyImages,
-        features: featuresList,
+        features: filteredFeatures,
         status: data.status,
         listingType: data.listingType,
         isPinned: data.isPinned,
       };
-
+      // Debug: log propertyData before sending
+      console.log('Submitting propertyData:', propertyData);
       // Save to database using the API
       const response = await fetch("/api/properties", {
         method: "POST",
@@ -160,20 +165,20 @@ export default function NewProperty() {
       });
       if (!response.ok) {
         const result = await response.json();
+        if (result?.error?.code === 'VALIDATION_ERROR') {
+          const details = result?.error?.details ? Object.values(result.error.details).join(', ') : '';
+          throw new Error(`Validation failed: ${details || result.error.message || 'Invalid input data'}`);
+        }
         throw new Error(result.error?.message || "Failed to save property");
       }
-  // const savedProperty = await response.json();
-
       // Reset form state after successful submission
       resetForm();
-
       // Show success message
       alert("Pasuria u ruajt me sukses!");
-
       // Redirect to dashboard
       router.push("/admin/dashboard");
     } catch (error) {
-      console.error("Error creating property:", error);
+      console.error("Error creating property:", error, data);
 
       // Provide specific error messages based on error type
       if (error instanceof Error) {
@@ -242,6 +247,10 @@ export default function NewProperty() {
                   type="text"
                   {...register("title", {
                     required: "Titulli është i detyrueshëm",
+                    minLength: {
+                      value: 5,
+                      message: "Titulli duhet të jetë të paktën 5 karaktere",
+                    },
                   })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="p.sh. Apartament Modern në Qendër të Tiranës"
@@ -261,6 +270,10 @@ export default function NewProperty() {
                   rows={4}
                   {...register("description", {
                     required: "Përshkrimi është i detyrueshëm",
+                    minLength: {
+                      value: 20,
+                      message: "Përshkrimi duhet të jetë të paktën 20 karaktere",
+                    },
                   })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Përshkruani pasurinë në detaje..."
@@ -280,7 +293,7 @@ export default function NewProperty() {
                   type="number"
                   {...register("price", {
                     required: "Çmimi është i detyrueshëm",
-                    min: 1,
+                    min: { value: 1, message: "Çmimi duhet të jetë më i madh se 0" },
                   })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="120000"
@@ -370,6 +383,25 @@ export default function NewProperty() {
                 {errors.city && (
                   <p className="text-blue-600 text-sm mt-1">
                     {errors.city.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-900 mb-1">
+                  Shteti / Prefektura *
+                </label>
+                <input
+                  type="text"
+                  {...register("state", {
+                    required: "Shteti/Prefektura është i detyrueshëm",
+                  })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="p.sh. Tiranë"
+                />
+                {errors.state && (
+                  <p className="text-blue-600 text-sm mt-1">
+                    {errors.state.message}
                   </p>
                 )}
               </div>
@@ -582,9 +614,13 @@ export default function NewProperty() {
                 type="text"
                 value={featureInput}
                 onChange={(e) => setFeatureInput(e.target.value)}
-                onKeyPress={(e) =>
-                  e.key === "Enter" && (e.preventDefault(), addFeature())
-                }
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addFeature();
+                  }
+                  e.stopPropagation();
+                }}
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Shto karakteristikë (p.sh. Dysheme parket)"
               />
