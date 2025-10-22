@@ -125,17 +125,17 @@ nav[class*="sticky"] {
 /* Map UI overlays (ensure above Leaflet panes) */
 .map-controls-overlay {
   position: absolute !important;
-  z-index: 8000 !important; /* below filters and details */
+  z-index: 5 !important; /* above leaflet ui, below page header (z-10) */
 }
 
 .map-filters-overlay {
   position: absolute !important;
-  z-index: 9000 !important; /* above controls, below details */
+  z-index: 6 !important; /* above controls, below page header */
 }
 
 .map-details-overlay {
   position: absolute !important;
-  z-index: 10000 !important; /* always on top */
+  z-index: 7 !important; /* keep sidebar above other overlays, below header */
 }
 
 .leaflet-popup-content-wrapper {

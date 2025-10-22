@@ -37,13 +37,16 @@ export default function InteractiveMapView({
       if (!mapRef.current || mapInstanceRef.current) return;
 
       // Create map
-      const map = L.map(mapRef.current).setView(center, zoom);
+      const map = L.map(mapRef.current);
 
       // Add tile layer
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
         maxZoom: 19,
       }).addTo(map);
+
+      // Set initial view and ensure size/position are initialized
+      map.setView(center, zoom, { animate: false });
 
       // Add click handler for edit mode
       if (mode === 'edit') {
@@ -102,58 +105,29 @@ export default function InteractiveMapView({
         map.getContainer().style.cursor = 'crosshair';
       }
 
-      // Add property markers for view mode
-      if (mode === 'view' && properties.length > 0) {
-        addPropertyMarkers(L, map, properties);
-      }
-
-      // Add selected location marker if provided
-      if (selectedLocation && mode === 'edit') {
-        selectedMarkerRef.current = L.marker([selectedLocation.lat, selectedLocation.lng], {
-          icon: L.divIcon({
-            className: 'selected-location-marker',
-            html: `
-              <div style="
-                background: #2563eb;
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                border: 3px solid white;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-                position: relative;
-              ">
-                <div style="
-                  position: absolute;
-                  top: -8px;
-                  left: 50%;
-                  transform: translateX(-50%);
-                  width: 0;
-                  height: 0;
-                  border-left: 6px solid transparent;
-                  border-right: 6px solid transparent;
-                  border-bottom: 8px solid #2563eb;
-                "></div>
-              </div>
-            `,
-            iconSize: [20, 20],
-            iconAnchor: [10, 10],
-          }),
-        }).addTo(map);
-      }
-
       mapInstanceRef.current = map;
-      setIsMapReady(true);
+
+      // Once ready, invalidate size to ensure proper pane positioning
+      map.whenReady(() => {
+        setTimeout(() => {
+          map.invalidateSize();
+          setIsMapReady(true);
+        }, 0);
+      });
     });
 
     // Cleanup
     return () => {
       if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
+        try {
+          mapInstanceRef.current.off();
+          mapInstanceRef.current.remove();
+        } catch {}
         mapInstanceRef.current = null;
         setIsMapReady(false);
       }
     };
-  }, [center, zoom, mode]);
+  }, [mode]);
 
   // Update selected location marker when selectedLocation changes
   useEffect(() => {
@@ -199,10 +173,18 @@ export default function InteractiveMapView({
         }),
       }).addTo(map);
 
-      // Center map on selected location
-      map.setView([selectedLocation.lat, selectedLocation.lng], zoom);
+      // Center map on selected location (disable animation to avoid _leaflet_pos issues)
+      map.setView([selectedLocation.lat, selectedLocation.lng], zoom, { animate: false });
     });
   }, [selectedLocation, zoom, mode]);
+
+  // Update property markers when in view mode and the list changes
+  useEffect(() => {
+    if (!mapInstanceRef.current || mode !== 'view') return;
+    import('leaflet').then((L) => {
+      addPropertyMarkers(L, mapInstanceRef.current, properties);
+    });
+  }, [properties, mode]);
 
   // Add property markers function
   const addPropertyMarkers = (L: any, map: any, properties: Property[]) => {
@@ -257,7 +239,9 @@ export default function InteractiveMapView({
         <button
           onClick={() => {
             if (mapInstanceRef.current) {
-              mapInstanceRef.current.setView(center, zoom);
+              // Ensure map layout is up to date, then recenter without animation
+              try { mapInstanceRef.current.invalidateSize(); } catch {}
+              mapInstanceRef.current.setView(center, zoom, { animate: false });
             }
           }}
           className="bg-white hover:bg-blue-50 p-2 rounded-lg shadow-md border border-gray-200 transition-colors duration-200"

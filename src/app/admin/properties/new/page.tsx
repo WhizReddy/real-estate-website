@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import ImageUploader from "@/components/ImageUploader";
 import InteractiveMapView from "@/components/InteractiveMapView";
+import { useToast } from "@/components/Toast";
 
 interface PropertyFormData {
   title: string;
@@ -35,6 +36,7 @@ export default function NewProperty() {
   const [propertyImages, setPropertyImages] = useState<string[]>([]);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const router = useRouter();
+  const { showToast } = useToast();
 
   const {
     register,
@@ -171,36 +173,29 @@ export default function NewProperty() {
         }
         throw new Error(result.error?.message || "Failed to save property");
       }
-      // Reset form state after successful submission
-      resetForm();
-      // Show success message
-      alert("Pasuria u ruajt me sukses!");
-      // Redirect to dashboard
-      router.push("/admin/dashboard");
+  // Reset form state after successful submission
+  resetForm();
+  // Optional toast before redirect
+  showToast({ type: 'success', title: 'Sukses', message: 'Pasuria u krijua me sukses.' });
+  // Redirect to agent dashboard with success flag
+  router.push("/admin/dashboard?created=1");
     } catch (error) {
       console.error("Error creating property:", error, data);
 
       // Provide specific error messages based on error type
       if (error instanceof Error) {
         if (error.message.includes("Validation failed")) {
-          alert(
-            `Gabim në validim: ${error.message.replace(
-              "Validation failed: ",
-              ""
-            )}`
-          );
+          showToast({ type: 'error', title: 'Gabim në validim', message: error.message.replace('Validation failed: ', '') });
         } else if (
           error.message.includes("network") ||
           error.message.includes("fetch")
         ) {
-          alert(
-            "Gabim në lidhje. Ju lutem kontrolloni internetin dhe provoni përsëri."
-          );
+          showToast({ type: 'error', title: 'Gabim në lidhje', message: 'Kontrolloni internetin dhe provoni përsëri.' });
         } else {
-          alert(`Gabim: ${error.message}`);
+          showToast({ type: 'error', title: 'Gabim', message: error.message });
         }
       } else {
-        alert("Gabim gjatë ruajtjes së pasurisë. Ju lutem provoni përsëri.");
+        showToast({ type: 'error', title: 'Gabim', message: 'Gabim gjatë ruajtjes së pasurisë. Provoni përsëri.' });
       }
     } finally {
       setIsSubmitting(false);

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Property } from '@/types';
 import { formatPrice } from '@/lib/utils';
@@ -26,6 +26,8 @@ export default function AdminDashboard() {
     location: 'all'
   });
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [banner, setBanner] = useState<{ type: 'success' | 'warning' | 'info'; message: string } | null>(null);
 
 
   useEffect(() => {
@@ -43,6 +45,28 @@ export default function AdminDashboard() {
       setUserRole(user.role);
     }
   }, [router]);
+
+  // Show success banner based on URL flags and then clean up the URL
+  useEffect(() => {
+    const created = searchParams.get('created');
+    const updated = searchParams.get('updated');
+    const deleted = searchParams.get('deleted');
+    if (created === '1') {
+      setBanner({ type: 'success', message: 'Pasuria u krijua me sukses.' });
+    } else if (updated === '1') {
+      setBanner({ type: 'success', message: 'Ndryshimet u ruajtën me sukses.' });
+    } else if (deleted === '1') {
+      setBanner({ type: 'info', message: 'Pasuria u fshi.' });
+    }
+    if (created || updated || deleted) {
+      // Remove query params to keep URL clean
+      const url = new URL(window.location.href);
+      url.searchParams.delete('created');
+      url.searchParams.delete('updated');
+      url.searchParams.delete('deleted');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (!userRole) return;
@@ -226,6 +250,14 @@ export default function AdminDashboard() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {banner && (
+          <div className={`mb-6 rounded-md border p-4 ${banner.type === 'success' ? 'border-green-200 bg-green-50 text-green-800' : banner.type === 'info' ? 'border-blue-200 bg-blue-50 text-blue-800' : 'border-yellow-200 bg-yellow-50 text-yellow-800'}`}>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">{banner.message}</span>
+              <button className="text-sm opacity-70 hover:opacity-100" onClick={() => setBanner(null)}>Mbyll</button>
+            </div>
+          </div>
+        )}
         {/* Database Status Panel - Admin Only */}
         {userRole === 'ADMIN' && (
           <div className="mb-8">

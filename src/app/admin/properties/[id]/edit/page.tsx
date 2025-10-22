@@ -10,6 +10,7 @@ import { ArrowLeft, Plus, X, Trash2 } from 'lucide-react';
 import ImageUploader from '@/components/ImageUploader';
 import { getProperty, deleteProperty } from '@/lib/data';
 import InteractiveMapView from '@/components/InteractiveMapView';
+import { useToast } from '@/components/Toast';
 
 interface PropertyFormData {
   title: string;
@@ -41,6 +42,7 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
   const [propertyImages, setPropertyImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const { showToast } = useToast();
 
   const {
     register,
@@ -160,13 +162,15 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update property');
+        const result = await response.json().catch(() => ({}));
+        throw new Error(result?.error?.message || 'Failed to update property');
       }
-      
-      router.push('/admin/dashboard');
+      showToast({ type: 'success', title: 'U ruajt', message: 'Ndryshimet u ruajtën me sukses.' });
+      router.push('/admin/dashboard?updated=1');
     } catch (error) {
       console.error('Error updating property:', error);
-      alert('Gabim gjatë përditësimit të pasurisë. Ju lutem provoni përsëri.');
+      const message = error instanceof Error ? error.message : 'Gabim gjatë përditësimit të pasurisë. Ju lutem provoni përsëri.';
+      showToast({ type: 'error', title: 'Gabim', message });
     } finally {
       setIsSubmitting(false);
     }
@@ -180,10 +184,12 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
       
       try {
         await deleteProperty(property.id);
-        router.push('/admin/dashboard');
+        showToast({ type: 'success', title: 'E fshirë', message: 'Pasuria u fshi me sukses.' });
+        router.push('/admin/dashboard?deleted=1');
       } catch (error) {
         console.error('Failed to delete property:', error);
-        alert('Gabim gjatë fshirjes së pasurisë. Ju lutem provoni përsëri.');
+        const message = error instanceof Error ? error.message : 'Gabim gjatë fshirjes së pasurisë. Ju lutem provoni përsëri.';
+        showToast({ type: 'error', title: 'Gabim', message });
       } finally {
         setIsDeleting(false);
       }
