@@ -93,9 +93,29 @@ export default function PropertyDetailMap({
 
       const L = await import('leaflet');
 
+      // Completely clean up previous map instance
       if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
+        try {
+          mapInstanceRef.current.remove();
+        } catch (e) {
+          console.warn('Error removing previous map:', e);
+        }
         mapInstanceRef.current = null;
+      }
+
+      // Force remove Leaflet marker from DOM to prevent "already initialized" error
+      if (mapRef.current && (mapRef.current as HTMLDivElement & { _leaflet_id?: string })._leaflet_id) {
+        delete (mapRef.current as HTMLDivElement & { _leaflet_id?: string })._leaflet_id;
+      }
+
+      // Ensure container is completely clean before initializing new map
+      if (mapRef.current) {
+        // Remove all Leaflet event listeners
+        mapRef.current.innerHTML = '';
+        // Remove all child elements just to be safe
+        while (mapRef.current.firstChild) {
+          mapRef.current.removeChild(mapRef.current.firstChild);
+        }
       }
 
       markersRef.current = [];

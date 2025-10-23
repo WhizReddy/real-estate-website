@@ -733,10 +733,14 @@ export default function FullMapView({
         style={{ marginRight: selectedProperty && showPropertyDetails ? '20rem' : 0 }}
       />
 
-    {/* Map Controls */}
+    {/* Map Controls - Bottom Right on mobile, Top Right on desktop */}
     <div
-      className="absolute right-4 top-4 z-50 map-controls-overlay"
-      style={{ right: selectedProperty && showPropertyDetails ? '22rem' : '1rem' }}
+      className="absolute z-50 map-controls-overlay"
+      style={{
+        right: selectedProperty && showPropertyDetails ? '22rem' : '1rem',
+        bottom: 'auto',
+        top: '1rem',
+      }}
     >
       <div className="flex items-center gap-2">
         {/* Compact Layer Toggle */}
@@ -781,10 +785,11 @@ export default function FullMapView({
       </div>
     </div>
 
-      {/* Property Details Sidebar */}
+      {/* Property Details Modal/Popup - Compact and centered */}
     {selectedProperty && showPropertyDetails && (
-  <div className="absolute top-0 right-0 w-80 h-full bg-white shadow-xl border-l border-gray-200 z-50 map-details-overlay overflow-y-auto">
-          <div className="p-4 border-b border-gray-200">
+  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0 backdrop-blur-sm bg-black/20">
+    <div className="w-full max-w-md h-[85vh] sm:h-auto sm:max-h-[90vh] bg-white rounded-lg shadow-2xl overflow-hidden flex flex-col">
+          <div className="p-4 border-b border-gray-200 shrink-0">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">Detajet e Pasurisë</h3>
               <button
@@ -799,7 +804,7 @@ export default function FullMapView({
             </div>
           </div>
 
-          <div className="p-4 space-y-4">
+          <div className="p-4 space-y-4 overflow-y-auto flex-1">
             {/* Property Images */}
             {selectedProperty.images.length > 0 && (
               <div className="relative aspect-video bg-gray-200 rounded-lg overflow-hidden">
@@ -904,31 +909,29 @@ export default function FullMapView({
               </div>
             </div>
 
-            {/* Spacer to avoid overlap with sticky footer */}
-            <div className="h-3" />
-          </div>
-
-          {/* Sticky Action Footer: always visible, same height frame as map */}
-          <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3 pb-[calc(12px+env(safe-area-inset-bottom))]">
-            <div className="space-y-2">
-              <Link
-                href={`/properties/${selectedProperty.id}`}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
-              >
-                📋 Shiko Detajet e Plota
-              </Link>
-              <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${selectedProperty.address.coordinates.lat},${selectedProperty.address.coordinates.lng}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 transition-all font-medium"
-              >
-                <Navigation className="h-4 w-4" />
-                Navigim
-              </a>
+            {/* Sticky Action Footer: always visible */}
+            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3 pb-[calc(12px+env(safe-area-inset-bottom))] shrink-0">
+              <div className="space-y-2">
+                <Link
+                  href={`/properties/${selectedProperty.id}`}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all font-medium text-sm"
+                >
+                  📋 Shiko Detajet e Plota
+                </Link>
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${selectedProperty.address.coordinates.lat},${selectedProperty.address.coordinates.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 transition-all font-medium text-sm"
+                >
+                  <Navigation className="h-4 w-4" />
+                  Navigim
+                </a>
+              </div>
             </div>
           </div>
         </div>
+      </div>
       )}
 
       {/* Loading State */}

@@ -329,4 +329,32 @@ nav[class*="sticky"] {
   .map-controls-overlay {
     z-index: 401 !important;
   }
+
+  /* Stack controls vertically on mobile to avoid collisions */
+  .map-controls-overlay {
+    top: 6.5rem !important;
+    right: 1rem !important;
+    left: auto !important;
+  }
+
+  /* Search bar stays at top */
+  .map-filters-overlay {
+    left: 1rem !important;
+    top: 1rem !important;
+    right: auto !important;
+  }
+
+  /* Make details sidebar drawer-like on small screens */
+  .map-details-overlay {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 70vh !important;
+    bottom: 0 !important;
+    top: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    border-bottom: 2px solid #e5e7eb !important;
+    border-left: none !important;
+    border-radius: 1rem 1rem 0 0 !important;
+  }
 }
