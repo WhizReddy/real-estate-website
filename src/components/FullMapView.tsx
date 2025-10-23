@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -21,12 +23,13 @@ import CreativeLoader from '@/components/CreativeLoader';
 import LocationSearch from '@/components/LocationSearch';
 import Link from 'next/link';
 import Image from 'next/image';
+import type { Map as LeafletMap, Marker as LeafletMarker, Layer, TileLayer as LeafletTileLayer } from 'leaflet';
 
 // MapFilters removed as filters UI has been simplified and props are no longer used
 
 interface FullMapViewProps {
   properties: Property[];
-  onPropertySelect: (property: Property) => void;
+  onPropertySelect: (property: Property | null) => void;
   selectedProperty?: Property | null;
 }
 
@@ -36,15 +39,69 @@ export default function FullMapView({
   selectedProperty,
 }: FullMapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
+  const markersRef = useRef<LeafletMarker[]>([]);
+  const timeoutsRef = useRef<number[]>([]);
+  const observerRef = useRef<ResizeObserver | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [mapLayer, setMapLayer] = useState<'street' | 'satellite' | 'terrain'>('street');
   const [showPropertyDetails, setShowPropertyDetails] = useState(false);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>(properties);
+  const MAX_MARKERS = 800; // soft cap for performance on very large datasets
   // Location search circle is drawn directly on the map; no local state needed
+  const tileLayerRef = useRef<LeafletTileLayer | null>(null);
+  const tileProviderIndexRef = useRef<number>(0);
+
+  const waitForVisibleContainer = async (el: HTMLDivElement, maxMs = 1500) => {
+    const isVisible = () => {
+      const rect = el.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) return true;
+      const style = window.getComputedStyle(el);
+      if (style.display === 'none' || style.visibility === 'hidden') return false;
+      return rect.width > 0 && rect.height > 0;
+    };
+    if (isVisible()) return;
+    await new Promise<void>((resolve) => {
+      let resolved = false;
+      const ro = new ResizeObserver(() => {
+        if (!resolved && isVisible()) {
+          resolved = true;
+          ro.disconnect();
+          observerRef.current = null;
+          resolve();
+        }
+      });
+      observerRef.current = ro;
+      ro.observe(el);
+      const id = window.setTimeout(() => {
+        if (!resolved) {
+          ro.disconnect();
+          observerRef.current = null;
+          resolved = true;
+          resolve();
+        }
+      }, Math.max(300, Math.min(maxMs, 1500)));
+      timeoutsRef.current.push(id);
+    });
+    await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+  };
+
+  const ensureContainerSafe = () => {
+    if (!mapRef.current) return;
+    try {
+      // Force strict container bounds to prevent oversize on mobile
+      mapRef.current.style.width = '100%';
+      mapRef.current.style.height = '100%';
+      mapRef.current.style.maxHeight = '100vh';
+      mapRef.current.style.maxWidth = '100vw';
+      mapRef.current.style.overflow = 'hidden';
+      mapRef.current.style.position = 'absolute';
+      mapRef.current.style.top = '0';
+      mapRef.current.style.left = '0';
+    } catch {}
+  };
 
   const initializeMap = async () => {
     if (typeof window === 'undefined' || !mapRef.current) return;
@@ -53,13 +110,23 @@ export default function FullMapView({
       setIsLoading(true);
       setHasError(false);
 
+      // Ensure Leaflet CSS is available
+      if (!document.getElementById('leaflet-css')) {
+        const link = document.createElement('link');
+        link.id = 'leaflet-css';
+        link.rel = 'stylesheet';
+        link.href = '/leaflet.css';
+        document.head.appendChild(link);
+      }
+
+      // Wait for container to be sized/visible (fixes zero-size init on mobile)
+      await waitForVisibleContainer(mapRef.current, 1500);
+
+      // Ensure container is strictly bounded to prevent mobile layout issues
+      ensureContainerSafe();
+
       // Dynamically import Leaflet with timeout
-      const L = await Promise.race([
-        import('leaflet'),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Leaflet loading timeout')), 10000)
-        )
-      ]) as any;
+      const Leaflet = await import('leaflet');
 
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
@@ -73,7 +140,7 @@ export default function FullMapView({
       const mapCenter = calculateCenter(properties);
 
       // Initialize map with full-screen performance-optimized settings
-      const map = L.map(mapRef.current, {
+      const map = Leaflet.map(mapRef.current, {
         center: mapCenter,
         zoom: 12,
         minZoom: 8,
@@ -87,33 +154,51 @@ export default function FullMapView({
         keyboard: true,
         attributionControl: false,
         preferCanvas: true, // Use canvas for better performance
-        renderer: L.canvas(), // Force canvas renderer for better performance
-        zoomAnimation: true,
-        fadeAnimation: true,
-        markerZoomAnimation: true,
+        renderer: Leaflet.canvas(), // Force canvas renderer for better performance
+        // Aggressively disable animations on all screens to prevent jank
+        zoomAnimation: false,
+        fadeAnimation: false,
+        markerZoomAnimation: false,
         maxBoundsViscosity: 1.0,
-      });
-
-      // Move default zoom controls to bottom-left to avoid overlapping the top-left search/filters
+      });      // Move default zoom controls to bottom-left to avoid overlapping the top-left search/filters
       try {
         // Leaflet adds zoomControl when zoomControl: true; reposition it after map init
         map.zoomControl?.setPosition('bottomleft');
       } catch {}
 
       // Add tile layer
-      addTileLayer(L, map, mapLayer);
+    addTileLayer(Leaflet, map, mapLayer);
       mapInstanceRef.current = map;
 
       // Wait for map to be ready before adding markers
       map.whenReady(() => {
         try {
-          addPropertyMarkers(L, map, properties);
+          addPropertyMarkers(Leaflet, map, properties);
           
           // Fit bounds to show all properties
-          if (properties.length > 0 && markersRef.current.length > 0) {
-            const group = new L.featureGroup(markersRef.current);
-            map.fitBounds(group.getBounds().pad(0.1));
-          }
+          const safeFitBounds = (attempt = 0) => {
+            try {
+              if (!map) return;
+              const size = map.getSize?.();
+              const pane = map.getPane?.('mapPane');
+              if (!pane || !size || size.x === 0 || size.y === 0) {
+                if (attempt < 10) {
+                  const id = window.setTimeout(() => safeFitBounds(attempt + 1), 120);
+                  timeoutsRef.current.push(id);
+                }
+                return;
+              }
+              if (properties.length > 0 && markersRef.current.length > 0) {
+                const group = Leaflet.featureGroup(markersRef.current);
+                try { if (pane) map.invalidateSize(); } catch {}
+                map.fitBounds(group.getBounds().pad(0.1), { animate: false, maxZoom: 15 });
+              }
+            } catch (err) {
+              console.warn('FullMapView bounds fit error:', err);
+            }
+          };
+          const id = window.setTimeout(() => safeFitBounds(0), 120);
+          timeoutsRef.current.push(id);
           // Ensure correct sizing after initial render
           setTimeout(() => {
             try { map.invalidateSize(); } catch {}
@@ -125,6 +210,29 @@ export default function FullMapView({
           setIsLoading(false);
         }
       });
+
+      // Re-cluster markers when zoom or move ends (for large datasets)
+      map.on('zoomend moveend', () => {
+        try {
+          if (!mapInstanceRef.current) return;
+          addPropertyMarkers(Leaflet, mapInstanceRef.current, filteredProperties);
+        } catch {}
+      });
+
+      map.on('resize', () => {
+        try { map.invalidateSize(); } catch {}
+      });
+
+      // Recalculate fallback height on viewport changes
+      const onWindowResize = () => {
+        ensureContainerSafe();
+        try { map.invalidateSize(); } catch {}
+      };
+      window.addEventListener('resize', onWindowResize);
+      window.addEventListener('orientationchange', onWindowResize);
+      // Store cleanup by pushing a timeout-like token using negative number convention
+      // We'll remove listeners explicitly in the cleanup below
+      (map as unknown as { __onWindowResize?: () => void }).__onWindowResize = onWindowResize;
 
     } catch (error) {
       console.error('Map initialization error:', error);
@@ -138,6 +246,21 @@ export default function FullMapView({
 
     // Cleanup function
     return () => {
+      // Clear timeouts and observers
+      timeoutsRef.current.forEach((id) => window.clearTimeout(id));
+      timeoutsRef.current = [];
+      if (observerRef.current) {
+        try { observerRef.current.disconnect(); } catch {}
+        observerRef.current = null;
+      }
+      // Remove window listeners if we attached them
+      try {
+        const resizeHandler = (mapInstanceRef.current as unknown as { __onWindowResize?: () => void })?.__onWindowResize;
+        if (resizeHandler) {
+          window.removeEventListener('resize', resizeHandler);
+          window.removeEventListener('orientationchange', resizeHandler);
+        }
+      } catch {}
       if (mapInstanceRef.current) {
         try {
           mapInstanceRef.current.remove();
@@ -184,11 +307,24 @@ export default function FullMapView({
         // Add new markers for filtered properties
         await addPropertyMarkers(L, mapInstanceRef.current, filteredProperties);
 
-        // Fit bounds to show all filtered properties
+        // Fit bounds safely to show all filtered properties
         if (filteredProperties.length > 0 && markersRef.current.length > 0) {
           try {
             const group = L.featureGroup(markersRef.current);
-            mapInstanceRef.current.fitBounds(group.getBounds().pad(0.1));
+            const safeFit = () => {
+              try {
+                const pane = mapInstanceRef.current?.getPane?.('mapPane');
+                const size = mapInstanceRef.current?.getSize?.();
+                if (!pane || !size || size.x === 0 || size.y === 0) return false;
+                mapInstanceRef.current?.invalidateSize();
+                mapInstanceRef.current?.fitBounds(group.getBounds().pad(0.1), { animate: false, maxZoom: 15 });
+                return true;
+              } catch { return true; }
+            };
+            if (!safeFit()) {
+              const id = window.setTimeout(safeFit, 120);
+              timeoutsRef.current.push(id);
+            }
           } catch (error) {
             console.warn('Error fitting bounds on update:', error);
           }
@@ -227,48 +363,120 @@ export default function FullMapView({
     return [avgLat, avgLng];
   };
 
-  const addTileLayer = (L: any, map: any, layer: string) => {
-    let tileUrl = '';
-    let attribution = '';
-    
+  type ProviderSpec = { url: string; attribution: string; options?: Parameters<typeof import('leaflet')['tileLayer']>[1] };
+  const getProviders = (layer: 'street' | 'satellite' | 'terrain'): ProviderSpec[] => {
     switch (layer) {
       case 'satellite':
-        tileUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
-        attribution = 'Esri';
-        break;
+        return [
+          {
+            url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            attribution: 'Esri',
+            options: { maxZoom: 19 }
+          },
+          // Fallback to OSM if imagery is unavailable
+          {
+            url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            attribution: 'OpenStreetMap',
+            options: { maxZoom: 19 }
+          }
+        ];
       case 'terrain':
-        tileUrl = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png';
-        attribution = 'OpenTopoMap';
-        break;
+        return [
+          {
+            url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+            attribution: 'OpenTopoMap',
+            options: { maxZoom: 17, maxNativeZoom: 17 }
+          },
+          {
+            url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            attribution: 'OpenStreetMap',
+            options: { maxZoom: 19 }
+          }
+        ];
       default:
-        tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        attribution = 'OpenStreetMap';
+        return [
+          {
+            url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            attribution: 'OpenStreetMap',
+            options: { maxZoom: 19 }
+          },
+          {
+            url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+            options: { maxZoom: 20, subdomains: 'abcd' as unknown as string[] }
+          }
+        ];
     }
-
-    const tileLayer = L.tileLayer(tileUrl, {
-      attribution,
-      maxZoom: 18,
-      timeout: 10000,
-      errorTileUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0iI2Y5ZmFmYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZiNzI4MCI+VGlsZSBub3QgZm91bmQ8L3RleHQ+PC9zdmc+',
-      retryDelay: 1000,
-      retryLimit: 3,
-    });
-
-    // Add error handling for tile loading
-    tileLayer.on('tileerror', (e: any) => {
-      console.warn('Tile loading error:', e);
-      // Retry with exponential backoff
-      setTimeout(() => {
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.invalidateSize();
-        }
-      }, 2000);
-    });
-
-    tileLayer.addTo(map);
   };
 
-  const addPropertyMarkers = async (L: any, map: any, props: Property[]) => {
+  const addTileLayer = (
+    L: typeof import('leaflet'),
+    map: LeafletMap,
+    layer: 'street' | 'satellite' | 'terrain'
+  ) => {
+    const providers = getProviders(layer);
+    tileProviderIndexRef.current = 0;
+
+    const attachLayer = (providerIndex: number) => {
+      const spec = providers[providerIndex];
+      if (!spec) return;
+
+      // Remove existing tile layer if any
+      if (tileLayerRef.current) {
+        try { map.removeLayer(tileLayerRef.current); } catch {}
+      }
+
+      const tileLayer = L.tileLayer(spec.url, {
+        attribution: spec.attribution,
+        detectRetina: true,
+        crossOrigin: true,
+        updateWhenIdle: true,
+        keepBuffer: 3,
+        errorTileUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0iI2Y5ZmFmYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZiNzI4MCI+VGlsZSBub3QgZm91bmQ8L3RleHQ+PC9zdmc+',
+        ...(spec.options || {})
+      });
+
+      let recentErrors = 0;
+      let switchTimeout: number | null = null;
+
+      const tryFallback = () => {
+        if (switchTimeout) return;
+        // debounce multiple tile errors; if many occur in a short time, switch provider
+        switchTimeout = window.setTimeout(() => {
+          switchTimeout = null;
+          if (recentErrors >= 4) {
+            const next = tileProviderIndexRef.current + 1;
+            if (next < providers.length) {
+              tileProviderIndexRef.current = next;
+              attachLayer(next);
+              try { map.invalidateSize(); } catch {}
+            }
+          }
+          recentErrors = 0;
+        }, 1200);
+      };
+
+      tileLayer.on('tileerror', () => {
+        recentErrors += 1;
+        // Nudge Leaflet to redraw; some mobile browsers keep tiles blank after a transform
+        try { map.invalidateSize(); } catch {}
+        tryFallback();
+      });
+
+      tileLayer.addTo(map);
+      tileLayerRef.current = tileLayer;
+    };
+
+    attachLayer(0);
+  };
+
+  type ClusterItem = { type: 'cluster'; lat: number; lng: number; count: number };
+  type PointItem = { type: 'point'; property: Property };
+  const addPropertyMarkers = async (
+    L: typeof import('leaflet'),
+    map: LeafletMap,
+    props: Property[]
+  ) => {
     // Performance optimization: batch marker creation and validate coordinates
     const validProperties = props.filter((property) => {
       try {
@@ -293,92 +501,157 @@ export default function FullMapView({
       }
     });
 
-    validProperties.forEach((property) => {
+    // Clear existing markers
+    markersRef.current.forEach((m) => {
+      try { m.remove(); } catch {}
+    });
+    markersRef.current = [];
+
+    // If the dataset is large, cluster by a simple zoom-based grid for performance
+    const zoom = map.getZoom?.() ?? 12;
+    const useClustering = validProperties.length > MAX_MARKERS;
+    const items: Array<ClusterItem | PointItem> = useClustering
+      ? clusterize(validProperties, zoom)
+      : validProperties.map<PointItem>(p => ({ type: 'point', property: p }));
+
+    items.forEach((item) => {
       try {
-        const coords = property.address.coordinates;
-        // Create custom marker icon with enhanced styling
-        const markerIcon = L.divIcon({
-          html: `
-            <div class="property-marker-full bg-linear-to-r from-blue-600 to-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-700 hover:to-blue-800 transition-all cursor-pointer transform hover:scale-105 z-10">
-              ${formatPrice(property.price)}
+        if (item.type === 'cluster') {
+          const { lat, lng, count } = item;
+          const icon = L.divIcon({
+            html: `
+              <div class="rounded-full bg-white shadow-lg border-2 border-blue-600 text-blue-700 font-bold text-xs w-10 h-10 flex items-center justify-center">
+                ${count}
+              </div>
+            `,
+            className: 'cluster-marker',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20],
+          });
+          const marker = L.marker([lat, lng], { icon }).addTo(map);
+          marker.on('click', () => {
+            try {
+              map.setView([lat, lng], Math.min((map.getZoom?.() ?? 12) + 2, 18), { animate: true });
+            } catch {}
+          });
+          markersRef.current.push(marker);
+        } else {
+          const property = item.property as Property;
+          const coords = property.address.coordinates;
+          // Create custom marker icon with enhanced styling
+          const markerIcon = L.divIcon({
+            html: `
+              <div class="property-marker-full bg-linear-to-r from-blue-600 to-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-700 hover:to-blue-800 transition-all cursor-pointer transform hover:scale-105 z-10">
+                ${formatPrice(property.price)}
+              </div>
+            `,
+            className: 'custom-marker-full',
+            iconSize: [120, 40],
+            iconAnchor: [60, 40],
+          });
+
+          const marker = L.marker([coords.lat, coords.lng], { icon: markerIcon }).addTo(map);
+
+          const tooltipContent = `
+            <div class="p-3 min-w-[200px] max-w-[280px]">
+              <h3 class="font-semibold text-gray-900 mb-2 text-sm">${property.title}</h3>
+              <p class="text-xs text-gray-600 mb-2">${property.address.street}, ${property.address.city}</p>
+              <div class="flex justify-between items-center mb-2">
+                <span class="font-bold text-blue-600 text-sm">${formatPrice(property.price)}</span>
+                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded capitalize">${property.details.propertyType}</span>
+              </div>
+              <div class="flex items-center gap-3 text-xs text-gray-600">
+                <span class="flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2L3 7v11h4v-6h6v6h4V7l-7-5z"/>
+                  </svg>
+                  ${property.details.bedrooms} dhoma
+                </span>
+                <span class="flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M8 2v2H6V2H4v2H2v2h2v10h2V6h2V4H6V2h2z"/>
+                  </svg>
+                  ${property.details.bathrooms} banjo
+                </span>
+                <span>${property.details.squareFootage ? property.details.squareFootage.toLocaleString() : ''} m²</span>
+              </div>
             </div>
-          `,
-          className: 'custom-marker-full',
-          iconSize: [120, 40],
-          iconAnchor: [60, 40],
-        });
+          `;
 
-        const marker = L.marker([coords.lat, coords.lng], { icon: markerIcon })
-          .addTo(map);
+          marker.bindTooltip(tooltipContent, {
+            permanent: false,
+            direction: 'top',
+            offset: [0, -15],
+            className: 'custom-tooltip-full'
+          });
 
-        // Create enhanced tooltip for hover
-        const tooltipContent = `
-          <div class="p-3 min-w-[200px] max-w-[280px]">
-            <h3 class="font-semibold text-gray-900 mb-2 text-sm">${property.title}</h3>
-            <p class="text-xs text-gray-600 mb-2">${property.address.street}, ${property.address.city}</p>
-            <div class="flex justify-between items-center mb-2">
-              <span class="font-bold text-blue-600 text-sm">${formatPrice(property.price)}</span>
-              <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded capitalize">${property.details.propertyType}</span>
-            </div>
-            <div class="flex items-center gap-3 text-xs text-gray-600">
-              <span class="flex items-center gap-1">
-                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 2L3 7v11h4v-6h6v6h4V7l-7-5z"/>
-                </svg>
-                ${property.details.bedrooms} dhoma
-              </span>
-              <span class="flex items-center gap-1">
-                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M8 2v2H6V2H4v2H2v2h2v10h2V6h2V4H6V2h2z"/>
-                </svg>
-                ${property.details.bathrooms} banjo
-              </span>
-              <span>${property.details.squareFootage ? property.details.squareFootage.toLocaleString() : ''} m²</span>
-            </div>
-          </div>
-        `;
-
-        marker.bindTooltip(tooltipContent, {
-          permanent: false,
-          direction: 'top',
-          offset: [0, -15],
-          className: 'custom-tooltip-full'
-        });
-
-        // Add click handler for property selection
-        marker.on('click', () => {
-          onPropertySelect(property);
-        });
-
-        // Show tooltip on hover
-        marker.on('mouseover', function() {
-          this.openTooltip();
-        });
-
-        marker.on('mouseout', function() {
-          this.closeTooltip();
-        });
-
-        markersRef.current.push(marker);
+          marker.on('click', () => {
+            onPropertySelect(property);
+          });
+          marker.on('mouseover', function() { this.openTooltip(); });
+          marker.on('mouseout', function() { this.closeTooltip(); });
+          markersRef.current.push(marker);
+        }
       } catch (err) {
-        console.warn('Error creating marker for property:', property, err);
+        console.warn('Error creating marker for item:', item, err);
       }
     });
   }
 
+  // Simple grid-based clustering to handle very large datasets without extra deps
+  const clusterize = (props: Property[], zoom: number): Array<ClusterItem | PointItem> => {
+    // Derive a cell size in degrees based on zoom; higher zoom => smaller cells
+    const baseCell = 360 / Math.pow(2, zoom);
+    const cellSize = baseCell * 2; // tweak factor for reasonable cluster sizes
+    const buckets = new Map<string, { latSum: number; lngSum: number; count: number; sample: Property }>();
+
+    for (const p of props) {
+      const { lat, lng } = p.address.coordinates;
+      const keyLat = Math.floor(lat / cellSize);
+      const keyLng = Math.floor(lng / cellSize);
+      const key = `${keyLat}:${keyLng}`;
+      const cur = buckets.get(key);
+      if (cur) {
+        cur.latSum += lat;
+        cur.lngSum += lng;
+        cur.count += 1;
+      } else {
+        buckets.set(key, { latSum: lat, lngSum: lng, count: 1, sample: p });
+      }
+    }
+
+  const clusters: Array<ClusterItem | PointItem> = [];
+    buckets.forEach((v) => {
+      if (v.count === 1) {
+        clusters.push({ type: 'point', property: v.sample });
+      } else {
+        clusters.push({ type: 'cluster', lat: v.latSum / v.count, lng: v.lngSum / v.count, count: v.count });
+      }
+    });
+
+    return clusters;
+  };
+
   const changeMapLayer = (layer: 'street' | 'satellite' | 'terrain') => {
     setMapLayer(layer);
     if (mapInstanceRef.current) {
-      // Remove existing tile layers
-      mapInstanceRef.current.eachLayer((layer: any) => {
-        if (layer instanceof (window as any).L?.TileLayer) {
-          mapInstanceRef.current.removeLayer(layer);
-        }
-      });
+      // Remove existing tile layer if present
+      if (tileLayerRef.current) {
+        try { mapInstanceRef.current.removeLayer(tileLayerRef.current); } catch {}
+        tileLayerRef.current = null;
+      }
 
       // Add new tile layer
       import('leaflet').then((L) => {
-        addTileLayer(L, mapInstanceRef.current, layer);
+        if (mapInstanceRef.current) {
+          addTileLayer(L, mapInstanceRef.current, layer);
+          // Nudge layout after provider switch to avoid glitches
+          try { mapInstanceRef.current.invalidateSize(); } catch {}
+          const id = window.setTimeout(() => {
+            try { mapInstanceRef.current?.invalidateSize(); } catch {}
+          }, 120);
+          timeoutsRef.current.push(id as unknown as number);
+        }
       });
     }
   };
@@ -407,9 +680,10 @@ export default function FullMapView({
       // Add search radius circle
       import('leaflet').then((L) => {
         // Remove existing search circle
-        mapInstanceRef.current.eachLayer((layer: any) => {
-          if (layer.options && layer.options.className === 'search-radius-circle') {
-            mapInstanceRef.current.removeLayer(layer);
+        mapInstanceRef.current?.eachLayer((layer: Layer) => {
+          const l = layer as unknown as { options?: { className?: string } };
+          if (l.options?.className === 'search-radius-circle') {
+            mapInstanceRef.current?.removeLayer(layer);
           }
         });
 
@@ -421,7 +695,7 @@ export default function FullMapView({
           color: '#3b82f6',
           weight: 2,
           className: 'search-radius-circle'
-        }).addTo(mapInstanceRef.current);
+        }).addTo(mapInstanceRef.current as LeafletMap);
       });
     }
   };
@@ -430,9 +704,10 @@ export default function FullMapView({
   const handleClearLocationSearch = () => {
     // Remove search radius circle
     if (mapInstanceRef.current) {
-      mapInstanceRef.current.eachLayer((layer: any) => {
-        if (layer.options && layer.options.className === 'search-radius-circle') {
-          mapInstanceRef.current.removeLayer(layer);
+      mapInstanceRef.current.eachLayer((layer: Layer) => {
+        const l = layer as unknown as { options?: { className?: string } };
+        if (l.options?.className === 'search-radius-circle') {
+          mapInstanceRef.current?.removeLayer(layer);
         }
       });
     }
@@ -441,8 +716,8 @@ export default function FullMapView({
   return (
     <div className="relative h-full w-full">
     {/* Search (simplified) */}
-    <div className="absolute left-4 top-4 z-1000 map-filters-overlay max-w-xs sm:max-w-sm w-full">
-      <div className="bg-white/95 backdrop-blur rounded-lg shadow border border-gray-200 p-2">
+    <div className="absolute left-4 top-4 z-50 map-filters-overlay pointer-events-none w-full max-w-[min(92vw,360px)] sm:w-auto sm:max-w-sm">
+      <div className="pointer-events-auto bg-white/95 backdrop-blur rounded-lg shadow border border-gray-200 p-2">
         <LocationSearch
           onLocationSelect={handleLocationSearch}
           onClear={handleClearLocationSearch}
@@ -460,7 +735,7 @@ export default function FullMapView({
 
     {/* Map Controls */}
     <div
-      className="absolute right-4 top-4 z-1000 map-controls-overlay"
+      className="absolute right-4 top-4 z-50 map-controls-overlay"
       style={{ right: selectedProperty && showPropertyDetails ? '22rem' : '1rem' }}
     >
       <div className="flex items-center gap-2">
@@ -508,14 +783,14 @@ export default function FullMapView({
 
       {/* Property Details Sidebar */}
     {selectedProperty && showPropertyDetails && (
-  <div className="absolute top-0 right-0 w-80 h-full bg-white shadow-xl border-l border-gray-200 z-1001 map-details-overlay overflow-y-auto">
+  <div className="absolute top-0 right-0 w-80 h-full bg-white shadow-xl border-l border-gray-200 z-50 map-details-overlay overflow-y-auto">
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">Detajet e Pasurisë</h3>
               <button
                 onClick={() => {
                   setShowPropertyDetails(false);
-                  onPropertySelect(null as any);
+                  onPropertySelect(null);
                 }}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               >
@@ -629,8 +904,13 @@ export default function FullMapView({
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="space-y-2 pt-4 border-t border-gray-200">
+            {/* Spacer to avoid overlap with sticky footer */}
+            <div className="h-3" />
+          </div>
+
+          {/* Sticky Action Footer: always visible, same height frame as map */}
+          <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3 pb-[calc(12px+env(safe-area-inset-bottom))]">
+            <div className="space-y-2">
               <Link
                 href={`/properties/${selectedProperty.id}`}
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all font-medium"

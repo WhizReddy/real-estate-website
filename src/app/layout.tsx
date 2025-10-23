@@ -113,14 +113,16 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
       </head>
       <body
-        className="font-sans antialiased"
+        className="font-sans antialiased min-h-dvh flex flex-col overflow-x-hidden"
         suppressHydrationWarning={true}
       >
         <PWAProvider>
           <ToastProvider>
             <PerformanceMonitor />
             <ResourcePreloader />
-            {children}
+            <main className="flex-1 min-h-0">
+              {children}
+            </main>
             <PWAInstallPrompt />
             <PWAUpdateNotification />
           </ToastProvider>

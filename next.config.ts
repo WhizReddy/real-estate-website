@@ -37,19 +37,6 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react', '@prisma/client'],
   },
   
-  // Turbopack specific configurations (moved from experimental.turbo)
-  turbopack: {
-    rules: {
-      '*.svg': {
-        loaders: ['@svgr/webpack'],
-        as: '*.js',
-      },
-    },
-    resolveAlias: {
-      '@': './src',
-    },
-  },
-  
   // Webpack configuration for fallback when Turbopack fails
   webpack: (config, { dev, isServer }) => {
     if (isServer) {

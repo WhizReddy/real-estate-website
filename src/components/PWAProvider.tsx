@@ -111,7 +111,7 @@ export default function PWAProvider({ children }: PWAProviderProps) {
       console.error('Failed to register service worker:', error);
     }
 
-    // Listen for install prompt
+    // Listen for install prompt (production only to reduce dev console noise)
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setCanInstall(true);
@@ -128,15 +128,19 @@ export default function PWAProvider({ children }: PWAProviderProps) {
       setUpdateAvailable(true);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
+    if (process.env.NODE_ENV === 'production') {
+      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.addEventListener('appinstalled', handleAppInstalled);
+    }
     window.addEventListener('pwa-update-available', handleUpdateAvailable);
 
     // Cleanup function
     return () => {
       cleanup();
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.removeEventListener('appinstalled', handleAppInstalled);
+      if (process.env.NODE_ENV === 'production') {
+        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        window.removeEventListener('appinstalled', handleAppInstalled);
+      }
       window.removeEventListener('pwa-update-available', handleUpdateAvailable);
     };
   };
@@ -263,7 +267,7 @@ export default function PWAProvider({ children }: PWAProviderProps) {
 export function useOffline() {
   const { isOnline } = usePWA();
   
-  const saveForLater = (key: string, data: any) => {
+  const saveForLater = (key: string, data: unknown) => {
     if (!isOnline) {
       OfflineStorage.setItem(key, data);
       return true;
@@ -294,12 +298,16 @@ export function useOffline() {
 // Hook for PWA installation
 export function usePWAInstall() {
   const { isInstalled, canInstall } = usePWA();
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  interface BeforeInstallPromptEvent extends Event {
+    prompt: () => Promise<void>;
+    userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+  }
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
 
     const handleAppInstalled = () => {

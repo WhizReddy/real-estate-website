@@ -149,9 +149,9 @@ export default function MapPage() {
   return (
     <Layout>
       <StructuredData type="website" />
-      <div className="h-screen flex flex-col bg-gray-50">
+  <div className="min-h-dvh flex flex-col bg-gray-50">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 px-4 py-3 z-10">
+        <header className="bg-white border-b border-gray-200 px-4 py-3 z-10 shrink-0">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-4">
               <Link
@@ -192,10 +192,10 @@ export default function MapPage() {
         </header>
 
         {/* Main Content */}
-        <div className="flex-1 flex overflow-hidden">
+  <div className="flex-1 min-h-0 flex overflow-hidden relative">
           {/* Filters Sidebar */}
           {showFilters && (
-            <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
+            <div className="w-80 bg-white border-r border-gray-200 flex flex-col overflow-hidden">
               <div className="p-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900">Filtrat</h2>
               </div>
@@ -339,7 +339,7 @@ export default function MapPage() {
           )}
 
           {/* Map Container */}
-          <div className="flex-1 relative">
+          <div className="flex-1 min-h-0 relative w-full overflow-hidden">
             <DynamicFullMapView
               properties={filteredProperties}
               onPropertySelect={handlePropertySelect}

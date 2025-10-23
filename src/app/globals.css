@@ -16,6 +16,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Ensure a single scroll container across pages */
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -41,6 +47,25 @@ img {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Collage marquee animations for homepage flats */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marqueeReverse {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(50%);
+  }
 }
 
 .animate-fadeIn {
@@ -71,7 +96,7 @@ img {
   z-index: 200;
 }
 
-/* Ensure map container doesn't have sticky positioning */
+/* Ensure map container is relatively positioned to respect flex layout */
 .leaflet-container {
   position: relative !important;
   z-index: 0 !important;
@@ -122,10 +147,27 @@ nav[class*="sticky"] {
   z-index: 100 !important;
 }
 
+/* Reduce hairline seams and tile flicker on mobile Safari/Chrome */
+.leaflet-container .leaflet-tile {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+  transform: translateZ(0);
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Disable tile fade/zoom transitions to reduce white-tile flashes */
+.leaflet-fade-anim .leaflet-tile {
+  transition: none !important;
+}
+.leaflet-zoom-anim .leaflet-zoom-animated {
+  transition: none !important;
+}
+
 /* Map UI overlays (ensure above Leaflet panes) */
 .map-controls-overlay {
   position: absolute !important;
-  z-index: 5 !important; /* above leaflet ui, below page header (z-10) */
+  z-index: 8 !important; /* sit above filters (6) and details (7), below header */
 }
 
 .map-filters-overlay {
@@ -211,6 +253,38 @@ nav[class*="sticky"] {
   font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
+/* Lightweight utility classes used across pages */
+.gpu-accelerated {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.complex-shadow {
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.04),
+    0 2px 4px rgba(0,0,0,0.06),
+    0 8px 24px rgba(0,0,0,0.08);
+}
+
+.mobile-button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Optional mobile grids to complement Tailwind utilities */
+.mobile-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.mobile-contact-grid {
+  grid-template-columns: 1fr;
+}
+
+.mobile-contact {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
 /* Mobile optimizations */
 @media (max-width: 768px) {
   button, a, input, select, textarea {
@@ -238,5 +312,21 @@ nav[class*="sticky"] {
   
   html {
     scroll-behavior: auto;
+  }
+}
+
+/* Mobile map container safety layer */
+@media (max-width: 640px) {
+  .leaflet-container {
+    /* Ensure no flex children overflow on mobile */
+    flex-shrink: 0;
+    max-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Overlay styling for mobile - keep positioned absolutely within the map container */
+  .map-filters-overlay,
+  .map-controls-overlay {
+    z-index: 401 !important;
   }
 }

@@ -100,6 +100,51 @@ export default function PropertyDetailMap({
 
       markersRef.current = [];
 
+      // Ensure container has a visible size before creating the map (prevents _leaflet_pos issues)
+      const waitForVisibleContainer = async (el: HTMLDivElement, maxMs = 1500) => {
+        const isVisible = () => {
+          const rect = el.getBoundingClientRect();
+          if (rect.width > 0 && rect.height > 0) return true;
+          const style = window.getComputedStyle(el);
+          if (style.display === 'none' || style.visibility === 'hidden') return false;
+          return rect.width > 0 && rect.height > 0;
+        };
+        if (isVisible()) return;
+        await new Promise<void>((resolve) => {
+          let resolved = false;
+          const ro = new ResizeObserver(() => {
+            if (isVisible() && !resolved) {
+              resolved = true;
+              try { ro.disconnect(); } catch {}
+              resolve();
+            }
+          });
+          ro.observe(el);
+          window.setTimeout(() => {
+            if (!resolved) {
+              try { ro.disconnect(); } catch {}
+              resolved = true;
+              resolve();
+            }
+          }, Math.max(250, Math.min(maxMs, 1500)));
+          // no need to store timeout here; short-lived
+        });
+        await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+      };
+
+      // Mobile fallback: ensure a decent height
+      try {
+        const rect = mapRef.current.getBoundingClientRect();
+        const top = Math.max(0, rect.top);
+        const available = Math.floor(window.innerHeight - top);
+        const desired = isFullscreen ? window.innerHeight : parseInt((height || '400px').toString());
+        if (available > 0 && rect.height < Math.max(200, Math.min(available, desired || 400))) {
+          mapRef.current.style.minHeight = Math.max(280, Math.min(available, desired || 400)) + 'px';
+        }
+      } catch {}
+
+      await waitForVisibleContainer(mapRef.current, 1200);
+
       const map = L.map(mapRef.current, {
         center: [property.address.coordinates.lat, property.address.coordinates.lng],
         zoom: 15,
@@ -112,22 +157,55 @@ export default function PropertyDetailMap({
         touchZoom: true,
         maxBounds: null,
         maxBoundsViscosity: 0.0,
+        // Disable animations to mitigate white tile flashes on both mobile and detail view transitions
+        fadeAnimation: false,
+        zoomAnimation: false,
+        markerZoomAnimation: false,
+        preferCanvas: true,
       });
+      try { map.zoomControl?.setPosition('bottomleft'); } catch {}
 
       // Add tile layer
-      const tileUrl = mapLayer === 'satellite' 
-        ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      type ProviderSpec = { url: string; attribution: string; options?: Parameters<typeof L.tileLayer>[1] };
+      const streetProviders: ProviderSpec[] = [
+        { url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', attribution: '© OpenStreetMap contributors', options: { maxZoom: 19 } },
+        { url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', attribution: '&copy; OpenStreetMap & CARTO', options: { maxZoom: 20, subdomains: 'abcd' as unknown as string[] } },
+      ];
+      const satelliteProviders: ProviderSpec[] = [
+        { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attribution: 'Esri', options: { maxZoom: 19 } },
+      ];
 
-      L.tileLayer(tileUrl, {
-        attribution: mapLayer === 'satellite' ? 'Esri' : 'OpenStreetMap',
-        maxZoom: 18,
-        minZoom: 10,
-        tileSize: 256,
-        keepBuffer: 2,
-        updateWhenZooming: false,
-        updateWhenIdle: true,
-      }).addTo(map);
+      const providers = mapLayer === 'satellite' ? satelliteProviders : streetProviders;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let tileLayer: any = null;
+      const attachTiles = (index: number) => {
+        const spec = providers[index];
+        if (!spec) return;
+        if (tileLayer) {
+          try { map.removeLayer(tileLayer); } catch {}
+          tileLayer = null;
+        }
+        tileLayer = L.tileLayer(spec.url, {
+          attribution: spec.attribution,
+          detectRetina: true,
+          crossOrigin: true,
+          updateWhenIdle: true,
+          updateWhenZooming: false,
+          keepBuffer: 2,
+          tileSize: 256,
+          errorTileUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0iI2Y5ZmFmYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNjM3MzgwIiBmb250LXNpemU9IjE0Ij5NYXAgVGlsZSBOb3QgQXZhaWxhYmxlPC90ZXh0Pjwvc3ZnPg==',
+          ...(spec.options || {}),
+        }).addTo(map);
+        let errCount = 0;
+        tileLayer.on('tileerror', () => {
+          errCount += 1;
+          try { map.invalidateSize(); } catch {}
+          if (errCount >= 3 && index + 1 < providers.length) {
+            attachTiles(index + 1);
+          }
+        });
+      };
+      attachTiles(0);
 
       mapInstanceRef.current = map;
 
@@ -137,6 +215,15 @@ export default function PropertyDetailMap({
           map.invalidateSize();
         }
       }, 100);
+
+      // Keep responsive on resize/orientation
+      const onWinResize = () => {
+        try { map.invalidateSize(); } catch {}
+      };
+      window.addEventListener('resize', onWinResize);
+      window.addEventListener('orientationchange', onWinResize);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (map as any).__onWinResize = onWinResize;
 
       // Add main property marker
       addPropertyMarker(L, map, property);
@@ -159,13 +246,14 @@ export default function PropertyDetailMap({
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addPropertyMarker = (L: any, map: any, prop: Property) => {
     const coords = prop.address.coordinates;
     
     // Create custom marker for main property
     const mainMarkerIcon = L.divIcon({
       html: `
-        <div class="main-property-marker bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-3 rounded-lg text-sm font-bold shadow-xl border-3 border-white relative">
+  <div class="main-property-marker bg-linear-to-r from-blue-600 to-blue-700 text-white px-4 py-3 rounded-lg text-sm font-bold shadow-xl border-3 border-white relative">
           <div class="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 rounded-full animate-pulse"></div>
           ${formatPrice(prop.price)}
         </div>
@@ -181,7 +269,7 @@ export default function PropertyDetailMap({
     const popupContent = `
       <div class="p-4 min-w-[280px]">
         <div class="flex items-start gap-3 mb-3">
-          <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+          <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 shrink-0"></div>
           <div>
             <h3 class="font-bold text-gray-900 mb-1">${prop.title}</h3>
             <p class="text-sm text-gray-600 mb-2">${prop.address.street}, ${prop.address.city}</p>
@@ -227,13 +315,14 @@ export default function PropertyDetailMap({
     markersRef.current.push(marker);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addNearbyPropertyMarkers = (L: any, map: any, properties: Property[]) => {
     properties.forEach((prop) => {
       const coords = prop.address.coordinates;
       
       const nearbyMarkerIcon = L.divIcon({
         html: `
-          <div class="nearby-property-marker bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-600 hover:to-blue-700 transition-all cursor-pointer">
+          <div class="nearby-property-marker bg-linear-to-r from-blue-500 to-blue-600 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-600 hover:to-blue-700 transition-all cursor-pointer">
             ${formatPrice(prop.price)}
           </div>
         `,
@@ -268,6 +357,7 @@ export default function PropertyDetailMap({
     });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addNeighborhoodMarkers = (L: any, map: any, places: NeighborhoodPlace[]) => {
     places.forEach((place) => {
       const icon = getPlaceIcon(place.type);
@@ -334,10 +424,24 @@ export default function PropertyDetailMap({
   };
 
   useEffect(() => {
-    initializeMap();
+    let canceled = false;
+    const init = async () => {
+      if (canceled) return;
+      await initializeMap();
+    };
+    init();
 
     return () => {
+      canceled = true;
       if (mapInstanceRef.current) {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const handler = (mapInstanceRef.current as any).__onWinResize;
+          if (handler) {
+            window.removeEventListener('resize', handler);
+            window.removeEventListener('orientationchange', handler);
+          }
+        } catch {}
         try {
           mapInstanceRef.current.remove();
         } catch (error) {
@@ -347,6 +451,7 @@ export default function PropertyDetailMap({
         markersRef.current = [];
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapLayer, showNearbyPlaces]);
 
   const toggleFullscreen = () => {
@@ -381,7 +486,7 @@ export default function PropertyDetailMap({
   }
 
   return (
-    <div className={`${isFullscreen ? 'fixed inset-0 z-[200] bg-white' : 'relative'} ${className}`}>
+  <div className={`${isFullscreen ? 'fixed inset-0 z-200 bg-white' : 'relative'} ${className}`}>
       <div
         ref={mapRef}
         style={{ height: isFullscreen ? '100vh' : height }}
@@ -389,7 +494,7 @@ export default function PropertyDetailMap({
       />
 
       {/* Map Controls */}
-      <div className={`absolute top-3 right-3 flex flex-col gap-2 ${isFullscreen ? 'z-[1000]' : 'z-10'}`}>
+  <div className={`absolute top-3 right-3 flex flex-col gap-2 ${isFullscreen ? 'z-1000' : 'z-10'}`}>
         {/* Fullscreen Toggle */}
         <button
           onClick={toggleFullscreen}
@@ -430,7 +535,7 @@ export default function PropertyDetailMap({
 
       {/* Directions Button */}
       {showDirections && (
-        <div className={`absolute bottom-3 right-3 ${isFullscreen ? 'z-[1000]' : 'z-10'}`}>
+  <div className={`absolute bottom-3 right-3 ${isFullscreen ? 'z-1000' : 'z-10'}`}>
           <a
             href={`https://www.google.com/maps/dir/?api=1&destination=${property.address.coordinates.lat},${property.address.coordinates.lng}`}
             target="_blank"
@@ -455,7 +560,7 @@ export default function PropertyDetailMap({
 
       {/* Neighborhood Legend */}
       {showNeighborhood && showNearbyPlaces && !isLoading && !error && (
-        <div className={`absolute bottom-3 left-3 bg-white rounded-lg shadow-md border border-gray-200 p-3 max-w-xs ${isFullscreen ? 'z-[1000]' : 'z-10'}`}>
+  <div className={`absolute bottom-3 left-3 bg-white rounded-lg shadow-md border border-gray-200 p-3 max-w-xs ${isFullscreen ? 'z-1000' : 'z-10'}`}>
           <h4 className="font-semibold text-gray-900 mb-2 text-sm">Nearby Places</h4>
           <div className="space-y-1 text-xs">
             <div className="flex items-center gap-2">

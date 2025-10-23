@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ContactInquiry } from '@/types';
 import { getInquiries, getProperty } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
@@ -86,44 +87,43 @@ export default function InquiriesPage() {
     setSelectedInquiry(inquiry);
   };
 
-  const filteredInquiries = inquiries.filter(inquiry => {
-    if (filter === 'all') return true;
-    // For now, we'll treat all inquiries as unread since we don't have a read status
-    // In a real app, you'd have a 'read' field in the inquiry model
-    return filter === 'unread';
-  });
+  const filteredInquiries = filter === 'all'
+    ? inquiries
+    : inquiries.filter(() => {
+        // For now, treat all inquiries as unread since we don't track read status
+        return filter === 'unread';
+      });
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-full bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+    <div className="min-h-full bg-linear-to-br from-slate-50 to-blue-50 overflow-x-hidden">
+      <header className="bg-linear-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-6">
+          <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <MessageCircle className="h-8 w-8 text-blue-600 mr-3" />
+              <Link
+                href="/admin/dashboard"
+                className="flex items-center text-white/90 hover:text-white mr-6 transition-colors duration-200"
+              >
+                <span className="font-medium">← Kthehu</span>
+              </Link>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Pyetjet e Klientëve</h1>
-                <p className="text-gray-600">Menaxhoni pyetjet dhe kërkesat e klientëve</p>
+                <h1 className="text-3xl font-bold text-white">Pyetjet e Klientëve</h1>
+                <p className="text-blue-200">Menaxhoni pyetjet dhe kërkesat e klientëve</p>
               </div>
             </div>
-            <button
-              onClick={() => router.push('/admin/dashboard')}
-              className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
-            >
-              Kthehu në Dashboard
-            </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Inquiries List */}
           <div className="lg:w-1/2">

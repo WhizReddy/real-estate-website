@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Property } from '@/types';
 import { formatPrice } from '@/lib/utils';
 import { getCurrentUser, isAdmin, isAgent, clearSession, UserData } from '@/lib/auth-utils';
-import { Plus, Edit, Trash2, Eye, LogOut, MessageCircle, Search, Filter, X, User } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, LogOut, MessageCircle, Search, Filter, X, User, MoreVertical } from 'lucide-react';
 import CreativeLoader from '@/components/CreativeLoader';
 import DatabaseStatusMonitor from '@/components/DatabaseStatusMonitor';
 
@@ -28,6 +28,7 @@ export default function AdminDashboard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [banner, setBanner] = useState<{ type: 'success' | 'warning' | 'info'; message: string } | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 
   useEffect(() => {
@@ -97,7 +98,7 @@ export default function AdminDashboard() {
 
   // Get unique values for filter options
   const uniqueCities = [...new Set(allProperties.map(p => p.address.city))].sort();
-  const uniquePropertyTypes = [...new Set(allProperties.map(p => p.details.propertyType))].sort();
+  const uniquePropertyTypes = [...new Set(allProperties.map(p => p.details.propertyType))].sort(); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   // Apply filters with useCallback to prevent infinite re-renders
   const applyFilters = useCallback(() => {
@@ -187,20 +188,20 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-[60vh] bg-linear-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <CreativeLoader type="properties" size="lg" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-full bg-linear-to-br from-slate-50 to-blue-50 overflow-x-hidden">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-between items-center">
+      <header className="bg-linear-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-4 relative pt-[env(safe-area-inset-top)]">
+          <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
             <div>
-              <h1 className="text-3xl font-bold text-white">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white">
                 {userRole === 'ADMIN' ? 'Paneli i Administrimit' : 'Paneli i Agjentit'}
               </h1>
               <p className="text-blue-200">
@@ -212,12 +213,13 @@ export default function AdminDashboard() {
                 </p>
               )}
             </div>
-            <div className="flex items-center space-x-6">
+            {/* Desktop actions */}
+            <div className="hidden sm:flex items-center space-x-6">
               {userRole === 'ADMIN' && <DatabaseStatusMonitor />}
               {userRole === 'ADMIN' && (
                 <Link
                   href="/admin/agents"
-                  className="flex items-center text-blue-100 hover:text-white transition-colors duration-200"
+                  className="flex items-center text-white/90 hover:text-white transition-colors duration-200"
                 >
                   <User className="h-5 w-5 mr-2" />
                   <span className="font-medium">Agjentët</span>
@@ -225,31 +227,88 @@ export default function AdminDashboard() {
               )}
               <Link
                 href="/admin/inquiries"
-                className="flex items-center text-blue-100 hover:text-white transition-colors duration-200"
+                className="flex items-center text-white/90 hover:text-white transition-colors duration-200"
               >
                 <MessageCircle className="h-5 w-5 mr-2" />
                 <span className="font-medium">Pyetjet</span>
               </Link>
               <Link
                 href="/"
-                className="flex items-center text-blue-100 hover:text-white transition-colors duration-200"
+                className="flex items-center text-white/90 hover:text-white transition-colors duration-200"
               >
                 <Eye className="h-5 w-5 mr-2" />
                 <span className="font-medium">Shiko Faqen</span>
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="flex items-center px-4 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <LogOut className="h-5 w-5 mr-2" />
                 <span className="font-medium">Dil</span>
               </button>
             </div>
           </div>
+          {/* Mobile actions: compact menu */}
+          <div className="sm:hidden absolute right-4 top-2">
+            <button
+              aria-label="Hap menunë"
+              onClick={() => setMobileMenuOpen(v => !v)}
+              className="inline-flex items-center justify-center p-2 rounded-md bg-white/10 text-white hover:bg-white/15"
+            >
+              <MoreVertical className="h-5 w-5" />
+            </button>
+          </div>
+          {mobileMenuOpen && (
+            <>
+              {/* backdrop */}
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-hidden="true"
+              />
+              <div className="absolute right-4 top-12 z-50 w-56 rounded-lg border border-white/10 bg-white/95 text-gray-900 shadow-xl backdrop-blur">
+                <div className="py-1">
+                  {userRole === 'ADMIN' && (
+                    <Link
+                      href="/admin/agents"
+                      className="flex items-center px-3 py-2 hover:bg-gray-100 rounded-md"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <User className="h-4 w-4 mr-2 text-blue-700" />
+                      Agjentët
+                    </Link>
+                  )}
+                  <Link
+                    href="/admin/inquiries"
+                    className="flex items-center px-3 py-2 hover:bg-gray-100 rounded-md"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <MessageCircle className="h-4 w-4 mr-2 text-blue-700" />
+                    Pyetjet
+                  </Link>
+                  <Link
+                    href="/"
+                    className="flex items-center px-3 py-2 hover:bg-gray-100 rounded-md"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Eye className="h-4 w-4 mr-2 text-blue-700" />
+                    Shiko faqen
+                  </Link>
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); handleLogout(); }}
+                    className="w-full text-left flex items-center px-3 py-2 hover:bg-gray-100 rounded-md"
+                  >
+                    <LogOut className="h-4 w-4 mr-2 text-blue-700" />
+                    Dil
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 sm:pb-8">
         {banner && (
           <div className={`mb-6 rounded-md border p-4 ${banner.type === 'success' ? 'border-green-200 bg-green-50 text-green-800' : banner.type === 'info' ? 'border-blue-200 bg-blue-50 text-blue-800' : 'border-yellow-200 bg-yellow-50 text-yellow-800'}`}>
             <div className="flex items-center justify-between">
@@ -266,8 +325,8 @@ export default function AdminDashboard() {
         )}
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 rounded-lg">
                 <div className="w-6 h-6 bg-blue-600 rounded"></div>
@@ -279,7 +338,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg">
                 <div className="w-6 h-6 bg-green-600 rounded"></div>
@@ -293,7 +352,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
             <div className="flex items-center">
               <div className="p-2 bg-yellow-100 rounded-lg">
                 <div className="w-6 h-6 bg-yellow-600 rounded"></div>
@@ -309,7 +368,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6">
+  <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6">
           {/* Search Bar */}
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" />
@@ -487,7 +546,7 @@ export default function AdminDashboard() {
                   <tr key={property.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-12 w-12">
+                        <div className="shrink-0 h-12 w-12">
                           <div className="h-12 w-12 bg-gray-200 rounded-lg flex items-center justify-center">
                             🏠
                           </div>
@@ -568,6 +627,22 @@ export default function AdminDashboard() {
             </Link>
           </div>
         )}
+      </div>
+
+      {/* Mobile sticky action bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 sm:hidden px-4 pb-[env(safe-area-inset-bottom)]">
+        <div className="mx-auto max-w-7xl">
+          <div className="bg-white/90 backdrop-blur border border-blue-100 shadow-md rounded-lg p-3 flex items-center justify-between">
+            <span className="text-sm text-gray-700">Veprime të shpejta</span>
+            <Link
+              href="/admin/properties/new"
+              className="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Shto Pasuri
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* Delete Confirmation Modal */}

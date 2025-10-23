@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { Property } from '@/types';
 import ImageGallery from '@/components/ImageGallery';
 import PropertyDetailMap from '@/components/PropertyDetailMap';
+import StaticMapPreview from '@/components/StaticMapPreview';
 import NeighborhoodInfo from '@/components/NeighborhoodInfo';
 import ViewOnMapButton, { ViewOnMapFAB } from '@/components/ViewOnMapButton';
 import ContactForm from '@/components/ContactForm';
@@ -238,13 +239,27 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                         </a>
                       </div>
                     </div>
-                    <PropertyDetailMap 
-                      property={property}
-                      nearbyProperties={nearbyProperties}
-                      height="500px"
-                      showNeighborhood={true}
-                      showDirections={true}
-                    />
+
+                    {/* Mobile: lightweight static map preview to avoid heavy rendering and scroll */}
+                    <div className="lg:hidden">
+                      <StaticMapPreview
+                        properties={[property, ...nearbyProperties].slice(0, 5)}
+                        height={300}
+                        width={640}
+                        ctaHref="/map"
+                      />
+                    </div>
+
+                    {/* Desktop: full interactive map */}
+                    <div className="hidden lg:block">
+                      <PropertyDetailMap 
+                        property={property}
+                        nearbyProperties={nearbyProperties}
+                        height="500px"
+                        showNeighborhood={true}
+                        showDirections={true}
+                      />
+                    </div>
                   </div>
                 )}
 

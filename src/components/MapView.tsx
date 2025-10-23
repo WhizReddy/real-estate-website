@@ -3,10 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Property } from '@/types';
 import { formatPrice } from '@/lib/utils';
-import { MapPin, AlertCircle, RefreshCw, Home, Navigation, Layers, Filter, Search } from 'lucide-react';
+import { MapPin, Home, Filter } from 'lucide-react';
 import CreativeLoader from '@/components/CreativeLoader';
 import { MapError, NetworkError } from '@/components/ErrorComponents';
-import { MapLoadingSkeleton } from '@/components/LoadingStates';
 import { useErrorHandler, useNetworkError } from '@/hooks/useErrorHandler';
 
 interface MapViewProps {
@@ -48,7 +47,7 @@ export default function MapView({
     propertyType: 'all'
   });
   // Removed markerClusterGroup state - using simple layer groups instead
-  const [isMapReady, setIsMapReady] = useState(false);
+  // const [isMapReady, setIsMapReady] = useState(false);
 
   const initializeMap = async () => {
     if (typeof window === 'undefined' || !mapRef.current) return;
@@ -181,9 +180,35 @@ export default function MapView({
         markersRef.current = [];
       }
     };
+    // initializeMap is intentionally not added to deps to avoid reinitialization loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorHandler.retryCount]);
 
-  // Update markers when properties or filters change
+  // Precompute filtered properties before effects that depend on it
+  const filteredProperties = properties.filter(property => {
+    if (mapFilters.priceRange !== 'all') {
+      const price = property.price;
+      switch (mapFilters.priceRange) {
+        case 'low':
+          if (price > 100000) return false;
+          break;
+        case 'medium':
+          if (price < 100000 || price > 300000) return false;
+          break;
+        case 'high':
+          if (price < 300000) return false;
+          break;
+      }
+    }
+
+    if (mapFilters.propertyType !== 'all') {
+      if (property.details.propertyType !== mapFilters.propertyType) return false;
+    }
+
+    return true;
+  });
+
+  // Update markers when filtered properties change
   useEffect(() => {
     if (!mapInstanceRef.current || typeof window === 'undefined') return;
 
@@ -219,7 +244,7 @@ export default function MapView({
     };
 
     updateMarkers();
-  }, [properties, onPropertySelect, mapFilters]);
+  }, [filteredProperties, onPropertySelect]);
 
   // Highlight selected property
   useEffect(() => {
@@ -270,7 +295,7 @@ export default function MapView({
           // Create mobile-friendly marker icon
           const markerIcon = L.divIcon({
             html: `
-              <div class="property-marker bg-gradient-to-r from-blue-600 to-blue-700 text-white px-2 py-1 rounded-lg text-xs font-semibold shadow-lg border-2 border-white cursor-pointer">
+              <div class="property-marker bg-linear-to-r from-blue-600 to-blue-700 text-white px-2 py-1 rounded-lg text-xs font-semibold shadow-lg border-2 border-white cursor-pointer">
                 ${formatPrice(property.price)}
               </div>
             `,
@@ -373,7 +398,6 @@ export default function MapView({
         } else {
           // All markers processed, add layer group to map
           map.addLayer(layerGroup);
-          setIsMapReady(true);
         }
       };
       
@@ -437,28 +461,7 @@ export default function MapView({
     }
   };
 
-  const filteredProperties = properties.filter(property => {
-    if (mapFilters.priceRange !== 'all') {
-      const price = property.price;
-      switch (mapFilters.priceRange) {
-        case 'low':
-          if (price > 100000) return false;
-          break;
-        case 'medium':
-          if (price < 100000 || price > 300000) return false;
-          break;
-        case 'high':
-          if (price < 300000) return false;
-          break;
-      }
-    }
-
-    if (mapFilters.propertyType !== 'all') {
-      if (property.details.propertyType !== mapFilters.propertyType) return false;
-    }
-
-    return true;
-  });
+  
 
   return (
     <div className="relative">
@@ -469,7 +472,7 @@ export default function MapView({
       />
 
       {/* Mobile-Optimized Map Controls */}
-      <div className="absolute top-2 right-2 flex flex-col gap-1 z-[1000]">
+  <div className="absolute top-2 right-2 flex flex-col gap-1 z-1000">
 
         {/* Map Layer Selector - Smaller for mobile */}
         <div className="bg-white rounded-md shadow-md border border-gray-200 overflow-hidden">
@@ -585,7 +588,7 @@ export default function MapView({
       </div>
 
       {/* Mobile-Friendly Map Filters */}
-      <div className="absolute top-3 left-3 z-[1000]">
+  <div className="absolute top-3 left-3 z-1000">
         <div className="bg-white rounded-lg shadow-md border border-gray-200 p-3 max-w-xs sm:max-w-sm">
           <div className="flex items-center gap-2 mb-2">
             <Filter className="h-4 w-4 text-blue-600" />
@@ -636,7 +639,7 @@ export default function MapView({
       
       {/* Loading State */}
       {isLoading && (
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-green-50 bg-opacity-95 flex items-center justify-center rounded-lg">
+        <div className="absolute inset-0 bg-linear-to-br from-blue-50 to-green-50 bg-opacity-95 flex items-center justify-center rounded-lg">
           <CreativeLoader type="map" size="md" />
         </div>
       )}
@@ -668,7 +671,7 @@ export default function MapView({
             <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Nuk ka pasuri</h3>
             <p className="text-gray-600 text-sm">
-              Nuk ka pasuri për t'u shfaqur në hartë.
+              Nuk ka pasuri për t&#39;u shfaqur në hartë.
             </p>
           </div>
         </div>

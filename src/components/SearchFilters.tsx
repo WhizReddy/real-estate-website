@@ -42,6 +42,7 @@ export default function SearchFilters({
   const [isExpanded, setIsExpanded] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
     searchTerm: "",
+    // Use a generous default; will sync to dataset maxPrice below
     priceRange: { min: 0, max: 1000000 },
     location: "",
     propertyType: [],
@@ -78,6 +79,22 @@ export default function SearchFilters({
     () => Math.max(...properties.map((p) => p.price)),
     [properties]
   );
+
+  // Ensure initial priceRange.max aligns with dataset max to avoid pre-applied filtering
+  useEffect(() => {
+    if (!Number.isFinite(maxPrice) || maxPrice <= 0) return;
+    setFilters((prev) => {
+      // If max was the generic default (1,000,000) or larger than available max,
+      // align it with the dataset so we don't inadvertently filter on first load.
+      if (prev.priceRange.max === 1000000 || prev.priceRange.max > maxPrice) {
+        return {
+          ...prev,
+          priceRange: { ...prev.priceRange, max: maxPrice },
+        };
+      }
+      return prev;
+    });
+  }, [maxPrice]);
 
   // Memoized sorting function
   const sortProperties = useCallback(

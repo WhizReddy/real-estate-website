@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { User, Plus, Edit, Trash2, Mail, Phone, Shield, UserCheck } from "lucide-react";
+import { User, Plus, Edit, Trash2, Mail, Phone, Shield, UserCheck, MoreVertical } from "lucide-react";
 import { handleApiResponse, logError } from "@/lib/error-handler";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
@@ -31,6 +31,7 @@ export default function AgentsPage() {
     password: '',
     role: 'AGENT' as 'ADMIN' | 'AGENT'
   });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     // Check authentication
@@ -147,7 +148,7 @@ export default function AgentsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-full bg-linear-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
@@ -155,31 +156,60 @@ export default function AgentsPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+  <div className="min-h-full bg-linear-to-br from-slate-50 to-blue-50 overflow-x-hidden">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
+      <header className="bg-linear-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-4 relative pt-[env(safe-area-inset-top)]">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center">
               <Link
                 href="/admin/dashboard"
-                className="flex items-center text-blue-100 hover:text-white mr-6 transition-colors duration-200"
+                className="flex items-center text-white/90 hover:text-white mr-6 transition-colors duration-200"
               >
                 <span className="font-medium">← Kthehu</span>
               </Link>
               <div>
-                <h1 className="text-3xl font-bold text-white">Menaxhimi i Agjentëve</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-white">Menaxhimi i Agjentëve</h1>
                 <p className="text-blue-200">Menaxho agjentët dhe të drejtat e tyre</p>
               </div>
             </div>
-            <button
-              onClick={() => setShowAddForm(true)}
-              className="flex items-center bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Shto Agjent të Ri
-            </button>
+            {/* Desktop add button */}
+            <div className="hidden sm:block">
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="inline-flex items-center bg-linear-to-r from-blue-600 to-blue-700 text-white px-5 py-2.5 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                <Plus className="h-5 w-5 mr-2" />
+                Shto Agjent të Ri
+              </button>
+            </div>
+            {/* Mobile kebab */}
+            <div className="sm:hidden absolute right-4 top-2">
+              <button
+                aria-label="Hap menunë"
+                onClick={() => setMobileMenuOpen(v => !v)}
+                className="inline-flex items-center justify-center p-2 rounded-md bg-white/10 text-white hover:bg-white/15"
+              >
+                <MoreVertical className="h-5 w-5" />
+              </button>
+            </div>
           </div>
+          {mobileMenuOpen && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setMobileMenuOpen(false)} aria-hidden="true" />
+              <div className="absolute right-4 top-12 z-50 w-56 rounded-lg border border-white/10 bg-white/95 text-gray-900 shadow-xl backdrop-blur">
+                <div className="py-1">
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); setShowAddForm(true); }}
+                    className="w-full text-left flex items-center px-3 py-2 hover:bg-gray-100 rounded-md"
+                  >
+                    <Plus className="h-4 w-4 mr-2 text-blue-700" />
+                    Shto Agjent të Ri
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </header>
 
@@ -259,8 +289,8 @@ export default function AgentsPage() {
                   <tr key={agent.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
-                          <div className="h-10 w-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                        <div className="shrink-0 h-10 w-10">
+                          <div className="h-10 w-10 bg-linear-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
                             <User className="h-5 w-5 text-white" />
                           </div>
                         </div>

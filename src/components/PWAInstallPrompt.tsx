@@ -23,10 +23,14 @@ export default function PWAInstallPrompt() {
   const { isMobile } = useResponsive();
 
   useEffect(() => {
+    // Reduce console noise in development; only enable in production
+    if (process.env.NODE_ENV !== 'production') {
+      return;
+    }
     // Check if app is already installed
     const checkInstallation = () => {
       const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches;
-      const isIOSStandalone = (window.navigator as any).standalone === true;
+  const isIOSStandalone = (window.navigator as unknown as { standalone?: boolean }).standalone === true;
       
       setIsStandalone(isStandaloneMode || isIOSStandalone);
       setIsInstalled(isStandaloneMode || isIOSStandalone);
@@ -64,8 +68,8 @@ export default function PWAInstallPrompt() {
       showInstallSuccessMessage();
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
+  window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -227,9 +231,12 @@ export function usePWAInstall() {
   const [canInstall, setCanInstall] = useState(false);
 
   useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') {
+      return;
+    }
     const checkInstallation = () => {
       const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches;
-      const isIOSStandalone = (window.navigator as any).standalone === true;
+  const isIOSStandalone = (window.navigator as unknown as { standalone?: boolean }).standalone === true;
       
       setIsInstalled(isStandaloneMode || isIOSStandalone);
     };
@@ -246,8 +253,8 @@ export function usePWAInstall() {
 
     checkInstallation();
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
+  window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);

@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { Agent } from '@/types';
-import { getAgents, searchAgents } from '@/lib/agents';
+import { getAgents } from '@/lib/agents';
 import AgentCard from '@/components/AgentCard';
 import Layout from '@/components/Layout';
-import { Search, Users, MapPin, Phone } from 'lucide-react';
+import { Search, Users, Phone } from 'lucide-react';
 
 export default function AgentsPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -64,7 +64,7 @@ export default function AgentsPage() {
   if (isLoading) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-[60vh] bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading agents...</p>
@@ -76,7 +76,7 @@ export default function AgentsPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="bg-gray-50">
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -134,7 +134,7 @@ export default function AgentsPage() {
               <div className="mt-4 flex flex-wrap gap-2">
                 {searchTerm && (
                   <span className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
-                    Search: "{searchTerm}"
+                    Search: &quot;{searchTerm}&quot;
                     <button
                       onClick={() => setSearchTerm('')}
                       className="ml-2 text-blue-600 hover:text-blue-800"
