@@ -38,9 +38,10 @@ export default function PropertyDetailMap({
   showDirections = true,
   className = ''
 }: PropertyDetailMapProps) {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const innerContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapInstanceRef = useRef<ReturnType<typeof Object> | null>(null);
+  const markersRef = useRef<Array<ReturnType<typeof Object>>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [mapLayer, setMapLayer] = useState<'street' | 'satellite'>('street');
@@ -82,7 +83,7 @@ export default function PropertyDetailMap({
 
   useEffect(() => {
     setNearbyPlaces(mockNearbyPlaces);
-  }, [property]);
+  }, [property, mockNearbyPlaces]);
 
   const initializeMap = async () => {
     if (typeof window === 'undefined' || !mapRef.current) return;
@@ -178,7 +179,32 @@ export default function PropertyDetailMap({
 
       await waitForVisibleContainer(mapRef.current, 1200);
 
-      const map = L.map(mapRef.current, {
+      // Create a fresh inner container for Leaflet so we never reuse a DOM node
+      // that may still have _leaflet_id set by another instance.
+      if (!mapRef.current) throw new Error('Map container missing');
+      // Clean any previously created inner container
+      if (innerContainerRef.current && innerContainerRef.current.parentElement === mapRef.current) {
+        try { innerContainerRef.current.remove(); } catch {}
+        innerContainerRef.current = null;
+      }
+
+      const inner = document.createElement('div');
+      inner.style.width = '100%';
+      inner.style.height = '100%';
+      // Give it a unique id so debugging is easier and Leaflet won't reuse
+      inner.id = `leaflet-container-${property.id}-${Date.now()}`;
+      // ensure no stray leaflet props
+      try {
+        // remove any stray leaflet id if present
+        const maybe = inner as unknown as { _leaflet_id?: unknown };
+        if (maybe && maybe._leaflet_id) {
+          try { delete maybe._leaflet_id; } catch {}
+        }
+      } catch {}
+      mapRef.current.appendChild(inner);
+      innerContainerRef.current = inner;
+
+      const map = L.map(inner, {
         center: [property.address.coordinates.lat, property.address.coordinates.lng],
         zoom: 15,
         minZoom: 10,
@@ -241,6 +267,9 @@ export default function PropertyDetailMap({
       attachTiles(0);
 
       mapInstanceRef.current = map;
+
+  // Attach a reference to the inner container so we can clean it later
+  try { (map as unknown as Record<string, unknown>)._containerElement = innerContainerRef.current; } catch {}
 
       // Force map to invalidate size after a short delay to ensure proper rendering
       setTimeout(() => {
@@ -458,6 +487,7 @@ export default function PropertyDetailMap({
 
   useEffect(() => {
     let canceled = false;
+    const hostRef = mapRef.current;
     const init = async () => {
       if (canceled) return;
       await initializeMap();
@@ -466,6 +496,7 @@ export default function PropertyDetailMap({
 
     return () => {
       canceled = true;
+      const host = hostRef;
       if (mapInstanceRef.current) {
         try {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -480,6 +511,14 @@ export default function PropertyDetailMap({
         } catch (error) {
           console.warn('Error cleaning up property map:', error);
         }
+        // Also remove the inner container element if present
+        try {
+          const innerEl = innerContainerRef.current;
+          if (innerEl && host && innerEl.parentElement === host) {
+            innerEl.remove();
+          }
+        } catch {}
+        innerContainerRef.current = null;
         mapInstanceRef.current = null;
         markersRef.current = [];
       }
