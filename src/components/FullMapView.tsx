@@ -793,153 +793,305 @@ export default function FullMapView({
     </div>
 
       {/* Property Details Modal/Popup - Compact and centered */}
+    {/* Property Details Modal/Popup - Right side on desktop, full screen on mobile */}
     {selectedProperty && showPropertyDetails && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0 backdrop-blur-sm bg-black/20">
-    <div className="w-full max-w-md h-[85vh] sm:h-auto sm:max-h-[90vh] bg-white rounded-lg shadow-2xl overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-gray-200 shrink-0">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Detajet e Pasurisë</h3>
-              <button
-                onClick={() => {
-                  setShowPropertyDetails(false);
-                  onPropertySelect(null);
-                }}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <X className="h-4 w-4 text-gray-500" />
-              </button>
+  <>
+    {/* Mobile: Full screen modal */}
+    <div className="sm:hidden fixed inset-0 z-50 flex flex-col bg-white overflow-hidden">
+      <div className="p-4 border-b border-gray-200 shrink-0 flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-gray-900">Detajet e Pasurisë</h3>
+        <button
+          onClick={() => {
+            setShowPropertyDetails(false);
+            onPropertySelect(null);
+          }}
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+        >
+          <X className="h-4 w-4 text-gray-500" />
+        </button>
+      </div>
+
+      <div className="p-4 space-y-4 overflow-y-auto flex-1">
+        {/* Property Images */}
+        {selectedProperty.images.length > 0 && (
+          <div className="relative aspect-video bg-gray-200 rounded-lg overflow-hidden">
+            <Image
+              src={selectedProperty.images[0]}
+              alt={selectedProperty.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 320px"
+              className="object-cover"
+              priority
+            />
+          </div>
+        )}
+
+        {/* Property Title and Price */}
+        <div>
+          <h4 className="text-xl font-bold text-gray-900 mb-1">
+            {selectedProperty.title}
+          </h4>
+          <p className="text-2xl font-bold text-blue-600 mb-2">
+            {formatPrice(selectedProperty.price)}
+          </p>
+          <p className="text-sm text-gray-600">
+            {selectedProperty.address.street}, {selectedProperty.address.city}
+          </p>
+        </div>
+
+        {/* Property Details */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Bed className="h-4 w-4" />
+            <span>{selectedProperty.details.bedrooms} dhoma</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Bath className="h-4 w-4" />
+            <span>{selectedProperty.details.bathrooms} banjo</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Square className="h-4 w-4" />
+            <span>{selectedProperty.details.squareFootage.toLocaleString()} m²</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Calendar className="h-4 w-4" />
+            <span>{selectedProperty.details.yearBuilt}</span>
+          </div>
+        </div>
+
+        {/* Property Description */}
+        <div>
+          <h5 className="font-semibold text-gray-900 mb-2">Përshkrimi</h5>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            {selectedProperty.description}
+          </p>
+        </div>
+
+        {/* Property Features */}
+        {Array.isArray(selectedProperty.features) && selectedProperty.features.length > 0 && (
+          <div>
+            <h5 className="font-semibold text-gray-900 mb-2">Karakteristikat</h5>
+            <div className="flex flex-wrap gap-2">
+              {selectedProperty.features.filter(f => typeof f === 'string' && f.trim().length > 0).map((feature, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+                >
+                  {feature}
+                </span>
+              ))}
             </div>
           </div>
+        )}
 
-          <div className="p-4 space-y-4 overflow-y-auto flex-1">
-            {/* Property Images */}
-            {selectedProperty.images.length > 0 && (
-              <div className="relative aspect-video bg-gray-200 rounded-lg overflow-hidden">
-                <Image
-                  src={selectedProperty.images[0]}
-                  alt={selectedProperty.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 320px"
-                  className="object-cover"
-                  priority
-                />
-              </div>
-            )}
-
-            {/* Property Title and Price */}
+        {/* Agent Information */}
+        <div className="border-t border-gray-200 pt-4">
+          <h5 className="font-semibold text-gray-900 mb-2">Agjenti</h5>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+              <span className="text-blue-600 font-semibold text-sm">
+                {selectedProperty.agent.name.charAt(0)}
+              </span>
+            </div>
             <div>
-              <h4 className="text-xl font-bold text-gray-900 mb-1">
-                {selectedProperty.title}
-              </h4>
-              <p className="text-2xl font-bold text-blue-600 mb-2">
-                {formatPrice(selectedProperty.price)}
-              </p>
-              <p className="text-sm text-gray-600">
-                {selectedProperty.address.street}, {selectedProperty.address.city}
-              </p>
+              <p className="font-medium text-gray-900">{selectedProperty.agent.name}</p>
+              <p className="text-sm text-gray-600">{selectedProperty.agent.email}</p>
             </div>
-
-            {/* Property Details */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Bed className="h-4 w-4" />
-                <span>{selectedProperty.details.bedrooms} dhoma</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Bath className="h-4 w-4" />
-                <span>{selectedProperty.details.bathrooms} banjo</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Square className="h-4 w-4" />
-                <span>{selectedProperty.details.squareFootage.toLocaleString()} m²</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Calendar className="h-4 w-4" />
-                <span>{selectedProperty.details.yearBuilt}</span>
-              </div>
-            </div>
-
-            {/* Property Description */}
-            <div>
-              <h5 className="font-semibold text-gray-900 mb-2">Përshkrimi</h5>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                {selectedProperty.description}
-              </p>
-            </div>
-
-            {/* Property Features */}
-            {Array.isArray(selectedProperty.features) && selectedProperty.features.length > 0 && (
-              <div>
-                <h5 className="font-semibold text-gray-900 mb-2">Karakteristikat</h5>
-                <div className="flex flex-wrap gap-2">
-                  {selectedProperty.features.filter(f => typeof f === 'string' && f.trim().length > 0).map((feature, index) => (
-                    <span
-                      key={index}
-                      className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
-                    >
-                      {feature}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Agent Information */}
-            <div className="border-t border-gray-200 pt-4">
-              <h5 className="font-semibold text-gray-900 mb-2">Agjenti</h5>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="text-blue-600 font-semibold text-sm">
-                    {selectedProperty.agent.name.charAt(0)}
-                  </span>
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">{selectedProperty.agent.name}</p>
-                  <p className="text-sm text-gray-600">{selectedProperty.agent.email}</p>
-                </div>
-              </div>
-              <div className="flex gap-2 mt-3">
-                <a
-                  href={`tel:${selectedProperty.agent.phone}`}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
-                >
-                  <Phone className="h-4 w-4" />
-                  Telefono
-                </a>
-                <a
-                  href={`mailto:${selectedProperty.agent.email}`}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm"
-                >
-                  <Mail className="h-4 w-4" />
-                  Email
-                </a>
-              </div>
-            </div>
-
-            {/* Sticky Action Footer: always visible */}
-            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3 pb-[calc(12px+env(safe-area-inset-bottom))] shrink-0">
-              <div className="space-y-2">
-                <Link
-                  href={`/properties/${selectedProperty.id}`}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all font-medium text-sm"
-                >
-                  📋 Shiko Detajet e Plota
-                </Link>
-                <a
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${selectedProperty.address.coordinates.lat},${selectedProperty.address.coordinates.lng}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 transition-all font-medium text-sm"
-                >
-                  <Navigation className="h-4 w-4" />
-                  Navigim
-                </a>
-              </div>
-            </div>
+          </div>
+          <div className="flex gap-2 mt-3">
+            <a
+              href={`tel:${selectedProperty.agent.phone}`}
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+            >
+              <Phone className="h-4 w-4" />
+              Telefono
+            </a>
+            <a
+              href={`mailto:${selectedProperty.agent.email}`}
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm"
+            >
+              <Mail className="h-4 w-4" />
+              Email
+            </a>
           </div>
         </div>
       </div>
-      )}
+
+      {/* Mobile: Sticky Action Footer */}
+      <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3 pb-[calc(12px+env(safe-area-inset-bottom))] shrink-0">
+        <div className="space-y-2">
+          <Link
+            href={`/properties/${selectedProperty.id}`}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all font-medium text-sm"
+          >
+            📋 Shiko Detajet e Plota
+          </Link>
+          <a
+            href={`https://www.google.com/maps/dir/?api=1&destination=${selectedProperty.address.coordinates.lat},${selectedProperty.address.coordinates.lng}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 transition-all font-medium text-sm"
+          >
+            <Navigation className="h-4 w-4" />
+            Navigim
+          </a>
+        </div>
+      </div>
+    </div>
+
+    {/* Desktop: Right-side panel */}
+    <div className="hidden sm:flex fixed right-0 top-0 bottom-0 z-40 w-80 bg-white shadow-2xl flex-col overflow-hidden">
+      <div className="p-4 border-b border-gray-200 shrink-0 flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-gray-900">Detajet e Pasurisë</h3>
+        <button
+          onClick={() => {
+            setShowPropertyDetails(false);
+            onPropertySelect(null);
+          }}
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+        >
+          <X className="h-4 w-4 text-gray-500" />
+        </button>
+      </div>
+
+      <div className="p-4 space-y-4 overflow-y-auto flex-1">
+        {/* Property Images */}
+        {selectedProperty.images.length > 0 && (
+          <div className="relative aspect-video bg-gray-200 rounded-lg overflow-hidden">
+            <Image
+              src={selectedProperty.images[0]}
+              alt={selectedProperty.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 320px"
+              className="object-cover"
+              priority
+            />
+          </div>
+        )}
+
+        {/* Property Title and Price */}
+        <div>
+          <h4 className="text-lg font-bold text-gray-900 mb-1">
+            {selectedProperty.title}
+          </h4>
+          <p className="text-xl font-bold text-blue-600 mb-2">
+            {formatPrice(selectedProperty.price)}
+          </p>
+          <p className="text-xs text-gray-600">
+            {selectedProperty.address.street}, {selectedProperty.address.city}
+          </p>
+        </div>
+
+        {/* Property Details */}
+        <div className="grid grid-cols-2 gap-2">
+          <div className="flex items-center gap-2 text-xs text-gray-600">
+            <Bed className="h-3 w-3" />
+            <span>{selectedProperty.details.bedrooms} dhoma</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-gray-600">
+            <Bath className="h-3 w-3" />
+            <span>{selectedProperty.details.bathrooms} banjo</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-gray-600">
+            <Square className="h-3 w-3" />
+            <span>{(selectedProperty.details.squareFootage).toLocaleString()} m²</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-gray-600">
+            <Calendar className="h-3 w-3" />
+            <span>{selectedProperty.details.yearBuilt}</span>
+          </div>
+        </div>
+
+        {/* Property Description */}
+        <div>
+          <h5 className="font-semibold text-gray-900 mb-2 text-sm">Përshkrimi</h5>
+          <p className="text-xs text-gray-600 leading-relaxed">
+            {selectedProperty.description}
+          </p>
+        </div>
+
+        {/* Property Features */}
+        {Array.isArray(selectedProperty.features) && selectedProperty.features.length > 0 && (
+          <div>
+            <h5 className="font-semibold text-gray-900 mb-2 text-sm">Karakteristikat</h5>
+            <div className="flex flex-wrap gap-1">
+              {selectedProperty.features.filter(f => typeof f === 'string' && f.trim().length > 0).map((feature, index) => (
+                <span
+                  key={index}
+                  className="px-1.5 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full"
+                >
+                  {feature}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Agent Information */}
+        <div className="border-t border-gray-200 pt-3">
+          <h5 className="font-semibold text-gray-900 mb-2 text-sm">Agjenti</h5>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
+              <span className="text-blue-600 font-semibold text-xs">
+                {selectedProperty.agent.name.charAt(0)}
+              </span>
+            </div>
+            <div className="min-w-0">
+              <p className="font-medium text-gray-900 text-xs">{selectedProperty.agent.name}</p>
+              <p className="text-xs text-gray-600 truncate">{selectedProperty.agent.email}</p>
+            </div>
+          </div>
+          <div className="flex gap-1 mt-2">
+            <a
+              href={`tel:${selectedProperty.agent.phone}`}
+              className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition-colors"
+            >
+              <Phone className="h-3 w-3" />
+              Telefono
+            </a>
+            <a
+              href={`mailto:${selectedProperty.agent.email}`}
+              className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 border border-gray-300 text-gray-700 rounded text-xs hover:bg-gray-50 transition-colors"
+            >
+              <Mail className="h-3 w-3" />
+              Email
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop: Sticky Action Footer */}
+      <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3 shrink-0">
+        <div className="space-y-2">
+          <Link
+            href={`/properties/${selectedProperty.id}`}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded text-sm hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
+          >
+            📋 Shiko Detajet
+          </Link>
+          <a
+            href={`https://www.google.com/maps/dir/?api=1&destination=${selectedProperty.address.coordinates.lat},${selectedProperty.address.coordinates.lng}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-linear-to-r from-green-600 to-green-700 text-white rounded text-sm hover:from-green-700 hover:to-green-800 transition-all font-medium"
+          >
+            <Navigation className="h-3 w-3" />
+            Navigim
+          </a>
+        </div>
+      </div>
+    </div>
+
+    {/* Backdrop - click to close */}
+    <div
+      className="hidden sm:block fixed inset-0 z-30 bg-black/10"
+      onClick={() => {
+        setShowPropertyDetails(false);
+        onPropertySelect(null);
+      }}
+    />
+  </>
+    )}
 
       {/* Loading State */}
       {isLoading && (

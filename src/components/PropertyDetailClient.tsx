@@ -253,6 +253,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                     {/* Desktop: full interactive map */}
                     <div className="hidden lg:block">
                       <PropertyDetailMap 
+                        key={property.id}
                         property={property}
                         nearbyProperties={nearbyProperties}
                         height="500px"

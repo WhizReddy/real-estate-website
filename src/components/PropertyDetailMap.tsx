@@ -103,19 +103,32 @@ export default function PropertyDetailMap({
         mapInstanceRef.current = null;
       }
 
-      // Force remove Leaflet marker from DOM to prevent "already initialized" error
-      if (mapRef.current && (mapRef.current as HTMLDivElement & { _leaflet_id?: string })._leaflet_id) {
-        delete (mapRef.current as HTMLDivElement & { _leaflet_id?: string })._leaflet_id;
-      }
-
-      // Ensure container is completely clean before initializing new map
+      // Force remove Leaflet markers from DOM to prevent "already initialized" error
       if (mapRef.current) {
-        // Remove all Leaflet event listeners
+        // Remove all Leaflet-specific attributes and properties
+        const el = mapRef.current as HTMLDivElement & { _leaflet_id?: string };
+        
+        // Delete Leaflet's internal ID
+        if (el._leaflet_id) {
+          delete el._leaflet_id;
+        }
+        
+        // Remove all child elements and listeners
         mapRef.current.innerHTML = '';
-        // Remove all child elements just to be safe
         while (mapRef.current.firstChild) {
           mapRef.current.removeChild(mapRef.current.firstChild);
         }
+        
+        // Clear all data attributes and event listeners
+        Array.from(mapRef.current.attributes).forEach(attr => {
+          if (attr.name.startsWith('data-leaflet')) {
+            mapRef.current.removeAttribute(attr.name);
+          }
+        });
+        
+        // Remove any inline styles that might interfere
+        const classes = mapRef.current.className || '';
+        mapRef.current.className = classes.replace(/leaflet-\S+/g, '');
       }
 
       markersRef.current = [];
