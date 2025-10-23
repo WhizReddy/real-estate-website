@@ -452,6 +452,8 @@ export default function MapSearchFilters({
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
+            id="search-query"
+            name="searchQuery"
             placeholder="Search by title, description, location, or features..."
             value={filters.searchQuery}
             onChange={(e) => updateFilter('searchQuery', e.target.value)}
@@ -537,6 +539,8 @@ export default function MapSearchFilters({
               <label className="flex items-center">
                 <input
                   type="checkbox"
+                  id="location-search-enabled"
+                  name="locationSearchEnabled"
                   checked={filters.locationSearch.enabled}
                   onChange={(e) => updateFilter('locationSearch', {
                     ...filters.locationSearch,
@@ -551,6 +555,8 @@ export default function MapSearchFilters({
                   <span className="text-sm text-gray-600">Radius:</span>
                   <input
                     type="range"
+                    id="location-radius"
+                    name="locationRadius"
                     min="1"
                     max="50"
                     value={filters.locationSearch.radius}
@@ -574,6 +580,8 @@ export default function MapSearchFilters({
             <div className="flex items-center gap-4">
               <input
                 type="range"
+                id="price-min"
+                name="priceMin"
                 min={getPriceRange().min}
                 max={getPriceRange().max}
                 value={filters.priceRange.min}
@@ -585,6 +593,8 @@ export default function MapSearchFilters({
               />
               <input
                 type="range"
+                id="price-max"
+                name="priceMax"
                 min={getPriceRange().min}
                 max={getPriceRange().max}
                 value={filters.priceRange.max}
@@ -605,6 +615,8 @@ export default function MapSearchFilters({
                 <label key={type} className="flex items-center">
                   <input
                     type="checkbox"
+                    id={`property-type-${type}`}
+                    name="propertyType"
                     checked={filters.propertyType.includes(type)}
                     onChange={(e) => {
                       if (e.target.checked) {
@@ -628,6 +640,8 @@ export default function MapSearchFilters({
               <label className="flex items-center">
                 <input
                   type="checkbox"
+                  id="listing-type-sale"
+                  name="listingType"
                   checked={filters.listingType.includes('sale')}
                   onChange={(e) => {
                     if (e.target.checked) {
@@ -643,6 +657,8 @@ export default function MapSearchFilters({
               <label className="flex items-center">
                 <input
                   type="checkbox"
+                  id="listing-type-rent"
+                  name="listingType"
                   checked={filters.listingType.includes('rent')}
                   onChange={(e) => {
                     if (e.target.checked) {
@@ -667,6 +683,8 @@ export default function MapSearchFilters({
               <div className="flex items-center gap-2">
                 <input
                   type="range"
+                  id="bedrooms-min"
+                  name="bedroomsMin"
                   min="0"
                   max="10"
                   value={filters.bedrooms.min}
@@ -678,6 +696,8 @@ export default function MapSearchFilters({
                 />
                 <input
                   type="range"
+                  id="bedrooms-max"
+                  name="bedroomsMax"
                   min="0"
                   max="10"
                   value={filters.bedrooms.max}
@@ -697,6 +717,8 @@ export default function MapSearchFilters({
               <div className="flex items-center gap-2">
                 <input
                   type="range"
+                  id="bathrooms-min"
+                  name="bathroomsMin"
                   min="0"
                   max="10"
                   value={filters.bathrooms.min}
@@ -708,6 +730,8 @@ export default function MapSearchFilters({
                 />
                 <input
                   type="range"
+                  id="bathrooms-max"
+                  name="bathroomsMax"
                   min="0"
                   max="10"
                   value={filters.bathrooms.max}
@@ -729,6 +753,8 @@ export default function MapSearchFilters({
             <div className="flex items-center gap-4">
               <input
                 type="range"
+                id="square-footage-min"
+                name="squareFootageMin"
                 min={getSquareFootageRange().min}
                 max={getSquareFootageRange().max}
                 value={filters.squareFootage.min}
@@ -740,6 +766,8 @@ export default function MapSearchFilters({
               />
               <input
                 type="range"
+                id="square-footage-max"
+                name="squareFootageMax"
                 min={getSquareFootageRange().min}
                 max={getSquareFootageRange().max}
                 value={filters.squareFootage.max}
@@ -760,6 +788,8 @@ export default function MapSearchFilters({
             <div className="flex items-center gap-4">
               <input
                 type="range"
+                id="year-built-min"
+                name="yearBuiltMin"
                 min="1900"
                 max={new Date().getFullYear()}
                 value={filters.yearBuilt.min}
@@ -771,6 +801,8 @@ export default function MapSearchFilters({
               />
               <input
                 type="range"
+                id="year-built-max"
+                name="yearBuiltMax"
                 min="1900"
                 max={new Date().getFullYear()}
                 value={filters.yearBuilt.max}
@@ -791,6 +823,8 @@ export default function MapSearchFilters({
                 <label key={feature} className="flex items-center">
                   <input
                     type="checkbox"
+                    id={`feature-${feature}`}
+                    name="features"
                     checked={filters.features.includes(feature)}
                     onChange={(e) => {
                       if (e.target.checked) {

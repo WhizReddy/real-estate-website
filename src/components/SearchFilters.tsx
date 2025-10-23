@@ -357,6 +357,8 @@ export default function SearchFilters({
           <div className="flex items-center gap-2">
             <ArrowUpDown className="h-4 w-4 text-gray-500" />
             <select
+              id="sort-by"
+              name="sortBy"
               value={filters.sortBy}
               onChange={(e) => handleFilterChange("sortBy", e.target.value)}
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -370,6 +372,8 @@ export default function SearchFilters({
 
             {filters.sortBy && (
               <select
+                id="sort-order"
+                name="sortOrder"
                 value={filters.sortOrder}
                 onChange={(e) =>
                   handleFilterChange(

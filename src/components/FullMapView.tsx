@@ -286,6 +286,13 @@ export default function FullMapView({
     setFilteredProperties(properties);
   }, [properties]);
 
+  // Show property details modal when a property is selected
+  useEffect(() => {
+    if (selectedProperty) {
+      setShowPropertyDetails(true);
+    }
+  }, [selectedProperty]);
+
   // Update markers when filtered properties change
   useEffect(() => {
     if (!mapInstanceRef.current || typeof window === 'undefined') return;
