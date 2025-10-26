@@ -14,12 +14,15 @@ body {
   text-rendering: optimizeSpeed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #1E378D;
+  min-height: 100vh;
 }
 
 /* Ensure a single scroll container across pages */
 html, body {
   height: 100%;
   overflow-x: hidden;
+  background: #1E378D;
 }
 
 * {

@@ -41,7 +41,7 @@ export default function Layout({
     <div className={`${getLayoutClasses()} overflow-x-hidden ${className}`}>
       {showNavigation && <Navigation />}
       
-      <main className="flex-grow min-h-0">
+      <main className="flex-grow min-h-0 bg-transparent">
         {children}
       </main>
       

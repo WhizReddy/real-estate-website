@@ -87,6 +87,8 @@ export default function Home() {
     []
   );
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalProperties, setTotalProperties] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -97,14 +99,19 @@ export default function Home() {
   useEffect(() => {
     const loadProperties = async () => {
       try {
-        const res = await fetch("/api/properties/active", { cache: "no-store" });
+        // Use paginated endpoint for better performance with large datasets
+        const res = await fetch(`/api/properties/paginated?page=1&limit=${MAX_INITIAL_LOAD}`, { 
+          next: { revalidate: 60 } // Cache for 60 seconds
+        });
         if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
         const data = await res.json();
         const activeProperties: Property[] = data.properties || [];
-        const limitedProperties = activeProperties.slice(0, MAX_INITIAL_LOAD);
+        
         setAllProperties(activeProperties);
-        setFilteredProperties(limitedProperties);
-        setDisplayedProperties(limitedProperties.slice(0, PROPERTIES_PER_PAGE));
+        setFilteredProperties(activeProperties);
+        setDisplayedProperties(activeProperties.slice(0, PROPERTIES_PER_PAGE));
+        setTotalProperties(data.pagination?.total || 0);
+        setHasMore(data.pagination?.hasMore || false);
       } catch (error) {
         console.error("Error loading properties:", error);
       } finally {
@@ -140,26 +147,45 @@ export default function Home() {
     setCurrentPage(1);
   }, []);
 
-  const loadMoreProperties = useCallback(() => {
+  const loadMoreProperties = useCallback(async () => {
     if (isLoadingMore) return;
 
     setIsLoadingMore(true);
 
-    // Simulate loading delay for better UX
-    setTimeout(() => {
+    try {
       const nextPage = currentPage + 1;
       const startIndex = 0;
       const endIndex = nextPage * PROPERTIES_PER_PAGE;
-      const newDisplayedProperties = filteredProperties.slice(
-        startIndex,
-        endIndex
-      );
-
-      setDisplayedProperties(newDisplayedProperties);
+      
+      // Check if we need to fetch more data from API
+      if (endIndex > allProperties.length && hasMore) {
+        // Fetch next batch of properties
+        const apiPage = Math.ceil(allProperties.length / MAX_INITIAL_LOAD) + 1;
+        const res = await fetch(`/api/properties/paginated?page=${apiPage}&limit=${MAX_INITIAL_LOAD}`);
+        
+        if (res.ok) {
+          const data = await res.json();
+          const newProperties = data.properties || [];
+          const updatedAll = [...allProperties, ...newProperties];
+          setAllProperties(updatedAll);
+          setFilteredProperties(updatedAll);
+          setHasMore(data.pagination?.hasMore || false);
+          
+          setDisplayedProperties(updatedAll.slice(startIndex, endIndex));
+        }
+      } else {
+        // Use existing data
+        const newDisplayedProperties = filteredProperties.slice(startIndex, endIndex);
+        setDisplayedProperties(newDisplayedProperties);
+      }
+      
       setCurrentPage(nextPage);
+    } catch (error) {
+      console.error("Error loading more properties:", error);
+    } finally {
       setIsLoadingMore(false);
-    }, 500);
-  }, [currentPage, filteredProperties, isLoadingMore]);
+    }
+  }, [currentPage, filteredProperties, allProperties, hasMore, isLoadingMore]);
 
   const hasMoreProperties =
     displayedProperties.length < filteredProperties.length;
@@ -176,7 +202,7 @@ export default function Home() {
     <Layout variant="homepage">
       <StructuredData type="website" />
       <StructuredData type="organization" />
-  <div className="bg-linear-to-br from-slate-50 to-blue-50 min-h-screen">
+  <div className="min-h-screen" style={{ background: '#1E378D' }}>
         {/* Royal Blue Hero Section */}
   <section className="relative overflow-hidden bg-linear-to-br from-indigo-950 via-blue-900 to-blue-700">
           {/* Background Pattern */}
@@ -353,10 +379,11 @@ export default function Home() {
           {/* eslint-enable @next/next/no-img-element */}
         </section>
 
-        {/* Main Content */}
-        <section id="properties" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+        {/* Main Content with light background */}
+        <div className="bg-linear-to-br from-slate-50 to-blue-50">
+        <section id="properties" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10 pb-16 sm:pb-20">
           {/* View All on Map Button - Blends with hero section */}
-          <div className="mb-10">
+          <div className="mb-16 sm:mb-20">
             <Link
               href="/map"
               className="group relative block w-full sm:max-w-2xl sm:mx-auto overflow-hidden rounded-2xl bg-white shadow-2xl hover:shadow-[0_20px_60px_-15px_rgba(59,130,246,0.5)] transition-all duration-500 transform hover:scale-[1.02]"
@@ -409,7 +436,7 @@ export default function Home() {
           />
 
           {/* Performance Notice */}
-          {allProperties.length > MAX_INITIAL_LOAD && (
+          {totalProperties > MAX_INITIAL_LOAD && (
             <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-sm text-blue-800">
                 <span className="font-medium flex items-center gap-1">
@@ -417,8 +444,8 @@ export default function Home() {
                   Performancë e optimizuar:
                 </span>{" "}
                 Po shfaqen{" "}
-                {Math.min(filteredProperties.length, MAX_INITIAL_LOAD)} pasuri
-                nga {allProperties.length} gjithsej për performancë më të mirë.
+                {displayedProperties.length} pasuri
+                nga {totalProperties} gjithsej për performancë më të mirë.
                 Përdorni filtrat për të gjetur pasuritë që ju interesojnë.
               </p>
             </div>
@@ -523,14 +550,16 @@ export default function Home() {
             </div>
           </div>
         </section>
+        </div>
 
         {/* Contact Section */}
         <section
           id="contact"
-          className="bg-linear-to-br from-gray-900 via-blue-900 to-indigo-900 mobile-contact py-12 sm:py-16 pb-20 sm:pb-28"
+          className="mobile-contact py-16 sm:py-20 pb-16 sm:pb-20"
+          style={{ background: '#1E378D' }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 sm:mb-12">
+            <div className="text-center mb-12 sm:mb-16">
               <div className="max-w-3xl mx-auto space-y-4">
                 <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center justify-center gap-3">
                   <div className="w-1 h-8 bg-linear-to-b from-blue-400 to-indigo-400 rounded-full"></div>
@@ -542,8 +571,8 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="grid mobile-contact-grid md:grid-cols-3 gap-6 sm:gap-8">
-              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 hover:bg-blue-600/10 transition-all gpu-accelerated">
+            <div className="grid mobile-contact-grid md:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16">
+              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 hover:bg-blue-600/10 transition-all gpu-accelerated shadow-lg">
                 <div className="flex items-start space-x-4">
                   <div className="p-3 bg-linear-to-r from-blue-600 to-indigo-600 rounded-xl shrink-0">
                     <Phone className="h-6 w-6 text-white" />
@@ -564,7 +593,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 hover:bg-blue-600/10 transition-all gpu-accelerated">
+              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 hover:bg-blue-600/10 transition-all gpu-accelerated shadow-lg">
                 <div className="flex items-start space-x-4">
                   <div className="p-3 bg-linear-to-r from-blue-600 to-indigo-600 rounded-xl shrink-0">
                     <svg
@@ -595,7 +624,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 hover:bg-blue-600/10 transition-all gpu-accelerated">
+              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 hover:bg-blue-600/10 transition-all gpu-accelerated shadow-lg">
                 <div className="flex items-start space-x-4">
                   <div className="p-3 bg-linear-to-r from-blue-600 to-indigo-600 rounded-xl shrink-0">
                     <MapPin className="h-6 w-6 text-white" />
