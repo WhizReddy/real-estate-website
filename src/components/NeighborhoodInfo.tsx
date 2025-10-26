@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Property } from '@/types';
+import { fetchNearbyPlacesCached, OSMPlace } from '@/lib/openstreetmap';
 import { 
   School, 
   ShoppingCart, 
@@ -10,7 +11,6 @@ import {
   Car,
   Train,
   MapPin,
-  Star,
   Clock,
   Phone,
   ExternalLink,
@@ -23,115 +23,51 @@ interface NeighborhoodInfoProps {
   className?: string;
 }
 
-interface NeighborhoodPlace {
-  id: string;
-  name: string;
-  type: 'school' | 'shopping' | 'hospital' | 'restaurant' | 'transport' | 'park';
-  distance: number;
-  walkTime: number;
-  driveTime: number;
-  rating?: number;
-  address: string;
+// Use OSMPlace from openstreetmap.ts, but extend with optional UI fields
+interface NeighborhoodPlace extends OSMPlace {
+  walkTime?: number;
+  driveTime?: number;
   phone?: string;
   hours?: string;
   description?: string;
-  coordinates: { lat: number; lng: number };
-}
-
-interface NeighborhoodStats {
-  walkScore: number;
-  transitScore: number;
-  bikeScore: number;
-  crimeRate: 'low' | 'medium' | 'high';
-  schoolRating: number;
-  averageCommute: number;
 }
 
 export default function NeighborhoodInfo({ property, className = '' }: NeighborhoodInfoProps) {
   const [activeCategory, setActiveCategory] = useState<string>('overview');
   const [expandedPlace, setExpandedPlace] = useState<string | null>(null);
+  const [nearbyPlaces, setNearbyPlaces] = useState<NeighborhoodPlace[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mock data - in real app, this would come from APIs
-  const neighborhoodStats: NeighborhoodStats = {
-    walkScore: 78,
-    transitScore: 65,
-    bikeScore: 72,
-    crimeRate: 'low',
-    schoolRating: 4.2,
-    averageCommute: 25
-  };
+  // Fetch real nearby places from OpenStreetMap on mount
+  useEffect(() => {
+    const loadNearbyPlaces = async () => {
+      setIsLoading(true);
+      try {
+        const places = await fetchNearbyPlacesCached(
+          property.address.coordinates.lat,
+          property.address.coordinates.lng,
+          2, // 2km radius
+          5  // 5 places per category
+        );
+        
+        // Convert OSMPlace to NeighborhoodPlace with estimated walk/drive times
+        const enhancedPlaces: NeighborhoodPlace[] = places.map(place => ({
+          ...place,
+          walkTime: Math.ceil(place.distance * 12), // ~12 min per km walking
+          driveTime: Math.ceil(place.distance * 2),  // ~2 min per km driving
+        }));
+        
+        setNearbyPlaces(enhancedPlaces);
+      } catch (error) {
+        console.error('Failed to load nearby places:', error);
+        setNearbyPlaces([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const nearbyPlaces: NeighborhoodPlace[] = [
-    {
-      id: '1',
-      name: 'Shkolla e Mesme \"Fan Noli\"',
-      type: 'school',
-      distance: 0.3,
-      walkTime: 4,
-      driveTime: 2,
-      rating: 4.2,
-      address: 'Rruga Dëshmorët e Kombit, Tiranë',
-      phone: '+355 4 123 4567',
-      hours: '8:00 - 16:00',
-      description: 'Shkollë e mesme me reputacion të mirë dhe programe të avancuara.',
-      coordinates: { lat: property.address.coordinates.lat + 0.002, lng: property.address.coordinates.lng + 0.001 }
-    },
-    {
-      id: '2',
-      name: 'Qendra Tregtare \"Tirana East Gate\"',
-      type: 'shopping',
-      distance: 0.8,
-      walkTime: 10,
-      driveTime: 4,
-      rating: 4.5,
-      address: 'Autostrada Tiranë-Durrës, Tiranë',
-      phone: '+355 4 234 5678',
-      hours: '10:00 - 22:00',
-      description: 'Qendër tregtare moderne me dyqane, restorante dhe kinema.',
-      coordinates: { lat: property.address.coordinates.lat - 0.005, lng: property.address.coordinates.lng + 0.003 }
-    },
-    {
-      id: '3',
-      name: 'Spitali Amerikan',
-      type: 'hospital',
-      distance: 1.2,
-      walkTime: 15,
-      driveTime: 6,
-      rating: 4.7,
-      address: 'Rruga Dibres, Tiranë',
-      phone: '+355 4 345 6789',
-      hours: '24/7',
-      description: 'Spital privat me shërbime mjekësore të specializuara.',
-      coordinates: { lat: property.address.coordinates.lat + 0.008, lng: property.address.coordinates.lng - 0.002 }
-    },
-    {
-      id: '4',
-      name: 'Mulliri Vjeter',
-      type: 'restaurant',
-      distance: 0.5,
-      walkTime: 6,
-      driveTime: 3,
-      rating: 4.3,
-      address: 'Rruga Pjetër Bogdani, Tiranë',
-      phone: '+355 4 456 7890',
-      hours: '12:00 - 24:00',
-      description: 'Restorant tradicional me kuzhinë shqiptare dhe atmosferë të ngrohtë.',
-      coordinates: { lat: property.address.coordinates.lat - 0.003, lng: property.address.coordinates.lng - 0.001 }
-    },
-    {
-      id: '5',
-      name: 'Stacioni i Autobusëve',
-      type: 'transport',
-      distance: 0.7,
-      walkTime: 9,
-      driveTime: 4,
-      rating: 3.8,
-      address: 'Sheshi Skënderbej, Tiranë',
-      hours: '5:00 - 23:00',
-      description: 'Stacion kryesor i transportit publik me lidhje për të gjithë qytetin.',
-      coordinates: { lat: property.address.coordinates.lat + 0.004, lng: property.address.coordinates.lng + 0.002 }
-    }
-  ];
+    loadNearbyPlaces();
+  }, [property.address.coordinates.lat, property.address.coordinates.lng]);
 
   const categories = [
     { id: 'overview', label: 'Overview', icon: MapPin },
@@ -141,21 +77,6 @@ export default function NeighborhoodInfo({ property, className = '' }: Neighborh
     { id: 'restaurant', label: 'Dining', icon: Coffee },
     { id: 'transport', label: 'Transport', icon: Train }
   ];
-
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600 bg-green-100';
-    if (score >= 60) return 'text-yellow-600 bg-yellow-100';
-    return 'text-red-600 bg-red-100';
-  };
-
-  const getCrimeRateColor = (rate: string) => {
-    switch (rate) {
-      case 'low': return 'text-green-600 bg-green-100';
-      case 'medium': return 'text-yellow-600 bg-yellow-100';
-      case 'high': return 'text-red-600 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
-  };
 
   const getPlaceIcon = (type: string) => {
     switch (type) {
@@ -172,128 +93,94 @@ export default function NeighborhoodInfo({ property, className = '' }: Neighborh
     ? nearbyPlaces 
     : nearbyPlaces.filter(place => place.type === activeCategory);
 
-  const renderOverview = () => (
-    <div className="space-y-6">
-      {/* Neighborhood Scores */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg p-4 border border-gray-200">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">Walk Score</span>
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getScoreColor(neighborhoodStats.walkScore)}`}>
-              {neighborhoodStats.walkScore}
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${neighborhoodStats.walkScore}%` }}
-            ></div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-4 border border-gray-200">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">Transit Score</span>
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getScoreColor(neighborhoodStats.transitScore)}`}>
-              {neighborhoodStats.transitScore}
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="bg-green-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${neighborhoodStats.transitScore}%` }}
-            ></div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-4 border border-gray-200">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">Bike Score</span>
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getScoreColor(neighborhoodStats.bikeScore)}`}>
-              {neighborhoodStats.bikeScore}
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="bg-purple-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${neighborhoodStats.bikeScore}%` }}
-            ></div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-4 border border-gray-200">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">Safety</span>
-            <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${getCrimeRateColor(neighborhoodStats.crimeRate)}`}>
-              {neighborhoodStats.crimeRate} Crime
-            </span>
-          </div>
-          <div className="text-xs text-gray-500">
-            Based on local crime statistics
-          </div>
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className={`bg-gray-50 ${className}`}>
+        <div className="p-6 text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+          <p className="text-sm text-gray-600">Loading neighborhood data...</p>
         </div>
       </div>
+    );
+  }
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white rounded-lg p-4 border border-gray-200">
-          <h4 className="font-semibold text-gray-900 mb-3">Education</h4>
-          <div className="flex items-center gap-2 mb-2">
-            <Star className="h-4 w-4 text-yellow-500" />
-            <span className="text-sm text-gray-600">Average School Rating:</span>
-            <span className="font-medium">{neighborhoodStats.schoolRating}/5</span>
-          </div>
-          <p className="text-xs text-gray-500">
-            Based on {nearbyPlaces.filter(p => p.type === 'school').length} nearby schools
-          </p>
-        </div>
-
-        <div className="bg-white rounded-lg p-4 border border-gray-200">
-          <h4 className="font-semibold text-gray-900 mb-3">Commute</h4>
-          <div className="flex items-center gap-2 mb-2">
-            <Clock className="h-4 w-4 text-blue-500" />
-            <span className="text-sm text-gray-600">Average Commute:</span>
-            <span className="font-medium">{neighborhoodStats.averageCommute} min</span>
-          </div>
-          <p className="text-xs text-gray-500">
-            To Tirana city center during peak hours
-          </p>
+  // Show empty state if no places found
+  if (nearbyPlaces.length === 0) {
+    return (
+      <div className={`bg-gray-50 ${className}`}>
+        <div className="p-6 text-center">
+          <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+          <p className="text-sm text-gray-600">No nearby places found</p>
         </div>
       </div>
+    );
+  }
 
-      {/* Top Places */}
-      <div className="bg-white rounded-lg p-4 border border-gray-200">
-        <h4 className="font-semibold text-gray-900 mb-3">Nearby Highlights</h4>
-        <div className="space-y-3">
-          {nearbyPlaces.slice(0, 3).map((place) => {
-            const IconComponent = getPlaceIcon(place.type);
-            return (
-              <div key={place.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <IconComponent className="h-4 w-4 text-blue-600" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-sm">{place.name}</span>
-                    {place.rating && (
-                      <div className="flex items-center gap-1">
-                        <Star className="h-3 w-3 text-yellow-500" />
-                        <span className="text-xs text-gray-600">{place.rating}</span>
-                      </div>
-                    )}
+  const renderOverview = () => {
+    // Calculate stats from real data
+    const schoolPlaces = nearbyPlaces.filter(p => p.type === 'school');
+    const avgDistance = nearbyPlaces.length > 0
+      ? (nearbyPlaces.reduce((sum, p) => sum + p.distance, 0) / nearbyPlaces.length).toFixed(1)
+      : 0;
+
+    return (
+      <div className="space-y-6">
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white rounded-lg p-4 border border-gray-200">
+            <h4 className="font-semibold text-gray-900 mb-3">Education</h4>
+            <div className="flex items-center gap-2 mb-2">
+              <School className="h-4 w-4 text-blue-500" />
+              <span className="text-sm text-gray-600">Nearby Schools:</span>
+              <span className="font-medium">{schoolPlaces.length}</span>
+            </div>
+            <p className="text-xs text-gray-500">
+              Within 2km radius
+            </p>
+          </div>
+
+          <div className="bg-white rounded-lg p-4 border border-gray-200">
+            <h4 className="font-semibold text-gray-900 mb-3">Accessibility</h4>
+            <div className="flex items-center gap-2 mb-2">
+              <MapPin className="h-4 w-4 text-blue-500" />
+              <span className="text-sm text-gray-600">Avg. Distance:</span>
+              <span className="font-medium">{avgDistance} km</span>
+            </div>
+            <p className="text-xs text-gray-500">
+              To key amenities
+            </p>
+          </div>
+        </div>
+
+        {/* Top Places */}
+        <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <h4 className="font-semibold text-gray-900 mb-3">Nearby Highlights</h4>
+          <div className="space-y-3">
+            {nearbyPlaces.slice(0, 5).map((place) => {
+              const IconComponent = getPlaceIcon(place.type);
+              return (
+                <div key={place.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <IconComponent className="h-4 w-4 text-blue-600" />
                   </div>
-                  <div className="flex items-center gap-4 text-xs text-gray-500">
-                    <span>{place.distance} km away</span>
-                    <span>{place.walkTime} min walk</span>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm">{place.name}</span>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <span>{place.distance} km away</span>
+                      {place.walkTime && <span>{place.walkTime} min walk</span>}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderPlacesList = () => (
     <div className="space-y-3">
@@ -314,26 +201,24 @@ export default function NeighborhoodInfo({ property, className = '' }: Neighborh
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <h4 className="font-medium text-gray-900">{place.name}</h4>
-                    {place.rating && (
-                      <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 text-yellow-500" />
-                        <span className="text-sm text-gray-600">{place.rating}</span>
-                      </div>
-                    )}
                   </div>
                   <div className="flex items-center gap-4 text-sm text-gray-500">
                     <span className="flex items-center gap-1">
                       <MapPin className="h-3 w-3" />
                       {place.distance} km
                     </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      {place.walkTime} min walk
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Car className="h-3 w-3" />
-                      {place.driveTime} min drive
-                    </span>
+                    {place.walkTime && (
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {place.walkTime} min walk
+                      </span>
+                    )}
+                    {place.driveTime && (
+                      <span className="flex items-center gap-1">
+                        <Car className="h-3 w-3" />
+                        {place.driveTime} min drive
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="text-gray-400">
@@ -345,13 +230,15 @@ export default function NeighborhoodInfo({ property, className = '' }: Neighborh
             {isExpanded && (
               <div className="px-4 pb-4 border-t border-gray-100">
                 <div className="pt-3 space-y-3">
-                  <p className="text-sm text-gray-600">{place.description}</p>
+                  {place.description && <p className="text-sm text-gray-600">{place.description}</p>}
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-gray-400" />
-                      <span className="text-gray-600">{place.address}</span>
-                    </div>
+                    {place.address && (
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-gray-400" />
+                        <span className="text-gray-600">{place.address}</span>
+                      </div>
+                    )}
                     
                     {place.phone && (
                       <div className="flex items-center gap-2">
@@ -380,7 +267,7 @@ export default function NeighborhoodInfo({ property, className = '' }: Neighborh
                     </a>
                     
                     <a
-                      href={`https://www.google.com/search?q=${encodeURIComponent(place.name + ' ' + place.address)}`}
+                      href={`https://www.google.com/search?q=${encodeURIComponent(place.name + (place.address ? ' ' + place.address : ''))}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 px-3 py-1 border border-gray-300 text-gray-700 rounded text-xs hover:bg-gray-50 transition-colors"

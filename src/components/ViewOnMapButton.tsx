@@ -28,15 +28,15 @@ export default function ViewOnMapButton({
   const getVariantClasses = () => {
     switch (variant) {
       case 'primary':
-        return 'bg-blue-600 text-white hover:bg-blue-700 border-blue-600 hover:border-blue-700';
+        return 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 border-transparent shadow-md hover:shadow-lg';
       case 'secondary':
-        return 'bg-gray-600 text-white hover:bg-gray-700 border-gray-600 hover:border-gray-700';
+        return 'bg-gradient-to-r from-gray-600 to-gray-700 text-white hover:from-gray-700 hover:to-gray-800 border-transparent shadow-md hover:shadow-lg';
       case 'outline':
-        return 'bg-transparent text-blue-600 hover:bg-blue-50 border-blue-600 hover:border-blue-700';
+        return 'bg-white text-blue-600 hover:bg-blue-50 border-2 border-blue-600 hover:border-blue-700 shadow-sm hover:shadow-md';
       case 'minimal':
         return 'bg-transparent text-gray-600 hover:text-blue-600 hover:bg-gray-50 border-transparent';
       default:
-        return 'bg-blue-600 text-white hover:bg-blue-700 border-blue-600 hover:border-blue-700';
+        return 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 border-transparent shadow-md hover:shadow-lg';
     }
   };
 

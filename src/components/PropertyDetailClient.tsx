@@ -183,7 +183,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
 
               {/* Enhanced Map and Location Section */}
               <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                {/* Map Tabs - Neighborhood tab hidden until API integration */}
+                {/* Map Tabs - Neighborhood now powered by OpenStreetMap */}
                 <div className="border-b border-gray-200">
                   <div className="flex">
                     <button
@@ -199,22 +199,19 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                         Location & Map
                       </div>
                     </button>
-                    {/* Neighborhood tab temporarily disabled - enable when real API is integrated */}
-                    {false && (
-                      <button
-                        onClick={() => setActiveMapTab('neighborhood')}
-                        className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${
-                          activeMapTab === 'neighborhood'
-                            ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                        <div className="flex items-center justify-center gap-2">
-                          <Home className="h-4 w-4" />
-                          Neighborhood
-                        </div>
-                      </button>
-                    )}
+                    <button
+                      onClick={() => setActiveMapTab('neighborhood')}
+                      className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${
+                        activeMapTab === 'neighborhood'
+                          ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <Home className="h-4 w-4" />
+                        Neighborhood
+                      </div>
+                    </button>
                   </div>
                 </div>
 
@@ -222,20 +219,21 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                 {activeMapTab === 'location' && (
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        📍 Property Location
+                      <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-blue-600" />
+                        Property Location
                       </h3>
                       <div className="flex gap-2">
                         <ViewOnMapButton 
                           property={property} 
-                          variant="outline" 
+                          variant="primary" 
                           size="sm"
                         />
                         <a
                           href={`https://www.google.com/maps/dir/?api=1&destination=${property.address.coordinates.lat},${property.address.coordinates.lng}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-green-600 border border-green-600 rounded-lg hover:bg-green-50 transition-colors"
+                          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg shadow-sm hover:shadow-md transition-all"
                         >
                           <Navigation className="h-4 w-4" />
                           Directions

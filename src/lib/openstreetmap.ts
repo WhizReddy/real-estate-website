@@ -123,9 +123,15 @@ export async function fetchNearbyPlaces(
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: `data=${encodeURIComponent(query)}`,
+      signal: AbortSignal.timeout(15000), // 15 second timeout
     });
 
     if (!response.ok) {
+      // Handle 504 Gateway Timeout and other errors gracefully
+      if (response.status === 504) {
+        console.warn('Overpass API timeout - the service is temporarily overloaded. Returning empty results.');
+        return [];
+      }
       throw new Error(`Overpass API error: ${response.status}`);
     }
 
@@ -149,7 +155,17 @@ export async function fetchNearbyPlaces(
       // Limit results per category
       if (categoryCounts[type] >= limit) continue;
 
-      const name = element.tags.name || element.tags['name:sq'] || element.tags['name:en'] || 'Unnamed';
+      // Get name from various possible tags
+      const name = element.tags.name || 
+                   element.tags['name:sq'] || 
+                   element.tags['name:en'] || 
+                   element.tags['name:al'] ||
+                   element.tags.operator ||
+                   element.tags.brand;
+      
+      // Skip if no name found - we don't want unnamed places
+      if (!name || name.trim() === '') continue;
+
       const distance = calculateDistance(lat, lng, element.lat, element.lon);
 
       places.push({
@@ -173,7 +189,14 @@ export async function fetchNearbyPlaces(
 
     return places;
   } catch (error) {
-    console.error('Failed to fetch nearby places from OpenStreetMap:', error);
+    // Handle timeout and network errors gracefully
+    if (error instanceof Error) {
+      if (error.name === 'TimeoutError' || error.message.includes('504')) {
+        console.warn('OpenStreetMap API timeout - service is temporarily busy. Please try again later.');
+      } else {
+        console.error('Failed to fetch nearby places from OpenStreetMap:', error);
+      }
+    }
     return [];
   }
 }

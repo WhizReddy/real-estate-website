@@ -354,7 +354,54 @@ export default function Home() {
         </section>
 
         {/* Main Content */}
-        <section id="properties" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <section id="properties" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+          {/* View All on Map Button - Blends with hero section */}
+          <div className="mb-10">
+            <Link
+              href="/map"
+              className="group relative block w-full sm:max-w-2xl sm:mx-auto overflow-hidden rounded-2xl bg-white shadow-2xl hover:shadow-[0_20px_60px_-15px_rgba(59,130,246,0.5)] transition-all duration-500 transform hover:scale-[1.02]"
+            >
+              {/* Gradient background */}
+              <div className="absolute inset-0 bg-linear-to-r from-blue-600 via-blue-700 to-indigo-700 opacity-95 group-hover:opacity-100 transition-opacity"></div>
+              
+              {/* Animated shine effect */}
+              <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
+              
+              <div className="relative px-6 py-5 sm:px-8 sm:py-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    {/* Icon */}
+                    <div className="shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-all group-hover:scale-110">
+                      <Map className="h-7 w-7 sm:h-8 sm:w-8 text-white" />
+                    </div>
+                    
+                    {/* Text content */}
+                    <div className="text-left">
+                      <div className="text-xl sm:text-2xl font-bold text-white mb-1 flex items-center gap-2">
+                        Shiko Të Gjitha në Hartë
+                        <svg 
+                          className="h-5 w-5 group-hover:translate-x-1 transition-transform" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          strokeWidth="2.5" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                      </div>
+                      <div className="text-sm sm:text-base text-white/90 font-medium">
+                        📍 Eksploro {allProperties.length}+ pasuri në hartë interaktive
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Bottom accent line */}
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r from-yellow-400 via-orange-400 to-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            </Link>
+          </div>
+
           {/* Search Filters */}
           <DynamicSearchFilters
             properties={allProperties}
@@ -480,7 +527,7 @@ export default function Home() {
         {/* Contact Section */}
         <section
           id="contact"
-          className="bg-linear-to-br from-gray-900 via-blue-900 to-indigo-900 mobile-contact py-12 sm:py-16 pb-16 sm:pb-20"
+          className="bg-linear-to-br from-gray-900 via-blue-900 to-indigo-900 mobile-contact py-12 sm:py-16 pb-20 sm:pb-28"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 sm:mb-12">

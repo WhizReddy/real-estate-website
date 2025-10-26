@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Property } from '@/types';
 import { formatPrice } from '@/lib/utils';
 import { fetchNearbyPlacesCached, OSMPlace } from '@/lib/openstreetmap';
@@ -28,7 +28,7 @@ export default function PropertyDetailMap({
   property,
   nearbyProperties = [],
   height = '400px',
-  showNeighborhood = false, // Disabled until real API integration
+  showNeighborhood = true, // Re-enabled with real OpenStreetMap data
   showDirections = true,
   className = ''
 }: PropertyDetailMapProps) {
@@ -39,33 +39,49 @@ export default function PropertyDetailMap({
   const [isLoading, setIsLoading] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [mapLayer, setMapLayer] = useState<'street' | 'satellite'>('street');
-  const [showNearbyPlaces, setShowNearbyPlaces] = useState(false); // Disabled
+  const [showNearbyPlaces, setShowNearbyPlaces] = useState(true);
   const [selectedPlace, setSelectedPlace] = useState<NeighborhoodPlace | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [nearbyPlaces, setNearbyPlaces] = useState<NeighborhoodPlace[]>([]);
+  const [loadingPlaces, setLoadingPlaces] = useState(false);
 
-  // Mock nearby places data - DISABLED FOR NOW
-  // TODO: Replace with real API integration (Google Places or OpenStreetMap)
-  const nearbyPlaces = useMemo<NeighborhoodPlace[]>(() => ([
-    // Commented out mock data - enable when real API is integrated
-    /*
-    {
-      id: '1',
-      name: 'Shkolla e Mesme "Fan Noli"',
-      type: 'school',
-      distance: 0.3,
-      coordinates: { lat: property.address.coordinates.lat + 0.002, lng: property.address.coordinates.lng + 0.001 },
-      rating: 4.2,
-      address: 'Rruga Dëshmorët e Kombit'
-    },
-    */
-  ]), []);
+  // Fetch real nearby places from OpenStreetMap on mount
+  useEffect(() => {
+    const loadNearbyPlaces = async () => {
+      if (!showNeighborhood) return;
+      
+      setLoadingPlaces(true);
+      try {
+        const places = await fetchNearbyPlacesCached(
+          property.address.coordinates.lat,
+          property.address.coordinates.lng,
+          2, // 2km radius
+          5  // 5 places per category
+        );
+        setNearbyPlaces(places);
+      } catch (error) {
+        console.error('Failed to load nearby places:', error);
+      } finally {
+        setLoadingPlaces(false);
+      }
+    };
 
-  const initializeMap = async () => {
-    if (typeof window === 'undefined' || !mapRef.current) return;
+    loadNearbyPlaces();
+  }, [property.address.coordinates.lat, property.address.coordinates.lng, showNeighborhood]);
+
+  const initializeMap = async (): Promise<boolean> => {
+    if (typeof window === 'undefined' || !mapRef.current) return false;
 
     try {
       setIsLoading(true);
       setError(null);
+
+      // Early validation - ensure container exists and is in DOM
+      if (!mapRef.current || !mapRef.current.parentElement) {
+        console.warn('Map container not ready, will retry...');
+        setIsLoading(false);
+        return false;
+      }
 
       const L = await import('leaflet');
 
@@ -154,9 +170,15 @@ export default function PropertyDetailMap({
 
       await waitForVisibleContainer(mapRef.current, 1200);
 
+      // Final validation before creating map - return false to allow retry
+      if (!mapRef.current || !mapRef.current.parentElement) {
+        console.warn('Map container still not ready after wait, will retry...');
+        setIsLoading(false);
+        return false;
+      }
+
       // Create a fresh inner container for Leaflet so we never reuse a DOM node
       // that may still have _leaflet_id set by another instance.
-      if (!mapRef.current) throw new Error('Map container missing');
       // Clean any previously created inner container
       if (innerContainerRef.current && innerContainerRef.current.parentElement === mapRef.current) {
         try { innerContainerRef.current.remove(); } catch {}
@@ -276,10 +298,12 @@ export default function PropertyDetailMap({
       }
 
       setIsLoading(false);
+      return true;
     } catch (error) {
       console.error('Property map initialization error:', error);
       setError('Failed to load map');
       setIsLoading(false);
+      return false;
     }
   };
 
@@ -420,13 +444,9 @@ export default function PropertyDetailMap({
             <div class="text-gray-600">${icon}</div>
             <h4 class="font-semibold text-gray-900 text-sm">${place.name}</h4>
           </div>
-          <p class="text-xs text-gray-600 mb-2">${place.address}</p>
+          ${place.address ? `<p class="text-xs text-gray-600 mb-2">${place.address}</p>` : ''}
           <div class="flex justify-between items-center mb-2">
             <span class="text-xs text-gray-500">${place.distance} km larg</span>
-            ${place.rating ? `<div class="flex items-center gap-1">
-              <span class="text-yellow-500 text-xs">⭐</span>
-              <span class="text-xs text-gray-600">${place.rating}</span>
-            </div>` : ''}
           </div>
           <a href="https://www.google.com/maps/dir/?api=1&destination=${place.coordinates.lat},${place.coordinates.lng}" 
              target="_blank" 
@@ -462,15 +482,39 @@ export default function PropertyDetailMap({
 
   useEffect(() => {
     let canceled = false;
+    let timeoutId: NodeJS.Timeout;
+    let retryTimeoutId: NodeJS.Timeout;
     const hostRef = mapRef.current;
+    
     const init = async () => {
       if (canceled) return;
-      await initializeMap();
+      
+      // Wait for DOM to be ready
+      await new Promise(resolve => {
+        timeoutId = setTimeout(resolve, 100);
+      });
+      
+      if (canceled) return;
+      
+      // Try to initialize, if it fails, retry once after a delay
+      const success = await initializeMap();
+      
+      if (!success && !canceled) {
+        // Retry once after 200ms if first attempt failed
+        retryTimeoutId = setTimeout(async () => {
+          if (!canceled) {
+            await initializeMap();
+          }
+        }, 200);
+      }
     };
+    
     init();
 
     return () => {
       canceled = true;
+      if (timeoutId) clearTimeout(timeoutId);
+      if (retryTimeoutId) clearTimeout(retryTimeoutId);
       const host = hostRef;
       if (mapInstanceRef.current) {
         try {
