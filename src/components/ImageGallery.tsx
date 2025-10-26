@@ -50,6 +50,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 66vw"
+            priority={currentIndex === 0}
           />
           
           {/* Navigation Arrows */}
@@ -90,7 +91,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
                 <button
                   key={index}
                   onClick={() => setCurrentIndex(index)}
-                  className={`relative flex-shrink-0 w-20 h-16 rounded-md overflow-hidden border-2 transition-colors ${
+                  className={`relative shrink-0 w-20 h-16 rounded-md overflow-hidden border-2 transition-colors ${
                     index === currentIndex ? 'border-blue-600' : 'border-gray-200'
                   }`}
                 >

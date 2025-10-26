@@ -48,11 +48,28 @@ export default function FullMapView({
   const [retryCount, setRetryCount] = useState(0);
   const [mapLayer, setMapLayer] = useState<'street' | 'satellite' | 'terrain'>('street');
   const [showPropertyDetails, setShowPropertyDetails] = useState(false);
+  const [mobilePreview, setMobilePreview] = useState<Property | null>(null);
+  const [mobilePreviewPosition, setMobilePreviewPosition] = useState<'top' | 'bottom'>('bottom');
   const [filteredProperties, setFilteredProperties] = useState<Property[]>(properties);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const MAX_MARKERS = 800; // soft cap for performance on very large datasets
   // Location search circle is drawn directly on the map; no local state needed
   const tileLayerRef = useRef<LeafletTileLayer | null>(null);
   const tileProviderIndexRef = useRef<number>(0);
+
+  // Detect mobile viewport on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobileViewport(window.innerWidth < 640);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
 
   const waitForVisibleContainer = async (el: HTMLDivElement, maxMs = 1500) => {
     const isVisible = () => {
@@ -170,6 +187,15 @@ export default function FullMapView({
     addTileLayer(Leaflet, map, mapLayer);
       mapInstanceRef.current = map;
 
+      // Close any existing popups on mobile to prevent errors
+      if (isMobileViewport) {
+        try {
+          map.closePopup();
+        } catch (error) {
+          console.warn('Failed to close popup:', error);
+        }
+      }
+
       // Wait for map to be ready before adding markers
       map.whenReady(() => {
         try {
@@ -218,6 +244,18 @@ export default function FullMapView({
           addPropertyMarkers(Leaflet, mapInstanceRef.current, filteredProperties);
         } catch {}
       });
+
+      // Prevent popup operations on mobile
+      if (isMobileViewport) {
+        map.on('popupopen', () => {
+          try {
+            // Immediately close any popup that tries to open on mobile
+            map.closePopup();
+          } catch (error) {
+            console.warn('Failed to close popup on mobile:', error);
+          }
+        });
+      }
 
       map.on('resize', () => {
         try { map.invalidateSize(); } catch {}
@@ -286,10 +324,21 @@ export default function FullMapView({
     setFilteredProperties(properties);
   }, [properties]);
 
-  // Show property details modal when a property is selected
+  // Show property details appropriately per viewport
   useEffect(() => {
-    if (selectedProperty) {
+    if (!selectedProperty) {
+      setShowPropertyDetails(false);
+      setMobilePreview(null);
+      return;
+    }
+
+    const isDesktop = typeof window === 'undefined' ? true : window.innerWidth >= 640;
+    if (isDesktop) {
+      setMobilePreview(null);
       setShowPropertyDetails(true);
+    } else {
+      setShowPropertyDetails(false);
+      setMobilePreview(selectedProperty);
     }
   }, [selectedProperty]);
 
@@ -342,7 +391,7 @@ export default function FullMapView({
     };
 
     updateMarkers();
-  }, [filteredProperties]);
+  }, [filteredProperties, isMobileViewport]); // Re-create markers when viewport changes
 
   // Highlight selected property
   useEffect(() => {
@@ -354,7 +403,6 @@ export default function FullMapView({
         animate: true,
         duration: 1
       });
-      setShowPropertyDetails(true);
     } catch (error) {
       console.warn('Error highlighting selected property:', error);
     }
@@ -592,11 +640,133 @@ export default function FullMapView({
             className: 'custom-tooltip-full'
           });
 
-          marker.on('click', () => {
-            onPropertySelect(property);
+          // Bind a compact popup for mobile with a quick CTA
+          const popupContent = `
+            <div class="p-0 min-w-[240px] max-w-[280px] overflow-hidden rounded-xl shadow-lg border border-blue-100 bg-white">
+              ${property.images && property.images[0]
+                ? `<div class="relative h-32 overflow-hidden">
+                     <img src="${property.images[0]}" alt="${property.title}" class="w-full h-full object-cover" />
+                     <div class="absolute inset-0 bg-linear-to-t from-black/50 via-black/10 to-transparent"></div>
+                     <span class="absolute bottom-2 left-2 text-xs font-semibold text-white bg-black/40 backdrop-blur-sm px-2 py-1 rounded-full">
+                       ${property.details.propertyType}
+                     </span>
+                   </div>`
+                : ''}
+              <div class="p-4 space-y-3">
+                <div>
+                  <h3 class="font-semibold text-gray-900 text-sm leading-tight line-clamp-2">${property.title}</h3>
+                  <p class="text-[12px] text-gray-500 mt-1 flex items-center gap-1">
+                    <svg class="w-3 h-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                    </svg>
+                    ${property.address.street}, ${property.address.city}
+                  </p>
+                </div>
+                <div class="flex items-center justify-between text-xs text-gray-600">
+                  <span class="flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2L3 7v11h4v-6h6v6h4V7l-7-5z"/></svg>
+                    ${property.details.bedrooms} dhoma
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M8 2v2H6V2H4v2H2v2h2v10h2V6h2V4H6V2h2z"/></svg>
+                    ${property.details.bathrooms} banjo
+                  </span>
+                  <span>${property.details.squareFootage ? property.details.squareFootage.toLocaleString() : ''} m²</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-base font-semibold text-blue-600">${formatPrice(property.price)}</span>
+                  <a href="/properties/${property.id}" class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700">
+                    Shiko detajet
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          // NEVER bind popup on mobile - use custom preview instead
+          // Only bind on desktop to prevent Leaflet errors
+          if (!isMobileViewport) {
+            try {
+              marker.bindPopup(popupContent, {
+                className: 'custom-popup-full',
+                offset: [0, -10],
+                maxWidth: 280,
+                closeButton: true,
+                autoPan: false, // Prevent auto-pan issues
+              });
+            } catch (error) {
+              console.warn('Failed to bind popup:', error);
+            }
+          }
+          
+          // Remove ALL default Leaflet click handlers
+          marker.off('click');
+          marker.off('dblclick');
+
+          // Add custom click handler that prevents popup on mobile
+          marker.on('click', (e) => {
+            // Stop event propagation
+            L.DomEvent.stopPropagation(e);
+            
+            if (isMobileViewport) {
+              // Mobile: Show custom preview card ONLY, no Leaflet popup
+              try {
+                // Close any open popups
+                const map = mapInstanceRef.current;
+                if (map) {
+                  map.closePopup();
+                  
+                  // Determine if marker is in top or bottom half of screen
+                  const latLng = marker.getLatLng();
+                  const point = map.latLngToContainerPoint(latLng);
+                  const mapSize = map.getSize();
+                  
+                  // If marker is in top half, show preview at bottom
+                  // If marker is in bottom half, show preview at top
+                  const isTopHalf = point.y < mapSize.y / 2;
+                  setMobilePreviewPosition(isTopHalf ? 'bottom' : 'top');
+                  
+                  // Pan to marker with offset based on preview position
+                  const offsetY = isTopHalf ? -80 : 80; // Offset away from preview
+                  const newPoint = L.point([point.x, point.y + offsetY]);
+                  const newLatLng = map.containerPointToLatLng(newPoint);
+                  map.panTo(newLatLng, { animate: true, duration: 0.3 });
+                }
+                
+                setMobilePreview(property);
+                onPropertySelect(property);
+              } catch (error) {
+                console.warn('Failed to show mobile preview:', error);
+                setMobilePreview(property);
+                onPropertySelect(property);
+              }
+            } else {
+              // Desktop: Show popup (already bound) and update state
+              onPropertySelect(property);
+            }
           });
-          marker.on('mouseover', function() { this.openTooltip(); });
-          marker.on('mouseout', function() { this.closeTooltip(); });
+          
+          // Only enable hover tooltips on desktop (not touch devices)
+          if (!isMobileViewport) {
+            marker.on('mouseover', function() { 
+              try {
+                this.openTooltip(); 
+              } catch (error) {
+                console.warn('Failed to open tooltip:', error);
+              }
+            });
+            marker.on('mouseout', function() { 
+              try {
+                this.closeTooltip(); 
+              } catch (error) {
+                console.warn('Failed to close tooltip:', error);
+              }
+            });
+          }
+          
           markersRef.current.push(marker);
         }
       } catch (err) {
@@ -740,7 +910,74 @@ export default function FullMapView({
         style={{ marginRight: selectedProperty && showPropertyDetails ? '20rem' : 0 }}
       />
 
-    {/* Map Controls - Bottom Right on mobile, Top Right on desktop */}
+      {mobilePreview && (
+        <div 
+          className={`sm:hidden fixed inset-x-2 z-1100 pointer-events-auto transition-all duration-300 ${
+            mobilePreviewPosition === 'top' ? 'top-2' : 'bottom-2'
+          }`}
+        >
+          <div className="relative rounded-lg shadow-lg bg-white/95 backdrop-blur-sm max-w-xs mx-auto border border-gray-200">
+            <button
+              onClick={() => {
+                setMobilePreview(null);
+                onPropertySelect(null);
+              }}
+              className="absolute right-1.5 top-1.5 z-20 rounded-full bg-gray-100 p-0.5 hover:bg-gray-200"
+              aria-label="Mbyll"
+            >
+              <X className="h-3 w-3 text-gray-600" />
+            </button>
+
+            <div className="p-2 pr-6">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="inline-flex items-center gap-0.5 rounded bg-blue-100 px-1.5 py-0.5 text-[9px] font-semibold text-blue-700">
+                  <Home className="h-2 w-2" />
+                  {mobilePreview.details.propertyType}
+                </span>
+                <span className="text-xs font-bold text-blue-600">
+                  {formatPrice(mobilePreview.price)}
+                </span>
+              </div>
+              
+              <h3 className="text-xs font-semibold text-gray-900 line-clamp-1 mb-1">
+                {mobilePreview.title}
+              </h3>
+              
+              <div className="flex items-center gap-2 text-[9px] text-gray-600 mb-1.5">
+                <span className="flex items-center gap-0.5">
+                  <Bed className="h-2.5 w-2.5" />
+                  {mobilePreview.details.bedrooms}
+                </span>
+                <span className="flex items-center gap-0.5">
+                  <Bath className="h-2.5 w-2.5" />
+                  {mobilePreview.details.bathrooms}
+                </span>
+                <span className="flex items-center gap-0.5">
+                  <Square className="h-2.5 w-2.5" />
+                  {mobilePreview.details.squareFootage?.toLocaleString()} m²
+                </span>
+              </div>
+              
+              <button
+                onClick={() => {
+                  // Open property in full screen detail view
+                  onPropertySelect(mobilePreview);
+                  setShowPropertyDetails(true);
+                  setMobilePreview(null);
+                }}
+                className="w-full inline-flex items-center justify-center gap-1 rounded bg-blue-600 px-2 py-1 text-[10px] font-semibold text-white hover:bg-blue-700"
+              >
+                Shiko detajet
+                <svg className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Map Controls - Bottom Right on mobile, Top Right on desktop */}
     <div
       className="absolute z-50 map-controls-overlay"
       style={{
@@ -796,8 +1033,8 @@ export default function FullMapView({
     {/* Property Details Modal/Popup - Right side on desktop, full screen on mobile */}
     {selectedProperty && showPropertyDetails && (
   <>
-    {/* Mobile: Full screen modal */}
-    <div className="sm:hidden fixed inset-0 z-50 flex flex-col bg-white overflow-hidden">
+  {/* Mobile: Full screen modal */}
+  <div className="sm:hidden fixed inset-0 z-1000 flex flex-col bg-white overflow-y-auto">
       <div className="p-4 border-b border-gray-200 shrink-0 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">Detajet e Pasurisë</h3>
         <button
@@ -940,7 +1177,7 @@ export default function FullMapView({
     </div>
 
     {/* Desktop: Right-side panel */}
-    <div className="hidden sm:flex fixed right-0 top-0 bottom-0 z-40 w-80 bg-white shadow-2xl flex-col overflow-hidden">
+  <div className="hidden sm:flex fixed right-0 top-0 bottom-0 z-1000 w-80 bg-white shadow-2xl flex-col overflow-y-auto">
       <div className="p-4 border-b border-gray-200 shrink-0 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">Detajet e Pasurisë</h3>
         <button
@@ -1084,7 +1321,7 @@ export default function FullMapView({
 
     {/* Backdrop - click to close */}
     <div
-      className="hidden sm:block fixed inset-0 z-30 bg-black/10"
+  className="hidden sm:block fixed inset-0 z-950 bg-black/30"
       onClick={() => {
         setShowPropertyDetails(false);
         onPropertySelect(null);

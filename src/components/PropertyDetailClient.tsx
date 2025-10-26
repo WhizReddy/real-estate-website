@@ -183,7 +183,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
 
               {/* Enhanced Map and Location Section */}
               <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                {/* Map Tabs */}
+                {/* Map Tabs - Neighborhood tab hidden until API integration */}
                 <div className="border-b border-gray-200">
                   <div className="flex">
                     <button
@@ -199,19 +199,22 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                         Location & Map
                       </div>
                     </button>
-                    <button
-                      onClick={() => setActiveMapTab('neighborhood')}
-                      className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${
-                        activeMapTab === 'neighborhood'
-                          ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex items-center justify-center gap-2">
-                        <Home className="h-4 w-4" />
-                        Neighborhood
-                      </div>
-                    </button>
+                    {/* Neighborhood tab temporarily disabled - enable when real API is integrated */}
+                    {false && (
+                      <button
+                        onClick={() => setActiveMapTab('neighborhood')}
+                        className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${
+                          activeMapTab === 'neighborhood'
+                            ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        <div className="flex items-center justify-center gap-2">
+                          <Home className="h-4 w-4" />
+                          Neighborhood
+                        </div>
+                      </button>
+                    )}
                   </div>
                 </div>
 

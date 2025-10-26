@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Property } from '@/types';
 import { formatPrice } from '@/lib/utils';
+import { fetchNearbyPlacesCached, OSMPlace } from '@/lib/openstreetmap';
 import { 
   MapPin, 
   Navigation, 
@@ -20,21 +21,14 @@ interface PropertyDetailMapProps {
   className?: string;
 }
 
-interface NeighborhoodPlace {
-  id: string;
-  name: string;
-  type: 'school' | 'shopping' | 'hospital' | 'restaurant' | 'transport';
-  distance: number;
-  coordinates: { lat: number; lng: number };
-  rating?: number;
-  address?: string;
-}
+// Use OSMPlace type from openstreetmap.ts
+type NeighborhoodPlace = OSMPlace;
 
 export default function PropertyDetailMap({
   property,
   nearbyProperties = [],
   height = '400px',
-  showNeighborhood = true,
+  showNeighborhood = false, // Disabled until real API integration
   showDirections = true,
   className = ''
 }: PropertyDetailMapProps) {
@@ -45,13 +39,15 @@ export default function PropertyDetailMap({
   const [isLoading, setIsLoading] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [mapLayer, setMapLayer] = useState<'street' | 'satellite'>('street');
-  const [showNearbyPlaces, setShowNearbyPlaces] = useState(true);
+  const [showNearbyPlaces, setShowNearbyPlaces] = useState(false); // Disabled
   const [selectedPlace, setSelectedPlace] = useState<NeighborhoodPlace | null>(null);
-  const [nearbyPlaces, setNearbyPlaces] = useState<NeighborhoodPlace[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // Mock nearby places data (in real app, this would come from an API)
-  const mockNearbyPlaces: NeighborhoodPlace[] = [
+  // Mock nearby places data - DISABLED FOR NOW
+  // TODO: Replace with real API integration (Google Places or OpenStreetMap)
+  const nearbyPlaces = useMemo<NeighborhoodPlace[]>(() => ([
+    // Commented out mock data - enable when real API is integrated
+    /*
     {
       id: '1',
       name: 'Shkolla e Mesme "Fan Noli"',
@@ -61,29 +57,8 @@ export default function PropertyDetailMap({
       rating: 4.2,
       address: 'Rruga Dëshmorët e Kombit'
     },
-    {
-      id: '2',
-      name: 'Qendra Tregtare "Tirana East Gate"',
-      type: 'shopping',
-      distance: 0.8,
-      coordinates: { lat: property.address.coordinates.lat - 0.005, lng: property.address.coordinates.lng + 0.003 },
-      rating: 4.5,
-      address: 'Autostrada Tiranë-Durrës'
-    },
-    {
-      id: '3',
-      name: 'Spitali Amerikan',
-      type: 'hospital',
-      distance: 1.2,
-      coordinates: { lat: property.address.coordinates.lat + 0.008, lng: property.address.coordinates.lng - 0.002 },
-      rating: 4.7,
-      address: 'Rruga Dibres'
-    }
-  ];
-
-  useEffect(() => {
-    setNearbyPlaces(mockNearbyPlaces);
-  }, [property, mockNearbyPlaces]);
+    */
+  ]), []);
 
   const initializeMap = async () => {
     if (typeof window === 'undefined' || !mapRef.current) return;
@@ -524,7 +499,7 @@ export default function PropertyDetailMap({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapLayer, showNearbyPlaces]);
+  }, [mapLayer, showNearbyPlaces, nearbyPlaces, nearbyProperties, property]);
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
