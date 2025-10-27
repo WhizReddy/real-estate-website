@@ -113,19 +113,19 @@ export default function PropertyImageGallery({ images, title }: PropertyImageGal
           {/* Previous Button */}
           <button
             onClick={goToPrevious}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 touch-manipulation"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-2 sm:p-2.5 rounded-full opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 z-10 touch-manipulation active:scale-90"
             aria-label="Previous image"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-5 w-5 sm:h-4 sm:w-4" />
           </button>
 
           {/* Next Button */}
           <button
             onClick={goToNext}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 touch-manipulation"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-2 sm:p-2.5 rounded-full opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 z-10 touch-manipulation active:scale-90"
             aria-label="Next image"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-5 w-5 sm:h-4 sm:w-4" />
           </button>
 
           {/* Image Counter */}
@@ -134,15 +134,15 @@ export default function PropertyImageGallery({ images, title }: PropertyImageGal
           </div>
 
           {/* Dot Indicators */}
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-10">
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1.5 sm:space-x-1 z-10">
             {images.map((_, index) => (
               <button
                 key={index}
                 onClick={(e) => goToSlide(index, e)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 touch-manipulation ${
+                className={`rounded-full transition-all duration-300 touch-manipulation ${
                   index === currentIndex
-                    ? 'bg-white scale-125'
-                    : 'bg-white/50 hover:bg-white/75'
+                    ? 'w-4 h-1.5 sm:w-2 sm:h-2 bg-white sm:scale-125'
+                    : 'w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white/50 hover:bg-white/75'
                 }`}
                 aria-label={`Go to image ${index + 1}`}
               />
