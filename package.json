@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev --turbo",
     "dev:fast": "next dev --turbo --experimental-https",
+    "postinstall": "prisma generate",
     "prebuild": "npm run type-check && npm run lint && node scripts/validate-build.js",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "build:analyze": "ANALYZE=true next build",
     "build:production": "NODE_ENV=production npm run build",
     "build:staging": "NODE_ENV=staging npm run build",
