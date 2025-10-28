@@ -6,7 +6,7 @@
     "dev": "next dev --turbo",
     "dev:fast": "next dev --turbo --experimental-https",
     "postinstall": "prisma generate",
-    "prebuild": "echo 'Skipping type-check and lint for faster deployment'",
+    "prebuild": "echo 'Skipping checks for Vercel'",
     "build": "prisma generate && next build",
     "vercel-build": "prisma generate && prisma migrate deploy && next build",
     "build:analyze": "ANALYZE=true next build",
