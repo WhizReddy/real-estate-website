@@ -27,14 +27,31 @@ self.addEventListener('install', (event) => {
     caches.open(STATIC_CACHE_NAME)
       .then((cache) => {
         console.log('Service Worker: Caching static assets');
-        return cache.addAll(STATIC_ASSETS);
+        // Cache assets individually to avoid one failure blocking all
+        return Promise.allSettled(
+          STATIC_ASSETS.map(async (asset) => {
+            try {
+              const response = await fetch(asset);
+              if (response.ok) {
+                await cache.put(asset, response);
+                console.log(`Service Worker: Cached ${asset}`);
+              } else {
+                console.warn(`Service Worker: Failed to cache ${asset} - status ${response.status}`);
+              }
+            } catch (error) {
+              console.warn(`Service Worker: Skipped caching ${asset}:`, error);
+            }
+          })
+        );
       })
       .then(() => {
-        console.log('Service Worker: Static assets cached');
+        console.log('Service Worker: Install phase completed');
         return self.skipWaiting();
       })
       .catch((error) => {
-        console.error('Service Worker: Error caching static assets:', error);
+        console.error('Service Worker: Error in install event:', error);
+        // Continue despite errors
+        return self.skipWaiting();
       })
   );
 });

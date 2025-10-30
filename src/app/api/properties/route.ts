@@ -9,17 +9,26 @@ import { resolveAuthenticatedDbUser } from "@/lib/serverAuth";
 export async function GET() {
   try {
     const properties = await prisma.property.findMany({
-      // Temporarily removed owner relation until ownerId column is added
-      // include: {
-      //   owner: true, // Include agent/owner information
-      // },
+      include: {
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
       orderBy: {
         createdAt: "desc",
       },
     });
 
     // Transform the data to match the expected format
-    const transformedProperties = properties.map((property) => ({
+    const transformedProperties = properties.map((property) => {
+      const owner = property.owner;
+
+      return {
       id: property.id,
       title: property.title,
       description: property.description,
@@ -46,15 +55,23 @@ export async function GET() {
       status: property.status.toLowerCase(),
       listingType: property.listingType.toLowerCase(),
       isPinned: property.isPinned,
-      agent: {
-        id: 'default-agent',
-        name: 'Real Estate Agent',
-        email: 'agent@realestate-tirana.al',
-        phone: '+355 69 123 4567',
-      },
+      agent: owner
+        ? {
+            id: owner.id,
+            name: owner.name ?? 'Agjent i Pasurive',
+            email: owner.email,
+            role: owner.role.toLowerCase(),
+          }
+        : {
+            id: 'default-agent',
+            name: 'Real Estate Agent',
+            email: 'agent@realestate-tirana.al',
+            role: 'agent',
+          },
       createdAt: property.createdAt.toISOString(),
       updatedAt: property.updatedAt.toISOString(),
-    }));
+      };
+    });
 
     return NextResponse.json({ properties: transformedProperties });
   } catch (error) {
@@ -142,6 +159,16 @@ export async function POST(request: NextRequest) {
 
     const property = await prisma.property.create({
       data: sanitizedData,
+      include: {
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
     });
 
     // Transform the response to match expected format
@@ -172,7 +199,19 @@ export async function POST(request: NextRequest) {
       status: property.status.toLowerCase(),
       listingType: property.listingType.toLowerCase(),
       isPinned: property.isPinned,
-      ownerId: property.ownerId,
+      agent: property.owner
+        ? {
+            id: property.owner.id,
+            name: property.owner.name ?? 'Agjent i Pasurive',
+            email: property.owner.email,
+            role: property.owner.role.toLowerCase(),
+          }
+        : {
+            id: 'default-agent',
+            name: 'Real Estate Agent',
+            email: 'agent@realestate-tirana.al',
+            role: 'agent',
+          },
       createdAt: property.createdAt.toISOString(),
       updatedAt: property.updatedAt.toISOString(),
     };

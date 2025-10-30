@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getProperties } from '@/lib/data';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const properties = await getProperties();
@@ -88,38 +90,4 @@ ${allPages
     console.error('Error generating sitemap:', error);
     return new NextResponse('Error generating sitemap', { status: 500 });
   }
-}
-
-// Generate sitemap index for large sites
-async function generateSitemapIndex() {
-  const baseUrl = 'https://pasurite-tiranes.al';
-  
-  const sitemaps = [
-    {
-      url: `${baseUrl}/api/sitemap`,
-      lastModified: new Date().toISOString(),
-    },
-    {
-      url: `${baseUrl}/api/sitemap/properties`,
-      lastModified: new Date().toISOString(),
-    },
-    {
-      url: `${baseUrl}/api/sitemap/cities`,
-      lastModified: new Date().toISOString(),
-    },
-  ];
-
-  const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemaps
-  .map(
-    sitemap => `  <sitemap>
-    <loc>${sitemap.url}</loc>
-    <lastmod>${sitemap.lastModified}</lastmod>
-  </sitemap>`
-  )
-  .join('\n')}
-</sitemapindex>`;
-
-  return sitemapIndex;
 }
