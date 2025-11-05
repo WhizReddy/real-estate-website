@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Output configuration for better chunk handling
-  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
-  
   // Don't transpile leaflet - it should only run client-side
   transpilePackages: [],
   
@@ -34,7 +31,7 @@ const nextConfig: NextConfig = {
   // Experimental features for Next.js 15 with Turbopack optimizations
   experimental: {
     optimizeCss: true,
-    optimizePackageImports: ['lucide-react', '@prisma/client'],
+    optimizePackageImports: ['lucide-react'],
   },
   
   // Webpack configuration for fallback when Turbopack fails

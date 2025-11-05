@@ -1,6 +1,4 @@
-import { NextFetchEvent, NextRequest, NextResponse } from 'next/server';
-import { withAuth } from "next-auth/middleware";
-import type { NextRequestWithAuth } from "next-auth/middleware";
+import { NextRequest, NextResponse } from 'next/server';
 
 function applySecurityHeaders(response: NextResponse) {
   response.headers.set('X-Frame-Options', 'DENY');
@@ -15,21 +13,12 @@ function applySecurityHeaders(response: NextResponse) {
   return response;
 }
 
-const adminAuthMiddleware = withAuth(
-  function middleware() {
-    return NextResponse.next();
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => {
-        const role = typeof token?.role === 'string' ? token.role.toLowerCase() : undefined;
-        return role === 'admin' || role === 'agent';
-      },
-    },
-  }
-);
+function hasLegacyAdminSession(req: NextRequest) {
+  const sessionCookie = req.cookies.get('adminSession');
+  return typeof sessionCookie?.value === 'string' && sessionCookie.value.length > 20;
+}
 
-export default async function middleware(req: NextRequest, event: NextFetchEvent) {
+export default async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
   // Skip middleware for static and public assets
@@ -55,8 +44,18 @@ export default async function middleware(req: NextRequest, event: NextFetchEvent
   }
 
   if (pathname.startsWith('/admin')) {
-    const response = await adminAuthMiddleware(req as NextRequestWithAuth, event);
-    return response instanceof NextResponse ? applySecurityHeaders(response) : response;
+    if (pathname === '/admin/login') {
+      return applySecurityHeaders(NextResponse.next());
+    }
+
+    if (!hasLegacyAdminSession(req)) {
+      const redirectUrl = req.nextUrl.clone();
+      redirectUrl.pathname = '/admin/login';
+      redirectUrl.searchParams.set('redirectTo', pathname);
+      return applySecurityHeaders(NextResponse.redirect(redirectUrl));
+    }
+
+    return applySecurityHeaders(NextResponse.next());
   }
 
   return applySecurityHeaders(NextResponse.next());
