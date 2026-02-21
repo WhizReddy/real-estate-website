@@ -226,7 +226,7 @@ export default function Home() {
             }}
           />
 
-          <div className="relative max-w-7xl mx-auto hero-section px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+          <div className="relative max-w-7xl mx-auto hero-section px-4 sm:px-6 lg:px-8 pt-12 pb-24 sm:py-16 lg:py-20">
             <div className="text-center">
               <div className="mb-6 sm:mb-8">
                 <div className="inline-flex items-center px-3 sm:px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-medium mb-4 sm:mb-6">

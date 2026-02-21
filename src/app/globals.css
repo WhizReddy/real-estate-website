@@ -20,7 +20,6 @@ body {
 
 /* Ensure a single scroll container across pages */
 html, body {
-  height: 100%;
   overflow-x: hidden;
   background: #1E378D;
 }
