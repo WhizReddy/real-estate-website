@@ -14,7 +14,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   const getPropertyTypeLabel = (type: string) => {
     const labels = {
       house: 'Shtëpi',
-      apartment: 'Apartament', 
+      apartment: 'Apartament',
       condo: 'Kondo',
       townhouse: 'Shtëpi në Qytet'
     };
@@ -27,8 +27,8 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
   return (
     <Link href={`/properties/${property.id}`} className="group">
-      <div 
-        className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 active:scale-95 touch-manipulation"
+      <div
+        className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-500 transform hover:-translate-y-1.5 border border-gray-100 ring-1 ring-transparent hover:ring-blue-500/10 active:scale-[0.98] touch-manipulation"
         style={{ touchAction: 'manipulation' }}
       >
         {/* Property Image with Mobile Swipe Support */}
@@ -44,22 +44,22 @@ export default function PropertyCard({ property }: PropertyCardProps) {
               </div>
             </div>
           )}
-          
+
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
-          
+
           {/* Status Badges - Top Left */}
           <div className="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[calc(100%-2rem)]">
-            <span className="bg-white/95 backdrop-blur-sm text-gray-900 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">
+            <span className="bg-white/95 backdrop-blur-md text-gray-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm ring-1 ring-black/5">
               {getListingTypeLabel(property.listingType)}
             </span>
             {property.isPinned && (
-              <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center shadow-sm">
-                <Star className="h-3 w-3 mr-1" />
+              <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center shadow-md ring-1 ring-white/20">
+                <Star className="h-3.5 w-3.5 mr-1" />
                 I Zgjedhur
               </span>
             )}
-            <span className="bg-black/60 backdrop-blur-md text-white text-xs font-medium px-3 py-1.5 rounded-lg">
+            <span className="bg-black/60 backdrop-blur-md text-white text-xs font-medium px-3 py-1.5 rounded-full border border-white/10">
               {getPropertyTypeLabel(property.details.propertyType)}
             </span>
           </div>
@@ -68,14 +68,14 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         {/* Property Details */}
         <div className="p-5 sm:p-6 flex flex-col flex-1 h-full">
           <div className="flex justify-between items-start mb-2 gap-3">
-            <h3 className="text-lg sm:text-xl font-bold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors duration-300">
+            <h3 className="text-lg sm:text-xl font-extrabold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors duration-300">
               {property.title}
             </h3>
-            <span className="text-xl font-extrabold text-blue-700 whitespace-nowrap tracking-tight">
+            <span className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700 whitespace-nowrap tracking-tight">
               {formatPrice(property.price)}
             </span>
           </div>
-          
+
           <div className="flex items-center text-gray-500 text-sm mb-4">
             <MapPin className="h-4 w-4 mr-1.5 flex-shrink-0" />
             <span className="line-clamp-1 font-medium">{formatAddress(property.address)}</span>
@@ -89,12 +89,12 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                 <span className="text-sm font-medium">{property.details.bedrooms} <span className="hidden sm:inline">Dhoma</span></span>
               </div>
             )}
-            
+
             <div className="flex items-center gap-1.5">
               <Bath className="h-4 w-4 text-gray-400" />
               <span className="text-sm font-medium">{property.details.bathrooms} <span className="hidden sm:inline">Banjo</span></span>
             </div>
-            
+
             <div className="flex items-center gap-1.5">
               <Square className="h-4 w-4 text-gray-400" />
               <span className="text-sm font-medium">{property.details.squareFootage}m²</span>
@@ -151,7 +151,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           {/* Action Buttons */}
           <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <ViewOnMapButtonCompact 
+              <ViewOnMapButtonCompact
                 property={property}
                 className="z-10 bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors border border-gray-200"
               />
@@ -168,7 +168,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                 <Navigation className="h-4 w-4" />
               </button>
             </div>
-            
+
             <span className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-bold group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
               Shiko Detajet
             </span>

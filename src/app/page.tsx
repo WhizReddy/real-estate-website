@@ -265,28 +265,30 @@ export default function Home() {
               </div>
 
               {/* Stats */}
-              <div className="grid mobile-grid sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl mx-auto">
-                <div className="text-center gpu-accelerated">
-                  <div className="text-2xl sm:text-3xl font-bold text-white">
+              <div className="grid grid-cols-3 gap-3 sm:gap-8 max-w-3xl mx-auto">
+                <div className="text-center gpu-accelerated bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6 hover:bg-white/10 transition-colors shadow-xl">
+                  <div className="text-2xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-white to-blue-200 mb-1">
                     {allProperties.length}+
                   </div>
-                  <div className="text-white/80 text-sm">
-                    Pasuri të Disponueshme
+                  <div className="text-blue-100 text-xs sm:text-sm font-medium">
+                    Pasuri
                   </div>
                 </div>
-                <div className="text-center gpu-accelerated">
-                  <div className="text-2xl sm:text-3xl font-bold text-white">
+                <div className="text-center gpu-accelerated bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6 hover:bg-white/10 transition-colors shadow-xl">
+                  <div className="text-2xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-white to-blue-200 mb-1">
                     5★
                   </div>
-                  <div className="text-white/80 text-sm">
-                    Vlerësim Klientësh
+                  <div className="text-blue-100 text-xs sm:text-sm font-medium">
+                    Vlerësim
                   </div>
                 </div>
-                <div className="text-center gpu-accelerated">
-                  <div className="text-2xl sm:text-3xl font-bold text-white">
+                <div className="text-center gpu-accelerated bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6 hover:bg-white/10 transition-colors shadow-xl">
+                  <div className="text-2xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-white to-blue-200 mb-1">
                     24/7
                   </div>
-                  <div className="text-white/80 text-sm">Mbështetje</div>
+                  <div className="text-blue-100 text-xs sm:text-sm font-medium">
+                    Mbështetje
+                  </div>
                 </div>
               </div>
             </div>
@@ -514,6 +516,9 @@ export default function Home() {
             </div>
           </section>
         </div>
+
+        {/* Soft Transition Gradient */}
+        <div className="h-24 w-full bg-linear-to-b from-transparent to-[#1E378D] opacity-90 -mb-1 relative z-10" aria-hidden="true"></div>
 
         {/* Contact Section */}
         <section
