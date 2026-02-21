@@ -19,7 +19,7 @@ export const dynamicParams = true;
 // Dynamically import map component to avoid SSR issues with Leaflet
 const SimpleMapView = dynamic(
   () => import("@/components/SimpleMapView"),
-  { 
+  {
     ssr: false,
     loading: () => (
       <div className="h-64 bg-gray-100 rounded-lg animate-pulse flex items-center justify-center">
@@ -100,13 +100,13 @@ export default function Home() {
     const loadProperties = async () => {
       try {
         // Use paginated endpoint for better performance with large datasets
-        const res = await fetch(`/api/properties/paginated?page=1&limit=${MAX_INITIAL_LOAD}`, { 
+        const res = await fetch(`/api/properties/paginated?page=1&limit=${MAX_INITIAL_LOAD}`, {
           next: { revalidate: 60 } // Cache for 60 seconds
         });
         if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
         const data = await res.json();
         const activeProperties: Property[] = data.properties || [];
-        
+
         setAllProperties(activeProperties);
         setFilteredProperties(activeProperties);
         setDisplayedProperties(activeProperties.slice(0, PROPERTIES_PER_PAGE));
@@ -128,7 +128,7 @@ export default function Home() {
     // Prefetch SimpleMapView dynamically on idle
     const id = window.requestIdleCallback?.(
       () => {
-        import('@/components/SimpleMapView').catch(() => {});
+        import('@/components/SimpleMapView').catch(() => { });
       },
       { timeout: 2000 }
     );
@@ -156,13 +156,13 @@ export default function Home() {
       const nextPage = currentPage + 1;
       const startIndex = 0;
       const endIndex = nextPage * PROPERTIES_PER_PAGE;
-      
+
       // Check if we need to fetch more data from API
       if (endIndex > allProperties.length && hasMore) {
         // Fetch next batch of properties
         const apiPage = Math.ceil(allProperties.length / MAX_INITIAL_LOAD) + 1;
         const res = await fetch(`/api/properties/paginated?page=${apiPage}&limit=${MAX_INITIAL_LOAD}`);
-        
+
         if (res.ok) {
           const data = await res.json();
           const newProperties = data.properties || [];
@@ -170,7 +170,7 @@ export default function Home() {
           setAllProperties(updatedAll);
           setFilteredProperties(updatedAll);
           setHasMore(data.pagination?.hasMore || false);
-          
+
           setDisplayedProperties(updatedAll.slice(startIndex, endIndex));
         }
       } else {
@@ -178,7 +178,7 @@ export default function Home() {
         const newDisplayedProperties = filteredProperties.slice(startIndex, endIndex);
         setDisplayedProperties(newDisplayedProperties);
       }
-      
+
       setCurrentPage(nextPage);
     } catch (error) {
       console.error("Error loading more properties:", error);
@@ -192,7 +192,7 @@ export default function Home() {
 
   if (isLoading) {
     return (
-  <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <CreativeLoader type="properties" size="lg" />
       </div>
     );
@@ -202,9 +202,9 @@ export default function Home() {
     <Layout variant="homepage">
       <StructuredData type="website" />
       <StructuredData type="organization" />
-  <div className="min-h-screen" style={{ background: '#1E378D' }}>
+      <div className="min-h-screen" style={{ background: '#1E378D' }}>
         {/* Royal Blue Hero Section */}
-  <section className="relative overflow-hidden bg-linear-to-br from-indigo-950 via-blue-900 to-blue-700">
+        <section className="relative overflow-hidden bg-linear-to-br from-indigo-950 via-blue-900 to-blue-700">
           {/* Background Pattern */}
           <div className="absolute inset-0 bg-black/20"></div>
           <div className="absolute inset-0 opacity-20">
@@ -388,129 +388,131 @@ export default function Home() {
 
         {/* Main Content with light background */}
         <div className="bg-linear-to-br from-slate-50 to-blue-50">
-        <section id="properties" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-16 sm:pb-20">
+          <section id="properties" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pb-16 sm:pb-20">
 
-          {/* Search Filters */}
-          <DynamicSearchFilters
-            properties={allProperties}
-            onFilteredResults={handleFilteredResults}
-          />
-
-          {/* Performance Notice */}
-          {totalProperties > MAX_INITIAL_LOAD && (
-            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800">
-                <span className="font-medium flex items-center gap-1">
-                  <BarChart3 className="h-4 w-4" />
-                  Performancë e optimizuar:
-                </span>{" "}
-                Po shfaqen{" "}
-                {displayedProperties.length} pasuri
-                nga {totalProperties} gjithsej për performancë më të mirë.
-                Përdorni filtrat për të gjetur pasuritë që ju interesojnë.
-              </p>
-            </div>
-          )}
-
-          {/* Properties and Map Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-            {/* Search Results */}
-            <div className="lg:col-span-2 property-grid">
-              <DynamicSearchResults
-                properties={displayedProperties}
-                totalProperties={filteredProperties.length}
-                hasMore={hasMoreProperties}
-                onLoadMore={loadMoreProperties}
-                isLoadingMore={isLoadingMore}
+            {/* Search Filters Container that overlaps hero */}
+            <div className="relative z-20 -mt-10 sm:-mt-16 mb-8 sm:mb-10">
+              <DynamicSearchFilters
+                properties={allProperties}
+                onFilteredResults={handleFilteredResults}
               />
             </div>
 
-            {/* Map Sidebar - Hidden on mobile, shown on desktop */}
-            <div className="lg:col-span-1 hidden lg:block">
-              <div className="sticky top-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-blue-600" />
-                    Lokacionet e Pasurive
-                  </h3>
-                  <Link
-                    href="/map"
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
-                  >
-                    Harta e Plotë →
-                  </Link>
-                </div>
-                <div className="map-container">
-                  <SimpleMapView
-                    properties={filteredProperties.slice(0, 10)}
-                    height="600px"
-                  />
-                </div>
+            {/* Performance Notice */}
+            {totalProperties > MAX_INITIAL_LOAD && (
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  <span className="font-medium flex items-center gap-1">
+                    <BarChart3 className="h-4 w-4" />
+                    Performancë e optimizuar:
+                  </span>{" "}
+                  Po shfaqen{" "}
+                  {displayedProperties.length} pasuri
+                  nga {totalProperties} gjithsej për performancë më të mirë.
+                  Përdorni filtrat për të gjetur pasuritë që ju interesojnë.
+                </p>
+              </div>
+            )}
 
-                {filteredProperties.length !== allProperties.length && (
-                  <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm text-blue-800">
-                      <span className="font-medium">Harta tregon:</span>{" "}
-                      {filteredProperties.length} pasuri të filtruara nga {allProperties.length} gjithsej
-                    </p>
-                    {filteredProperties.length === 0 && (
-                      <p className="text-xs text-blue-600 mt-1">
-                        Ndryshoni filtrat për të parë më shumë pasuri në hartë
-                      </p>
-                    )}
+            {/* Properties and Map Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+              {/* Search Results */}
+              <div className="lg:col-span-2 property-grid">
+                <DynamicSearchResults
+                  properties={displayedProperties}
+                  totalProperties={filteredProperties.length}
+                  hasMore={hasMoreProperties}
+                  onLoadMore={loadMoreProperties}
+                  isLoadingMore={isLoadingMore}
+                />
+              </div>
+
+              {/* Map Sidebar - Hidden on mobile, shown on desktop */}
+              <div className="lg:col-span-1 hidden lg:block">
+                <div className="sticky top-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <MapPin className="h-5 w-5 text-blue-600" />
+                      Lokacionet e Pasurive
+                    </h3>
+                    <Link
+                      href="/map"
+                      className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                    >
+                      Harta e Plotë →
+                    </Link>
                   </div>
-                )}
+                  <div className="map-container">
+                    <SimpleMapView
+                      properties={filteredProperties.slice(0, 10)}
+                      height="600px"
+                    />
+                  </div>
 
-                {/* Full Map CTA */}
-                <div className="mt-4">
-                  <Link
-                    href="/map"
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium text-sm gpu-accelerated"
-                  >
-                    <Map className="h-4 w-4" />
-                    Shiko Hartën e Plotë
-                  </Link>
+                  {filteredProperties.length !== allProperties.length && (
+                    <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-sm text-blue-800">
+                        <span className="font-medium">Harta tregon:</span>{" "}
+                        {filteredProperties.length} pasuri të filtruara nga {allProperties.length} gjithsej
+                      </p>
+                      {filteredProperties.length === 0 && (
+                        <p className="text-xs text-blue-600 mt-1">
+                          Ndryshoni filtrat për të parë më shumë pasuri në hartë
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Full Map CTA */}
+                  <div className="mt-4">
+                    <Link
+                      href="/map"
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium text-sm gpu-accelerated"
+                    >
+                      <Map className="h-4 w-4" />
+                      Shiko Hartën e Plotë
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile Map Preview - Only shown on mobile (static image to avoid heavy Leaflet) */}
+              <div className="lg:hidden">
+                <div className="bg-white rounded-lg complex-shadow p-4 mb-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <MapPin className="h-5 w-5 text-blue-600" />
+                      Lokacionet
+                    </h3>
+                    <a
+                      href="/map"
+                      className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors mobile-button"
+                    >
+                      Shiko Hartën →
+                    </a>
+                  </div>
+                  <div className="mobile-map">
+                    {/** Use StaticMapPreview to avoid large scroll and rendering issues on mobile */}
+                    {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                    {/* @ts-ignore - dynamic import below */}
+                    <MobileStaticMap properties={filteredProperties.slice(0, 5)} />
+                  </div>
+                  <div className="mt-3 text-center">
+                    <p className="text-sm text-gray-600 mb-2">
+                      {filteredProperties.length} pasuri në hartë
+                    </p>
+                    <a
+                      href="/map"
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium text-sm mobile-button gpu-accelerated"
+                    >
+                      <Map className="h-4 w-4" />
+                      Hap Hartën e Plotë
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
-
-            {/* Mobile Map Preview - Only shown on mobile (static image to avoid heavy Leaflet) */}
-            <div className="lg:hidden">
-              <div className="bg-white rounded-lg complex-shadow p-4 mb-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-blue-600" />
-                    Lokacionet
-                  </h3>
-                  <a
-                    href="/map"
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors mobile-button"
-                  >
-                    Shiko Hartën →
-                  </a>
-                </div>
-                <div className="mobile-map">
-                  {/** Use StaticMapPreview to avoid large scroll and rendering issues on mobile */}
-                  {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                  {/* @ts-ignore - dynamic import below */}
-                  <MobileStaticMap properties={filteredProperties.slice(0, 5)} />
-                </div>
-                <div className="mt-3 text-center">
-                  <p className="text-sm text-gray-600 mb-2">
-                    {filteredProperties.length} pasuri në hartë
-                  </p>
-                  <a
-                    href="/map"
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium text-sm mobile-button gpu-accelerated"
-                  >
-                    <Map className="h-4 w-4" />
-                    Hap Hartën e Plotë
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
         </div>
 
         {/* Contact Section */}
@@ -532,7 +534,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="grid mobile-contact-grid md:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16">
               <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 hover:bg-blue-600/10 transition-all gpu-accelerated shadow-lg">
                 <div className="flex items-start space-x-4">
                   <div className="p-3 bg-linear-to-r from-blue-600 to-indigo-600 rounded-xl shrink-0">
@@ -610,7 +612,7 @@ export default function Home() {
         {/* Mobile Components */}
         <MobileFloatingActions
           onFilterToggle={() => setShowMobileSearch(true)}
-          onMapToggle={() => {}}
+          onMapToggle={() => { }}
           showMapToggle={false}
         />
 

@@ -237,22 +237,22 @@ export default function SearchFilters({
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const startTime = performance.now();
-      
+
       const filtered = filterProperties(properties, filters);
       const sorted = sortProperties(
         filtered,
         filters.sortBy,
         filters.sortOrder
       );
-      
+
       const endTime = performance.now();
       const processingTime = endTime - startTime;
-      
+
       // Log performance for large datasets
       if (properties.length > 1000 && processingTime > 100) {
         console.warn(`Slow filter operation: ${processingTime.toFixed(2)}ms for ${properties.length} properties`);
       }
-      
+
       onFilteredResultsRef.current(sorted);
     }, 300); // 300ms debounce
 
@@ -318,7 +318,7 @@ export default function SearchFilters({
     filters.agent;
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 md:p-6 mb-4 sm:mb-6 md:mb-8">
+    <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl hover:shadow-2xl border border-white/20 p-5 sm:p-6 md:p-8 mb-4 sm:mb-6 md:mb-8 transition-shadow duration-500">
       {/* Search Bar */}
       <div className="relative mb-4">
         <label htmlFor="property-search" className="sr-only">
@@ -387,19 +387,19 @@ export default function SearchFilters({
                   {filters.sortBy === "price"
                     ? "Më i lirë"
                     : filters.sortBy === "date"
-                    ? "Më i vjetër"
-                    : filters.sortBy === "size"
-                    ? "Më i vogël"
-                    : "A-Z"}
+                      ? "Më i vjetër"
+                      : filters.sortBy === "size"
+                        ? "Më i vogël"
+                        : "A-Z"}
                 </option>
                 <option value="desc">
                   {filters.sortBy === "price"
                     ? "Më i shtrenjtë"
                     : filters.sortBy === "date"
-                    ? "Më i ri"
-                    : filters.sortBy === "size"
-                    ? "Më i madh"
-                    : "Z-A"}
+                      ? "Më i ri"
+                      : filters.sortBy === "size"
+                        ? "Më i madh"
+                        : "Z-A"}
                 </option>
               </select>
             )}
@@ -419,7 +419,7 @@ export default function SearchFilters({
 
       {/* Advanced Filters */}
       {isExpanded && (
-        <div 
+        <div
           id="advanced-filters"
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pt-4 border-t border-gray-200"
           role="region"

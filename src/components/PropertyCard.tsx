@@ -48,70 +48,62 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
           
-          {/* Price Badge */}
-          <div className="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg backdrop-blur-sm">
-            {formatPrice(property.price)}
-          </div>
-          
-          {/* Status Badges */}
-          <div className="absolute top-4 left-4 flex flex-col space-y-2">
-            <span className="bg-white/95 backdrop-blur-sm text-blue-800 text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+          {/* Status Badges - Top Left */}
+          <div className="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[calc(100%-2rem)]">
+            <span className="bg-white/95 backdrop-blur-sm text-gray-900 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">
               {getListingTypeLabel(property.listingType)}
             </span>
             {property.isPinned && (
-              <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center shadow-md">
+              <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center shadow-sm">
                 <Star className="h-3 w-3 mr-1" />
                 I Zgjedhur
               </span>
             )}
-          </div>
-
-          {/* Property Type Badge */}
-          <div className="absolute bottom-4 left-4">
-            <span className="bg-black/70 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full">
+            <span className="bg-black/60 backdrop-blur-md text-white text-xs font-medium px-3 py-1.5 rounded-lg">
               {getPropertyTypeLabel(property.details.propertyType)}
             </span>
           </div>
         </div>
 
         {/* Property Details */}
-        <div className="p-4 sm:p-6">
-          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3 line-clamp-1 group-hover:text-blue-600 transition-colors duration-300">
-            {property.title}
-          </h3>
+        <div className="p-5 sm:p-6 flex flex-col flex-1 h-full">
+          <div className="flex justify-between items-start mb-2 gap-3">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors duration-300">
+              {property.title}
+            </h3>
+            <span className="text-xl font-extrabold text-blue-700 whitespace-nowrap tracking-tight">
+              {formatPrice(property.price)}
+            </span>
+          </div>
           
-          <div className="flex items-center text-gray-600 text-sm mb-3 sm:mb-4">
-            <MapPin className="h-4 w-4 mr-2 flex-shrink-0 text-blue-500" />
+          <div className="flex items-center text-gray-500 text-sm mb-4">
+            <MapPin className="h-4 w-4 mr-1.5 flex-shrink-0" />
             <span className="line-clamp-1 font-medium">{formatAddress(property.address)}</span>
           </div>
 
-          <p className="text-gray-700 text-sm mb-4 sm:mb-6 line-clamp-2 leading-relaxed">
-            {property.description}
-          </p>
-
           {/* Property Stats */}
-          <div className="flex flex-wrap gap-2 sm:gap-3">
+          <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-5 pb-5 border-b border-gray-100">
             {property.details.bedrooms > 0 && (
-              <div className="flex items-center space-x-1 bg-gray-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg">
-                <Bed className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
-                <span className="text-xs sm:text-sm font-medium text-gray-700">{property.details.bedrooms}</span>
+              <div className="flex items-center gap-1.5">
+                <Bed className="h-4 w-4 text-gray-400" />
+                <span className="text-sm font-medium">{property.details.bedrooms} <span className="hidden sm:inline">Dhoma</span></span>
               </div>
             )}
             
-            <div className="flex items-center space-x-1 bg-gray-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg">
-              <Bath className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
-              <span className="text-xs sm:text-sm font-medium text-gray-700">{property.details.bathrooms}</span>
+            <div className="flex items-center gap-1.5">
+              <Bath className="h-4 w-4 text-gray-400" />
+              <span className="text-sm font-medium">{property.details.bathrooms} <span className="hidden sm:inline">Banjo</span></span>
             </div>
             
-            <div className="flex items-center space-x-1 bg-gray-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg">
-              <Square className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
-              <span className="text-xs sm:text-sm font-medium text-gray-700">{property.details.squareFootage}m²</span>
+            <div className="flex items-center gap-1.5">
+              <Square className="h-4 w-4 text-gray-400" />
+              <span className="text-sm font-medium">{property.details.squareFootage}m²</span>
             </div>
           </div>
 
           {/* Agent Information */}
           {property.agent && (
-            <div className="mt-4 pt-4 border-t border-gray-100">
+            <div className="mb-4">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
                   {property.agent.name.split(' ').map(n => n[0]).join('')}
@@ -157,35 +149,29 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           )}
 
           {/* Action Buttons */}
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <ViewOnMapButtonCompact 
-                  property={property}
-                  className="z-10"
-                />
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${property.address.coordinates.lat},${property.address.coordinates.lng}`;
-                    window.open(directionsUrl, '_blank', 'noopener,noreferrer');
-                  }}
-                  className="p-1.5 text-green-600 hover:bg-green-50 rounded-full transition-colors border border-green-200 hover:border-green-300"
-                  title="Get directions"
-                >
-                  <Navigation className="h-3 w-3" />
-                </button>
-              </div>
-              <div className="text-right">
-                <div className="text-xs text-gray-500 font-medium mb-1">
-                  ID: {property.id.slice(0, 8)}
-                </div>
-                <span className="text-blue-600 text-sm font-semibold group-hover:text-blue-700 transition-colors duration-300">
-                  View Details →
-                </span>
-              </div>
+          <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ViewOnMapButtonCompact 
+                property={property}
+                className="z-10 bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors border border-gray-200"
+              />
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${property.address.coordinates.lat},${property.address.coordinates.lng}`;
+                  window.open(directionsUrl, '_blank', 'noopener,noreferrer');
+                }}
+                className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors border border-gray-200 hover:border-green-200"
+                title="Merr udhëzime"
+              >
+                <Navigation className="h-4 w-4" />
+              </button>
             </div>
+            
+            <span className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-bold group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+              Shiko Detajet
+            </span>
           </div>
         </div>
       </div>
