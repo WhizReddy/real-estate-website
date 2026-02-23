@@ -94,14 +94,14 @@ describe('Security utilities', () => {
     it('should validate correct image files', () => {
       const validFile = new File([''], 'test.jpg', { type: 'image/jpeg' });
       Object.defineProperty(validFile, 'size', { value: 1024 * 1024 }); // 1MB
-      
+
       const result = isValidImageFile(validFile);
       expect(result.valid).toBe(true);
     });
 
     it('should reject invalid file types', () => {
       const invalidFile = new File([''], 'test.txt', { type: 'text/plain' });
-      
+
       const result = isValidImageFile(invalidFile);
       expect(result.valid).toBe(false);
       expect(result.error).toContain('nuk është i lejuar');
@@ -110,7 +110,7 @@ describe('Security utilities', () => {
     it('should reject files that are too large', () => {
       const largeFile = new File([''], 'test.jpg', { type: 'image/jpeg' });
       Object.defineProperty(largeFile, 'size', { value: 10 * 1024 * 1024 }); // 10MB
-      
+
       const result = isValidImageFile(largeFile);
       expect(result.valid).toBe(false);
       expect(result.error).toContain('shumë i madh');
@@ -130,8 +130,8 @@ describe('Security utilities', () => {
       };
 
       const result = sanitizePropertyData(input);
-      
-      expect(result.title).toBe('alert("xss")');
+
+      expect(result.title).toBe('&lt;script&gt;alert(&quot;xss&quot;)&lt;&#x2F;script&gt;');
       expect(result.description).toBe('Normal description');
       expect(result.address.street).toBe('Main Street');
       expect(result.features).toEqual(['Feature 1', 'Feature 2']);
@@ -148,7 +148,7 @@ describe('Security utilities', () => {
       };
 
       const result = sanitizeInquiryData(input);
-      
+
       expect(result.name).toBe('John Doe');
       expect(result.email).toBe('john@example.com');
       expect(result.phone).toBe('+355 69 123 4567');

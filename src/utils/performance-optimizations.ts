@@ -132,7 +132,8 @@ export function useDebouncedSearch<T>(
 
 // Memory usage monitoring
 export function useMemoryMonitor() {
-  const [memoryInfo, setMemoryInfo] = useState<any>(null);
+  interface MemoryInfo { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number; }
+  const [memoryInfo, setMemoryInfo] = useState<MemoryInfo | null>(null);
 
   useEffect(() => {
     const updateMemoryInfo = () => {
@@ -177,7 +178,17 @@ export function analyzeBundleSize() {
 
 // Performance metrics collection
 export function usePerformanceMetrics() {
-  const [metrics, setMetrics] = useState<any>(null);
+  interface PerformanceMetrics {
+    domContentLoaded: number;
+    loadComplete: number;
+    firstPaint: number;
+    firstContentfulPaint: number;
+    dnsLookup: number;
+    tcpConnect: number;
+    serverResponse: number;
+    resourceCount: number;
+  }
+  const [metrics, setMetrics] = useState<PerformanceMetrics | null>(null);
 
   useEffect(() => {
     const collectMetrics = () => {
@@ -189,16 +200,16 @@ export function usePerformanceMetrics() {
           // Core Web Vitals
           domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
           loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
-          
+
           // Paint metrics
           firstPaint: paint.find(p => p.name === 'first-paint')?.startTime || 0,
           firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime || 0,
-          
+
           // Network metrics
           dnsLookup: navigation.domainLookupEnd - navigation.domainLookupStart,
           tcpConnect: navigation.connectEnd - navigation.connectStart,
           serverResponse: navigation.responseEnd - navigation.requestStart,
-          
+
           // Resource metrics
           resourceCount: performance.getEntriesByType('resource').length,
         });
@@ -258,9 +269,9 @@ export function registerServiceWorker() {
 
 // Cache management
 export class CacheManager {
-  private cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
+  private cache = new Map<string, { data: unknown; timestamp: number; ttl: number }>();
 
-  set(key: string, data: any, ttl: number = 5 * 60 * 1000) {
+  set(key: string, data: unknown, ttl: number = 5 * 60 * 1000) {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),

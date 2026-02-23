@@ -1,0 +1,203 @@
+  console.log
+    --- TEST FETCH CALLED WITH URL --- /api/auth/login
+
+      at log (src/__tests__/e2e/complete-user-flows.test.tsx:268:17)
+
+FAIL src/__tests__/e2e/complete-user-flows.test.tsx
+  Complete User Flows
+    Authentication Flow
+      ✕ should complete full admin authentication flow (1217 ms)
+      ✓ should handle authentication errors gracefully (50 ms)
+    Homepage and Search Flow
+      ✓ should load homepage with properties and allow searching (161 ms)
+      ✓ should filter properties by search term (121 ms)
+      ✓ should filter properties by city (123 ms)
+    Map Integration Flow
+      ✓ should update map when search filters change (129 ms)
+      ✓ should show correct property count in map info (274 ms)
+    Responsive Design Flow
+      ✓ should handle mobile interactions (154 ms)
+    Error Handling Flow
+      ✓ should handle component errors gracefully (170 ms)
+    Performance Flow
+      ✓ should load and render efficiently (173 ms)
+      ✓ should handle large property datasets efficiently (115 ms)
+
+  ● Complete User Flows › Authentication Flow › should complete full admin authentication flow
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: "/admin/dashboard"
+
+    Number of calls: 0
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head />[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"min-h-full bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"sm:mx-auto sm:w-full sm:max-w-md"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"text-center"[39m
+              [36m>[39m
+                [36m<h1[39m
+                  [33mclass[39m=[32m"text-3xl font-bold text-blue-600 mb-2"[39m
+                [36m>[39m
+                  [0m🏠 Pasuritë e Tiranës[0m
+                [36m</h1>[39m
+                [36m<h2[39m
+                  [33mclass[39m=[32m"text-2xl font-bold text-gray-900"[39m
+                [36m>[39m
+                  [0mHyrje për Agjentë[0m
+                [36m</h2>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"mt-2 text-sm text-gray-600"[39m
+                [36m>[39m
+                  [0mHyni në panelin tuaj të administrimit[0m
+                [36m</p>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"mt-8 sm:mx-auto sm:w-full sm:max-w-md"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10"[39m
+              [36m>[39m
+                [36m<form[39m
+                  [33mclass[39m=[32m"space-y-6"[39m
+                [36m>[39m
+                  [36m<div>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"block text-sm font-medium text-gray-700"[39m
+                      [33mfor[39m=[32m"username"[39m
+                    [36m>[39m
+                      [0mEmail[0m
+                    [36m</label>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"mt-1"[39m
+                    [36m>[39m
+                      [36m<input[39m
+                        [33mclass[39m=[32m"appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"[39m
+                        [33mid[39m=[32m"username"[39m
+                        [33mname[39m=[32m"username"[39m
+                        [33mplaceholder[39m=[32m"agent@example.com"[39m
+                        [33mrequired[39m=[32m""[39m
+                        [33mtype[39m=[32m"email"[39m
+                        [33mvalue[39m=[32m"admin@test.com"[39m
+                      [36m/>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"block text-sm font-medium text-gray-700"[39m
+                      [33mfor[39m=[32m"password"[39m
+                    [36m>[39m
+                      [0mFjalëkalimi[0m
+                    [36m</label>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"mt-1"[39m
+                    [36m>[39m
+                      [36m<input[39m
+                        [33mclass[39m=[32m"appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"[39m
+                        [33mid[39m=[32m"password"[39m
+                        [33mname[39m=[32m"password"[39m
+                        [33mplaceholder[39m=[32m"Shkruani fjalëkalimin tuaj"[39m
+                        [33mrequired[39m=[32m""[39m
+                        [33mtype[39m=[32m"password"[39m
+                        [33mvalue[39m=[32m"password123"[39m
+                      [36m/>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<button[39m
+                      [33mclass[39m=[32m"w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"[39m
+                      [33mtype[39m=[32m"submit"[39m
+                    [36m>[39m
+                      [0mKyçu[0m
+                    [36m</button>[39m
+                  [36m</div>[39m
+                [36m</form>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"mt-6"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"relative"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"absolute inset-0 flex items-center"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"w-full border-t border-gray-300"[39m
+                      [36m/>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"relative flex justify-center text-sm"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"px-2 bg-white text-gray-500"[39m
+                      [36m>[39m
+                        [0mose[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"mt-6 text-center"[39m
+                  [36m>[39m
+                    [36m<a[39m
+                      [33mclass[39m=[32m"text-blue-600 hover:text-blue-500 text-sm font-medium"[39m
+                      [33mhref[39m=[32m"/"[39m
+                    [36m>[39m
+                      [0m← Kthehu në faqen kryesore[0m
+                    [36m</a>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"mt-6 p-4 bg-blue-50 rounded-md"[39m
+                [36m>[39m
+                  [36m<h3[39m
+                    [33mclass[39m=[32m"text-sm font-medium text-blue-800 mb-2"[39m
+                  [36m>[39m
+                    [0mNdihmë për hyrje:[0m
+                  [36m</h3>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"text-sm text-blue-700"[39m
+                  [36m>[39m
+                    [36m<p>[39m
+                      [0mPërdorni email-in dhe fjalëkalimin që ju ka dhënë administratori.[0m
+                    [36m</p>[39m
+                    [36m<p>[39m
+                      [0mNëse keni probleme me hyrjen, kontaktoni administratorin.[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</body>[39m
+    [36m</html>[39m
+
+      291 |
+      292 |       await waitFor(() => {
+    > 293 |         expect(mockPush).toHaveBeenCalledWith('/admin/dashboard');
+          |                          ^
+      294 |       });
+      295 |
+      296 |       expect(mockFetch).toHaveBeenCalledWith('/api/auth/login', expect.objectContaining({
+
+      at toHaveBeenCalledWith (src/__tests__/e2e/complete-user-flows.test.tsx:293:26)
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at checkRealTimersCallback (node_modules/@testing-library/dom/dist/wait-for.js:118:16)
+      at Timeout.task [as _onTimeout] (node_modules/jsdom/lib/jsdom/browser/Window.js:579:19)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 10 passed, 11 total
+Snapshots:   0 total
+Time:        4.011 s
+Ran all test suites matching src/__tests__/e2e/complete-user-flows.test.tsx.

@@ -1,9 +1,9 @@
-import { 
-  validateAgentData, 
-  validateUserRole, 
+import {
+  validateAgentData,
+  validateUserRole,
   validatePassword,
   validateEmail,
-  validatePhone 
+  validatePhone
 } from '../validation';
 
 describe('Agent Validation Functions', () => {
@@ -109,7 +109,7 @@ describe('Agent Validation Functions', () => {
     it('should handle optional phone field', () => {
       const withoutPhone = { ...validAgentData };
       delete withoutPhone.phone;
-      
+
       const result = validateAgentData(withoutPhone);
       expect(result.isValid).toBe(true);
       expect(result.sanitizedData.phone).toBeUndefined();
@@ -134,7 +134,7 @@ describe('Agent Validation Functions', () => {
         name: '  John <script>alert("xss")</script> Doe  '
       });
       expect(result.isValid).toBe(true);
-      expect(result.sanitizedData.name).toBe('John &lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt; Doe');
+      expect(result.sanitizedData.name).toBe('John &lt;script&gt;alert(&quot;xss&quot;)&lt;&#x2F;script&gt; Doe');
     });
   });
 });

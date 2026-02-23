@@ -14,7 +14,7 @@ export function formatSquareFootage(sqft: number): string {
 }
 
 export function formatAddress(address: Property['address']): string {
-  return `${address.street}, ${address.city}`;
+  return [address.street, address.city].filter(Boolean).join(', ');
 }
 
 export function validateProperty(property: Partial<Property>): string[] {
@@ -77,7 +77,11 @@ export function getCurrentTimestamp(): string {
 
 export function formatDate(date: Date | string): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
-  
+
+  if (isNaN(dateObj.getTime())) {
+    return 'Invalid Date';
+  }
+
   return new Intl.DateTimeFormat('sq-AL', {
     year: 'numeric',
     month: 'long',
@@ -89,7 +93,11 @@ export function formatDate(date: Date | string): string {
 
 export function formatDateShort(date: Date | string): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
-  
+
+  if (isNaN(dateObj.getTime())) {
+    return 'Invalid Date';
+  }
+
   return new Intl.DateTimeFormat('sq-AL', {
     year: 'numeric',
     month: 'short',

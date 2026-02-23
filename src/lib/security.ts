@@ -7,7 +7,7 @@
  */
 export function sanitizeHtml(input: string): string {
   if (!input) return '';
-  
+
   return input
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -22,7 +22,7 @@ export function sanitizeHtml(input: string): string {
  */
 export function sanitizeString(input: string): string {
   if (!input) return '';
-  
+
   // Remove null bytes and control characters
   return input.replace(/[\x00-\x1F\x7F]/g, '').trim();
 }
@@ -55,7 +55,7 @@ export function isValidPrice(price: number): boolean {
  */
 export function isValidCoordinates(lat: number, lng: number): boolean {
   return (
-    typeof lat === 'number' && 
+    typeof lat === 'number' &&
     typeof lng === 'number' &&
     lat >= -90 && lat <= 90 &&
     lng >= -180 && lng <= 180
@@ -68,15 +68,15 @@ export function isValidCoordinates(lat: number, lng: number): boolean {
 export function isValidImageFile(file: File): { valid: boolean; error?: string } {
   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
   const maxSize = 5 * 1024 * 1024; // 5MB
-  
+
   if (!allowedTypes.includes(file.type)) {
     return { valid: false, error: 'Lloji i skedarit nuk është i lejuar. Përdorni JPEG, PNG ose WebP.' };
   }
-  
+
   if (file.size > maxSize) {
     return { valid: false, error: 'Skedari është shumë i madh. Maksimumi është 5MB.' };
   }
-  
+
   return { valid: true };
 }
 
@@ -96,17 +96,17 @@ class RateLimiter {
   isAllowed(identifier: string): boolean {
     const now = Date.now();
     const requests = this.requests.get(identifier) || [];
-    
+
     // Remove old requests outside the window
     const validRequests = requests.filter(time => now - time < this.windowMs);
-    
+
     if (validRequests.length >= this.maxRequests) {
       return false;
     }
-    
+
     validRequests.push(now);
     this.requests.set(identifier, validRequests);
-    
+
     return true;
   }
 }
@@ -158,8 +158,8 @@ export function verifyPassword(password: string, hash: string): boolean {
 export function sanitizePropertyData(data: any): any {
   return {
     ...data,
-    title: sanitizeString(data.title),
-    description: sanitizeString(data.description),
+    title: sanitizeHtml(sanitizeString(data.title)),
+    description: sanitizeHtml(sanitizeString(data.description)),
     address: {
       ...data.address,
       street: sanitizeString(data.address?.street || ''),
@@ -167,7 +167,7 @@ export function sanitizePropertyData(data: any): any {
       state: sanitizeString(data.address?.state || ''),
       zipCode: sanitizeString(data.address?.zipCode || ''),
     },
-    features: Array.isArray(data.features) 
+    features: Array.isArray(data.features)
       ? data.features.map((feature: string) => sanitizeString(feature))
       : [],
   };
@@ -179,9 +179,9 @@ export function sanitizePropertyData(data: any): any {
 export function sanitizeInquiryData(data: any): any {
   return {
     ...data,
-    name: sanitizeString(data.name),
-    email: sanitizeString(data.email),
-    phone: data.phone ? sanitizeString(data.phone) : undefined,
-    message: sanitizeString(data.message),
+    name: sanitizeHtml(sanitizeString(data.name)),
+    email: sanitizeHtml(sanitizeString(data.email)),
+    phone: data.phone ? sanitizeHtml(sanitizeString(data.phone)) : undefined,
+    message: sanitizeHtml(sanitizeString(data.message)),
   };
 }

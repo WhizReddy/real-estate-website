@@ -9,6 +9,7 @@ import StaticMapPreview from '@/components/StaticMapPreview';
 import NeighborhoodInfo from '@/components/NeighborhoodInfo';
 import ViewOnMapButton, { ViewOnMapFAB } from '@/components/ViewOnMapButton';
 import ContactForm from '@/components/ContactForm';
+import MortgageCalculator from '@/components/MortgageCalculator';
 import Layout from '@/components/Layout';
 import StructuredData from '@/components/StructuredData';
 import { ArrowLeft, MapPin, Home, Bed, Bath, Square, Calendar, Euro, Star, Navigation, Map } from 'lucide-react';
@@ -51,7 +52,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
   };
 
   return (
-    <Layout>
+    <Layout variant="property">
       <StructuredData property={property} type="property" />
       <div className="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
         {/* Breadcrumb Header */}
@@ -188,11 +189,10 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                   <div className="flex">
                     <button
                       onClick={() => setActiveMapTab('location')}
-                      className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${
-                        activeMapTab === 'location'
-                          ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                      }`}
+                      className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${activeMapTab === 'location'
+                        ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                        }`}
                     >
                       <div className="flex items-center justify-center gap-2">
                         <MapPin className="h-4 w-4" />
@@ -201,11 +201,10 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                     </button>
                     <button
                       onClick={() => setActiveMapTab('neighborhood')}
-                      className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${
-                        activeMapTab === 'neighborhood'
-                          ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                      }`}
+                      className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${activeMapTab === 'neighborhood'
+                        ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                        }`}
                     >
                       <div className="flex items-center justify-center gap-2">
                         <Home className="h-4 w-4" />
@@ -224,9 +223,9 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                         Property Location
                       </h3>
                       <div className="flex gap-2">
-                        <ViewOnMapButton 
-                          property={property} 
-                          variant="primary" 
+                        <ViewOnMapButton
+                          property={property}
+                          variant="primary"
                           size="sm"
                         />
                         <a
@@ -253,7 +252,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
 
                     {/* Desktop: full interactive map */}
                     <div className="hidden lg:block">
-                      <PropertyDetailMap 
+                      <PropertyDetailMap
                         key={property.id}
                         property={property}
                         nearbyProperties={nearbyProperties}
@@ -274,10 +273,13 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
 
             {/* Sidebar */}
             <div className="lg:col-span-1">
-              <ContactForm 
+              <ContactForm
                 propertyId={property.id}
                 propertyTitle={property.title}
               />
+              <div className="mt-8 sticky top-24">
+                <MortgageCalculator price={property.price} />
+              </div>
             </div>
           </div>
         </div>

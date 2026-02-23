@@ -3,15 +3,18 @@ import Link from 'next/link';
 import { Property } from '@/types';
 import { formatPrice, formatAddress } from '@/lib/utils';
 import { Bed, Bath, Square, MapPin, Star, Map, Navigation } from 'lucide-react';
-import PropertyImageGallery from './PropertyImageGallery';
+import { memo, useCallback } from 'react';
+import dynamic from 'next/dynamic';
+const PropertyImageGallery = dynamic(() => import('./PropertyImageGallery'), { ssr: false });
 import { ViewOnMapButtonCompact } from './ViewOnMapButton';
+import FavoriteButton from './FavoriteButton';
 
 interface PropertyCardProps {
   property: Property;
 }
 
-export default function PropertyCard({ property }: PropertyCardProps) {
-  const getPropertyTypeLabel = (type: string) => {
+const PropertyCard = ({ property }: PropertyCardProps) => {
+  const getPropertyTypeLabel = useCallback((type: string) => {
     const labels = {
       house: 'Shtëpi',
       apartment: 'Apartament',
@@ -19,11 +22,11 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       townhouse: 'Shtëpi në Qytet'
     };
     return labels[type as keyof typeof labels] || type;
-  };
+  }, []);
 
-  const getListingTypeLabel = (type: string) => {
+  const getListingTypeLabel = useCallback((type: string) => {
     return type === 'sale' ? 'Për Shitje' : 'Me Qira';
-  };
+  }, []);
 
   return (
     <Link href={`/properties/${property.id}`} className="group">
@@ -33,7 +36,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       >
         {/* Property Image with Mobile Swipe Support */}
         <div className="relative h-48 sm:h-56 w-full overflow-hidden">
-          {property.images.length > 0 ? (
+          {property.images && property.images.length > 0 ? (
             <PropertyImageGallery images={property.images} title={property.title} />
           ) : (
             // Fallback placeholder
@@ -62,6 +65,11 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             <span className="bg-black/60 backdrop-blur-md text-white text-xs font-medium px-3 py-1.5 rounded-full border border-white/10">
               {getPropertyTypeLabel(property.details.propertyType)}
             </span>
+          </div>
+
+          {/* Favorite Button - Top Right */}
+          <div className="absolute top-4 right-4 z-10">
+            <FavoriteButton propertyId={property.id} />
           </div>
         </div>
 
@@ -178,3 +186,4 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     </Link>
   );
 }
+export default memo(PropertyCard);

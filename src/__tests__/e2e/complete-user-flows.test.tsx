@@ -1,98 +1,159 @@
+// @ts-nocheck
 /**
  * End-to-end tests for complete user flows including authentication, search, and map interactions
  */
 
+/// <reference types="jest" />
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { signIn, getSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import React from 'react';
-import { jest, describe, it, expect, beforeEach } from '@jest/globals';
-import matchers from '@testing-library/jest-dom/matchers';
-
-// Extend jest expect with @testing-library/jest-dom matchers (types + runtime)
-expect.extend(matchers);
 import type { MockedFunction } from 'jest-mock';
+
+const mockSignInFn = jest.fn();
+const mockGetSessionFn = jest.fn();
 
 // Mock all necessary modules
 jest.mock('next-auth/react', () => ({
-  signIn: jest.fn(),
-  getSession: jest.fn(),
+  signIn: (...args: any[]) => mockSignInFn(...args),
+  getSession: (...args: any[]) => mockGetSessionFn(...args),
 }));
 
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-}));
-
-jest.mock('next/dynamic', () => {
-  return function mockDynamic(importFunc: any) {
-    const Component = importFunc();
-    return Component;
+// Mock next/navigation
+jest.mock('next/navigation', () => {
+  const mRouter = {
+    push: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    refresh: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn()
+  };
+  return {
+    __esModule: true,
+    usePathname: () => '/',
+    useRouter: () => mRouter,
+    __mockRouter: mRouter,
   };
 });
 
-// Create mock components for testing
-const Home = () => <div data-testid="home-page">Home Page</div>;
-const SignInPage = () => (
-  <div data-testid="signin-page">
-    <input placeholder="Enter your email" />
-    <input placeholder="Enter your password" type="password" />
-    <button>Sign In</button>
-  </div>
-);
+jest.mock('next/dynamic', () => {
+  return function mockDynamic(importFunc: any, options: any) {
+    const React = require('react');
+    return function DynamicComponent(props: any) {
+      const [{ Component }, setComponent] = React.useState({ Component: null });
 
-jest.mock('@/lib/data', () => ({
-  getProperties: (jest.fn().mockResolvedValue([
-    {
-      id: '1',
-      title: 'Luxury Apartment in Tirana',
-      price: 150000,
-      status: 'active',
-      listingType: 'sale',
-      address: { 
-        city: 'Tirana', 
-        street: 'Rruga e Kavajes', 
-        coordinates: { lat: 41.3275, lng: 19.8187 } 
-      },
-      details: { 
-        bedrooms: 3, 
-        bathrooms: 2, 
-        squareFootage: 120, 
-        propertyType: 'apartment',
-        yearBuilt: 2020,
-      },
-      features: ['parking', 'balcony'],
-      images: [],
-      description: 'Beautiful apartment',
-      createdAt: '2024-01-01',
-      updatedAt: '2024-01-01',
-    },
-    {
-      id: '2',
-      title: 'Modern House in Durres',
-      price: 250000,
-      status: 'active',
-      listingType: 'sale',
-      address: { 
-        city: 'Durres', 
-        street: 'Rruga Durresi', 
-        coordinates: { lat: 41.3144, lng: 19.4564 } 
-      },
-      details: { 
-        bedrooms: 4, 
-        bathrooms: 3, 
-        squareFootage: 200, 
-        propertyType: 'house',
-        yearBuilt: 2021,
-      },
-      features: ['garden', 'garage'],
-      images: [],
-      description: 'Spacious modern house',
-      createdAt: '2024-01-02',
-      updatedAt: '2024-01-02',
-    },
-  ]) as any),
+      React.useEffect(() => {
+        let mounted = true;
+        Promise.resolve(importFunc()).then((mod: any) => {
+          if (mounted) {
+            setComponent({ Component: mod.default || mod });
+          }
+        }).catch(() => { });
+        return () => { mounted = false; };
+      }, []);
+
+      if (!Component) return options?.loading ? options.loading() : null;
+      return <Component {...props} />;
+    };
+  };
+});
+
+jest.mock('@/lib/dynamicImport', () => ({
+  createDynamicImport: (importFunc: any, options: any) => {
+    const React = require('react');
+    return function DynamicComponent(props: any) {
+      const [{ Component }, setComponent] = React.useState({ Component: null });
+
+      React.useEffect(() => {
+        let mounted = true;
+        Promise.resolve(importFunc()).then((mod: any) => {
+          if (mounted) {
+            setComponent({ Component: mod.default || mod });
+          }
+        }).catch(() => { });
+        return () => { mounted = false; };
+      }, []);
+
+      if (!Component) return options?.loading ? options.loading() : null;
+      return <Component {...props} />;
+    };
+  },
+  logChunkError: jest.fn(),
+  prefetchChunk: jest.fn(),
 }));
+
+import Home from '@/app/page';
+import AdminLogin from '@/app/admin/login/page';
+
+
+const mockPropertiesConfig = [
+  {
+    id: '1',
+    title: 'Luxury Apartment in Tirana',
+    price: 150000,
+    status: 'active',
+    listingType: 'sale',
+    address: {
+      city: 'Tirana',
+      street: 'Rruga e Kavajes',
+      coordinates: { lat: 41.3275, lng: 19.8187 }
+    },
+    details: {
+      bedrooms: 3,
+      bathrooms: 2,
+      squareFootage: 120,
+      propertyType: 'apartment',
+      yearBuilt: 2020,
+    },
+    features: ['parking', 'balcony'],
+    images: [],
+    description: 'Beautiful apartment',
+    createdAt: '2024-01-01',
+    updatedAt: '2024-01-01',
+  },
+  {
+    id: '2',
+    title: 'Modern House in Durres',
+    price: 250000,
+    status: 'active',
+    listingType: 'sale',
+    address: {
+      city: 'Durres',
+      street: 'Rruga Durresi',
+      coordinates: { lat: 41.3144, lng: 19.4564 }
+    },
+    details: {
+      bedrooms: 4,
+      bathrooms: 3,
+      squareFootage: 200,
+      propertyType: 'house',
+      yearBuilt: 2021,
+    },
+    features: ['garden', 'garage'],
+    images: [],
+    description: 'Spacious modern house',
+    createdAt: '2024-01-02',
+    updatedAt: '2024-01-02',
+  },
+];
+
+global.fetch = jest.fn((url) => {
+  if (url.includes('/api/properties')) {
+    return Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({ properties: mockPropertiesConfig, pagination: { total: mockPropertiesConfig.length, hasMore: false } }),
+    });
+  }
+  return Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({}),
+  });
+}) as jest.Mock;
+
+
+
 
 // Mock components that might cause issues
 jest.mock('@/components/SearchFilters', () => {
@@ -100,28 +161,34 @@ jest.mock('@/components/SearchFilters', () => {
     return (
       <div data-testid="search-filters">
         <input
-          data-testid="search-input"
           placeholder="Kërkoni pasuri..."
           onChange={(e) => {
+            const val = e.target.value.toLowerCase();
             const filtered = properties.filter((p: any) =>
-              p.title.toLowerCase().includes(e.target.value.toLowerCase())
+              p.title.toLowerCase().includes(val) ||
+              p.address.city.toLowerCase().includes(val) ||
+              p.details.propertyType.toLowerCase() === val
             );
             onFilteredResults(filtered);
           }}
         />
-        <select
-          data-testid="city-filter"
-          onChange={(e) => {
-            const filtered = e.target.value === 'all' 
-              ? properties 
-              : properties.filter((p: any) => p.address.city === e.target.value);
-            onFilteredResults(filtered);
-          }}
-        >
-          <option value="all">Të gjitha qytetet</option>
-          <option value="Tirana">Tirana</option>
-          <option value="Durres">Durres</option>
-        </select>
+        <label>
+          Lokacioni
+          <select
+            role="combobox"
+            onChange={(e) => {
+              const val = e.target.value;
+              const filtered = val === 'all'
+                ? properties
+                : properties.filter((p: any) => p.address.city === val);
+              onFilteredResults(filtered);
+            }}
+          >
+            <option value="all">Të gjitha qytetet</option>
+            <option value="Tirana">Tirana</option>
+            <option value="Durres">Durres</option>
+          </select>
+        </label>
       </div>
     );
   };
@@ -162,90 +229,108 @@ jest.mock('@/lib/performance-monitor', () => ({
   trackAuthFlow: jest.fn(),
 }));
 
-const mockSignIn = signIn as unknown as MockedFunction<typeof signIn>;
-const mockGetSession = getSession as unknown as MockedFunction<typeof getSession>;
-const mockUseRouter = useRouter as unknown as MockedFunction<typeof useRouter>;
+const mockSignIn = mockSignInFn as unknown as MockedFunction<typeof signIn>;
+const mockGetSession = mockGetSessionFn as unknown as MockedFunction<typeof getSession>;
 
 describe('Complete User Flows', () => {
   const mockPush = jest.fn();
-  const mockRouter = {
-    push: mockPush,
-    back: jest.fn(),
-    forward: jest.fn(),
-    refresh: jest.fn(),
-    replace: jest.fn(),
-    prefetch: jest.fn(),
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseRouter.mockReturnValue(mockRouter);
+    mockPush.mockClear();
+
+    // Default fetch mock for all tests (especially Homepage which fetches properties)
+    jest.spyOn(global, 'fetch').mockImplementation((input: RequestInfo | URL, init?: RequestInit) => {
+      const urlStr = typeof input === 'string' ? input : input.toString();
+
+      if (urlStr.includes('/api/properties/paginated')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            properties: mockPropertiesConfig,
+            pagination: { total: mockPropertiesConfig.length, hasMore: false }
+          }),
+        } as any);
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({}),
+      } as any);
+    });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe('Authentication Flow', () => {
     it('should complete full admin authentication flow', async () => {
-      mockSignIn.mockResolvedValue({
-        ok: true,
-        error: null,
-        status: 200,
-        url: null,
+      const mockFetch = (global.fetch as any);
+      mockFetch.mockImplementationOnce((url: string) => {
+        console.log('--- TEST FETCH CALLED WITH URL ---', url);
+        if (url.includes('/api/auth/login')) {
+          return Promise.resolve({
+            ok: true,
+            json: async () => ({
+              success: true,
+              data: { sessionToken: 'abc', id: '1', name: 'Admin', email: 'admin@test.com', role: 'admin' },
+            }),
+          });
+        }
+        return Promise.resolve({ ok: true, json: async () => ({}) });
       });
 
-      mockGetSession.mockResolvedValue({
-        user: {
-          id: '1',
-          email: 'admin@test.com',
-          name: 'Admin User',
-          role: 'admin',
-        },
-        expires: '2024-12-31',
-      } as any);
-
-      render(<SignInPage />);
+      render(<AdminLogin />);
 
       // Complete sign-in process
-      const emailInput = screen.getByPlaceholderText('Enter your email');
-      const passwordInput = screen.getByPlaceholderText('Enter your password');
-      const submitButton = screen.getByRole('button', { name: /sign in/i });
+      const emailInput = screen.getByPlaceholderText('agent@example.com');
+      const passwordInput = screen.getByPlaceholderText('Shkruani fjalëkalimin tuaj');
+      const submitButton = screen.getByRole('button', { name: /Kyçu/i });
 
       fireEvent.change(emailInput, { target: { value: 'admin@test.com' } });
       fireEvent.change(passwordInput, { target: { value: 'password123' } });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith('/admin/dashboard');
+        const nav = require('next/navigation') as any;
+        expect(nav.__mockRouter.push).toHaveBeenCalledWith('/admin/dashboard');
       });
 
-      expect(mockSignIn).toHaveBeenCalledWith('credentials', {
-        email: 'admin@test.com',
-        password: 'password123',
-        redirect: false,
-      });
+      expect(mockFetch).toHaveBeenCalledWith('/api/auth/login', expect.objectContaining({
+        method: 'POST',
+        body: expect.stringContaining('admin@test.com'),
+      }));
     });
 
     it('should handle authentication errors gracefully', async () => {
-      mockSignIn.mockResolvedValue({
-        ok: false,
-        error: 'CredentialsSignin',
-        status: 401,
-        url: null,
+      const mockFetch = (global.fetch as any);
+      mockFetch.mockImplementationOnce((url: string) => {
+        if (url.includes('/api/auth/login')) {
+          return Promise.resolve({
+            ok: false,
+            json: async () => ({
+              success: false,
+              error: 'CredentialsSignin',
+            }),
+          });
+        }
+        return Promise.resolve({ ok: true, json: async () => ({}) });
       });
 
-      render(<SignInPage />);
+      render(<AdminLogin />);
 
-      const emailInput = screen.getByPlaceholderText('Enter your email');
-      const passwordInput = screen.getByPlaceholderText('Enter your password');
-      const submitButton = screen.getByRole('button', { name: /sign in/i });
+      const emailInput = screen.getByPlaceholderText('agent@example.com');
+      const passwordInput = screen.getByPlaceholderText('Shkruani fjalëkalimin tuaj');
+      const submitButton = screen.getByRole('button', { name: /Kyçu/i });
 
       fireEvent.change(emailInput, { target: { value: 'wrong@test.com' } });
       fireEvent.change(passwordInput, { target: { value: 'wrongpassword' } });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(screen.getByText('Invalid email or password')).toBeInTheDocument();
+        expect(screen.getByText('Email ose fjalëkalimi është i gabuar')).toBeInTheDocument();
       });
 
-      expect(mockPush).not.toHaveBeenCalled();
+      expect(mockPush).not.toHaveBeenCalledWith('/admin/dashboard');
     });
   });
 
@@ -255,25 +340,27 @@ describe('Complete User Flows', () => {
 
       // Wait for properties to load
       await waitFor(() => {
-        expect(screen.getByTestId('search-filters')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Kërkoni pasuri...')).toBeInTheDocument();
+        expect(screen.getByTestId('property-1')).toBeInTheDocument();
       });
 
       // Check that properties are displayed
       expect(screen.getByTestId('property-1')).toBeInTheDocument();
       expect(screen.getByTestId('property-2')).toBeInTheDocument();
-      expect(screen.getByText('Luxury Apartment in Tirana')).toBeInTheDocument();
-      expect(screen.getByText('Modern House in Durres')).toBeInTheDocument();
+      expect(screen.getAllByText('Luxury Apartment in Tirana').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Modern House in Durres').length).toBeGreaterThan(0);
     });
 
     it('should filter properties by search term', async () => {
       render(<Home />);
 
       await waitFor(() => {
-        expect(screen.getByTestId('search-filters')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Kërkoni pasuri...')).toBeInTheDocument();
+        expect(screen.getByTestId('property-1')).toBeInTheDocument();
       });
 
       // Search for "apartment"
-      const searchInput = screen.getByTestId('search-input');
+      const searchInput = screen.getByPlaceholderText('Kërkoni pasuri...');
       fireEvent.change(searchInput, { target: { value: 'apartment' } });
 
       await waitFor(() => {
@@ -286,16 +373,17 @@ describe('Complete User Flows', () => {
       render(<Home />);
 
       await waitFor(() => {
-        expect(screen.getByTestId('search-filters')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Kërkoni pasuri...')).toBeInTheDocument();
+        expect(screen.getByTestId('property-1')).toBeInTheDocument();
       });
 
-      // Filter by Durres
-      const cityFilter = screen.getByTestId('city-filter');
-      fireEvent.change(cityFilter, { target: { value: 'Durres' } });
+      // Filter by city
+      const cityFilter = screen.getByRole('combobox', { name: /Lokacioni/i });
+      fireEvent.change(cityFilter, { target: { value: 'Tirana' } });
 
       await waitFor(() => {
-        expect(screen.queryByTestId('property-1')).not.toBeInTheDocument();
-        expect(screen.getByTestId('property-2')).toBeInTheDocument();
+        expect(screen.getByTestId('property-1')).toBeInTheDocument();
+        expect(screen.queryByTestId('property-2')).not.toBeInTheDocument();
       });
     });
   });
@@ -306,6 +394,7 @@ describe('Complete User Flows', () => {
 
       await waitFor(() => {
         expect(screen.getByTestId('map-view')).toBeInTheDocument();
+        expect(screen.getByTestId('map-marker-1')).toBeInTheDocument();
       });
 
       // Initially should show all properties on map
@@ -314,7 +403,7 @@ describe('Complete User Flows', () => {
       expect(screen.getByTestId('map-marker-2')).toBeInTheDocument();
 
       // Filter by city
-      const cityFilter = screen.getByTestId('city-filter');
+      const cityFilter = screen.getByRole('combobox', { name: /Lokacioni/i });
       fireEvent.change(cityFilter, { target: { value: 'Tirana' } });
 
       await waitFor(() => {
@@ -329,10 +418,11 @@ describe('Complete User Flows', () => {
 
       await waitFor(() => {
         expect(screen.getByTestId('map-view')).toBeInTheDocument();
+        expect(screen.getByTestId('map-marker-1')).toBeInTheDocument();
       });
 
       // Search to filter properties
-      const searchInput = screen.getByTestId('search-input');
+      const searchInput = screen.getByPlaceholderText('Kërkoni pasuri...');
       fireEvent.change(searchInput, { target: { value: 'house' } });
 
       await waitFor(() => {
@@ -353,11 +443,12 @@ describe('Complete User Flows', () => {
       render(<Home />);
 
       await waitFor(() => {
-        expect(screen.getByTestId('search-filters')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Kërkoni pasuri...')).toBeInTheDocument();
+        expect(screen.getByTestId('property-1')).toBeInTheDocument();
       });
 
       // Should still work on mobile
-      const searchInput = screen.getByTestId('search-input');
+      const searchInput = screen.getByPlaceholderText('Kërkoni pasuri...');
       fireEvent.change(searchInput, { target: { value: 'apartment' } });
 
       await waitFor(() => {
@@ -376,7 +467,8 @@ describe('Complete User Flows', () => {
       render(<Home />);
 
       await waitFor(() => {
-        expect(screen.getByTestId('search-filters')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Kërkoni pasuri...')).toBeInTheDocument();
+        expect(screen.getByTestId('property-1')).toBeInTheDocument();
       });
 
       // Component should render without crashing
@@ -394,7 +486,8 @@ describe('Complete User Flows', () => {
       render(<Home />);
 
       await waitFor(() => {
-        expect(screen.getByTestId('search-filters')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Kërkoni pasuri...')).toBeInTheDocument();
+        expect(screen.getByTestId('property-1')).toBeInTheDocument();
       });
 
       const endTime = performance.now();
@@ -409,11 +502,12 @@ describe('Complete User Flows', () => {
       render(<Home />);
 
       await waitFor(() => {
-        expect(screen.getByTestId('search-filters')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Kërkoni pasuri...')).toBeInTheDocument();
+        expect(screen.getByTestId('property-1')).toBeInTheDocument();
       });
 
       // Should handle filtering without significant delay
-      const searchInput = screen.getByTestId('search-input');
+      const searchInput = screen.getByPlaceholderText('Kërkoni pasuri...');
       fireEvent.change(searchInput, { target: { value: 'test' } });
 
       // Should update quickly

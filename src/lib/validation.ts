@@ -6,16 +6,39 @@ export interface ValidationError {
   code: string;
 }
 
+// Property interface for typed data
+export interface Property {
+  title: string;
+  description: string;
+  price: number;
+  street: string;
+  city: string;
+  state: string;
+  zipCode?: string;
+  latitude: number;
+  longitude: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  squareFootage?: number;
+  propertyType: string;
+  yearBuilt?: number;
+  images: string[];
+  features?: string[];
+  status?: string;
+  listingType?: string;
+  isPinned?: boolean;
+}
+
 export interface ValidationResult {
   isValid: boolean;
   errors: ValidationError[];
-  sanitizedData?: any;
+  sanitizedData?: Partial<Property>;
 }
 
 // HTML sanitization to prevent XSS
 export function sanitizeHtml(input: string): string {
   if (!input) return '';
-  
+
   return input
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -28,7 +51,7 @@ export function sanitizeHtml(input: string): string {
 // Sanitize and validate text input
 export function sanitizeText(input: string, maxLength: number = 1000): string {
   if (!input) return '';
-  
+
   return sanitizeHtml(input)
     .substring(0, maxLength)
     .replace(/\s+/g, ' ') // Replace multiple spaces with single space
@@ -39,7 +62,7 @@ export function sanitizeText(input: string, maxLength: number = 1000): string {
 export function validateEmail(email: string): { isValid: boolean; sanitized: string } {
   const sanitized = email.toLowerCase().trim();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  
+
   return {
     isValid: emailRegex.test(sanitized),
     sanitized,
@@ -50,7 +73,7 @@ export function validateEmail(email: string): { isValid: boolean; sanitized: str
 export function validatePhone(phone: string): { isValid: boolean; sanitized: string } {
   const sanitized = phone.replace(/\D/g, ''); // Remove non-digits
   const phoneRegex = /^\d{8,15}$/; // 8-15 digits
-  
+
   return {
     isValid: phoneRegex.test(sanitized),
     sanitized,
@@ -217,8 +240,8 @@ export function validatePropertyData(data: any): ValidationResult {
   }
 
   // Coordinates validation
-  if (data.latitude === undefined || data.latitude === null || 
-      data.longitude === undefined || data.longitude === null) {
+  if (data.latitude === undefined || data.latitude === null ||
+    data.longitude === undefined || data.longitude === null) {
     errors.push({
       field: 'coordinates',
       message: 'Latitude and longitude are required',
@@ -340,7 +363,7 @@ export function validatePropertyData(data: any): ValidationResult {
         )
       );
     });
-    
+
     if (validImages.length === 0) {
       errors.push({
         field: 'images',
@@ -360,7 +383,7 @@ export function validatePropertyData(data: any): ValidationResult {
       .filter((feature: any) => typeof feature === 'string' && feature.trim().length > 0)
       .map((feature: string) => sanitizeText(feature, 100))
       .slice(0, 50); // Limit to 50 features
-    
+
     sanitizedData.features = sanitizedFeatures;
   }
 
@@ -405,29 +428,29 @@ export function validateUserRole(role: string): boolean {
 // Validate password strength
 export function validatePassword(password: string): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
-  
+
   if (!password || typeof password !== 'string') {
     errors.push('Password is required');
     return { isValid: false, errors };
   }
-  
+
   if (password.length < 6) {
     errors.push('Password must be at least 6 characters long');
   }
-  
+
   if (password.length > 128) {
     errors.push('Password cannot exceed 128 characters');
   }
-  
+
   // Check for at least one letter and one number for stronger passwords
   if (!/[a-zA-Z]/.test(password)) {
     errors.push('Password must contain at least one letter');
   }
-  
+
   if (!/\d/.test(password)) {
     errors.push('Password must contain at least one number');
   }
-  
+
   return {
     isValid: errors.length === 0,
     errors

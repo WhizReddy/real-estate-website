@@ -1,5 +1,3 @@
-'use client';
-
 // Analytics and performance monitoring utilities
 
 interface AnalyticsEvent {
@@ -34,7 +32,7 @@ class Analytics {
   constructor() {
     this.sessionId = this.generateSessionId();
     this.isEnabled = typeof window !== 'undefined' && process.env.NODE_ENV === 'production';
-    
+
     if (this.isEnabled) {
       this.initializePerformanceMonitoring();
       this.setupErrorTracking();
@@ -51,10 +49,10 @@ class Analytics {
 
     // Monitor Core Web Vitals
     this.observeWebVitals();
-    
+
     // Monitor custom performance metrics
     this.observeCustomMetrics();
-    
+
     // Monitor navigation timing
     this.trackNavigationTiming();
   }
@@ -193,7 +191,7 @@ class Analytics {
 
     if (this.isEnabled) {
       this.sendPerformanceMetric(metric);
-    } else {
+    } else if (process.env.NODE_ENV === 'production') {
       console.log('Performance Metric:', metric);
     }
   }
@@ -278,7 +276,7 @@ class Analytics {
     try {
       // In a real application, you would send this to your analytics service
       // Examples: Google Analytics, Mixpanel, Amplitude, etc.
-      
+
       // Example implementation:
       await fetch('/api/analytics/events', {
         method: 'POST',
@@ -312,7 +310,7 @@ class Analytics {
   public retryQueuedEvents() {
     const eventsToRetry = [...this.queue];
     this.queue = [];
-    
+
     eventsToRetry.forEach(event => {
       this.sendEvent(event);
     });

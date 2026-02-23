@@ -3,9 +3,9 @@ import { Mail, Phone, MapPin, Clock, Facebook, Instagram, Twitter, Building2, Aw
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  
+
   return (
-    <footer className="text-white" style={{ background: '#1E378D' }}>
+    <footer className="text-white bg-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
@@ -19,10 +19,10 @@ export default function Footer() {
               </h3>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
-              Partneri juaj i besuar për të gjetur shtëpinë perfekte në Tiranë. 
+              Partneri juaj i besuar për të gjetur shtëpinë perfekte në Tiranë.
               Ofrojmë shërbime profesionale për blerje, shitje dhe qira pasurie me teknologji moderne.
             </p>
-            
+
             {/* Trust Indicators */}
             <div className="grid grid-cols-3 gap-4 py-4">
               <div className="text-center">
@@ -38,7 +38,7 @@ export default function Footer() {
                 <div className="text-xs text-gray-400">500+ Klientë</div>
               </div>
             </div>
-            
+
             <div className="flex space-x-4">
               <a
                 href="https://facebook.com"
@@ -155,12 +155,12 @@ export default function Footer() {
                   <p>Tiranë 1001, Shqipëri</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-3 p-3 bg-gray-800/50 rounded-lg hover:bg-blue-600/10 transition-colors">
                 <Phone className="h-5 w-5 text-blue-400 flex-shrink-0" />
                 <div>
                   <a
-                    href="tel:+35569123456"
+                    href="tel:+355691234567"
                     className="text-gray-300 hover:text-blue-400 transition-colors text-sm font-medium"
                   >
                     +355 69 123 4567
@@ -168,7 +168,7 @@ export default function Footer() {
                   <p className="text-xs text-gray-500">24/7 Mbështetje</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-3 p-3 bg-gray-800/50 rounded-lg hover:bg-blue-600/10 transition-colors">
                 <Mail className="h-5 w-5 text-blue-400 flex-shrink-0" />
                 <div>
@@ -181,7 +181,7 @@ export default function Footer() {
                   <p className="text-xs text-gray-500">Përgjigje brenda 1 ore</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start space-x-3 p-3 bg-gray-800/50 rounded-lg">
                 <Clock className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
                 <div className="text-gray-300 text-sm">

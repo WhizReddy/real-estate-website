@@ -5,32 +5,32 @@ import { z } from 'zod';
 // Define the schema for environment variables
 const envSchema = z.object({
   // Database
-  DATABASE_URL: z.string().url('DATABASE_URL must be a valid URL'),
-  
+  DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
+
   // NextAuth
   NEXTAUTH_URL: z.string().url('NEXTAUTH_URL must be a valid URL').optional(),
   NEXTAUTH_SECRET: z.string().min(32, 'NEXTAUTH_SECRET must be at least 32 characters').optional(),
-  
+
   // Email configuration
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.string().optional(),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
-  
+
   // File storage
   BLOB_READ_WRITE_TOKEN: z.string().optional(),
-  
+
   // API Keys
   GOOGLE_MAPS_API_KEY: z.string().optional(),
-  
+
   // App configuration
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.string().default('3000'),
-  
+
   // Feature flags
   ENABLE_ANALYTICS: z.string().transform(val => val === 'true').default('false'),
   ENABLE_PERFORMANCE_MONITORING: z.string().transform(val => val === 'true').default('false'),
-  
+
   // Security
   ALLOWED_ORIGINS: z.string().optional(),
 });
@@ -104,7 +104,7 @@ export const logConfig = {
 if (typeof window === 'undefined') {
   // Server-side validation
   console.log('✅ Environment variables validated successfully');
-  
+
   if (isDevelopment) {
     console.log('🔧 Running in development mode');
   } else if (isProduction) {

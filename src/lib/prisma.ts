@@ -10,8 +10,7 @@ try {
   prisma = globalForPrisma.prisma ?? new PrismaClient();
   if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 } catch (error) {
-  console.error('Failed to initialize Prisma client:', error);
-  console.error('Please run "npx prisma generate" to generate the Prisma client');
+  console.error('[PRISMA_INIT_ERROR]', error);
   // Create a mock client that will gracefully fail
   prisma = {} as PrismaClient;
 }

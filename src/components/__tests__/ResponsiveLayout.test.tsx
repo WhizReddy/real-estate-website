@@ -1,219 +1,106 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ResponsiveLayout from '../ResponsiveLayout';
-
-// Mock window.matchMedia for responsive testing
-const mockMatchMedia = (matches: boolean) => {
-  Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    value: jest.fn().mockImplementation(query => ({
-      matches,
-      media: query,
-      onchange: null,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
-    })),
-  });
-};
+import ResponsiveLayout, {
+  ResponsiveGrid,
+  ResponsiveContainer,
+  ResponsiveText,
+  ResponsiveButton,
+  ResponsiveCard,
+} from '../ResponsiveLayout';
 
 describe('ResponsiveLayout Component', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('renders children correctly', () => {
     render(
       <ResponsiveLayout>
         <div data-testid="child-content">Test Content</div>
       </ResponsiveLayout>
     );
-    
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.getByText('Test Content')).toBeInTheDocument();
   });
 
-  it('applies mobile layout classes on small screens', () => {
-    mockMatchMedia(true); // Simulate mobile screen
-    
-    render(
-      <ResponsiveLayout>
-        <div>Mobile Content</div>
-      </ResponsiveLayout>
-    );
-    
-    const container = screen.getByTestId('responsive-container');
-    expect(container).toHaveClass('px-4', 'sm:px-6', 'lg:px-8');
-  });
-
-  it('applies desktop layout classes on large screens', () => {
-    mockMatchMedia(false); // Simulate desktop screen
-    
-    render(
-      <ResponsiveLayout>
-        <div>Desktop Content</div>
-      </ResponsiveLayout>
-    );
-    
-    const container = screen.getByTestId('responsive-container');
-    expect(container).toHaveClass('max-w-7xl', 'mx-auto');
-  });
-
-  it('handles sidebar toggle on mobile', () => {
-    mockMatchMedia(true); // Mobile screen
-    
-    render(
-      <ResponsiveLayout 
-        sidebar={<div data-testid="sidebar">Sidebar Content</div>}
-      >
-        <div>Main Content</div>
-      </ResponsiveLayout>
-    );
-    
-    const toggleButton = screen.getByLabelText('Toggle sidebar');
-    fireEvent.click(toggleButton);
-    
-    expect(screen.getByTestId('sidebar')).toBeInTheDocument();
-  });
-
-  it('shows sidebar by default on desktop', () => {
-    mockMatchMedia(false); // Desktop screen
-    
-    render(
-      <ResponsiveLayout 
-        sidebar={<div data-testid="sidebar">Sidebar Content</div>}
-      >
-        <div>Main Content</div>
-      </ResponsiveLayout>
-    );
-    
-    expect(screen.getByTestId('sidebar')).toBeInTheDocument();
-  });
-
-  it('applies custom className when provided', () => {
-    render(
-      <ResponsiveLayout className="custom-class">
-        <div>Content</div>
-      </ResponsiveLayout>
-    );
-    
-    const container = screen.getByTestId('responsive-container');
-    expect(container).toHaveClass('custom-class');
-  });
-
-  it('handles fullWidth prop correctly', () => {
-    render(
-      <ResponsiveLayout fullWidth>
-        <div>Full Width Content</div>
-      </ResponsiveLayout>
-    );
-    
-    const container = screen.getByTestId('responsive-container');
-    expect(container).toHaveClass('w-full');
-  });
-
-  it('renders header when provided', () => {
-    render(
-      <ResponsiveLayout 
-        header={<div data-testid="header">Header Content</div>}
-      >
-        <div>Main Content</div>
-      </ResponsiveLayout>
-    );
-    
-    expect(screen.getByTestId('header')).toBeInTheDocument();
-  });
-
-  it('renders footer when provided', () => {
-    render(
-      <ResponsiveLayout 
-        footer={<div data-testid="footer">Footer Content</div>}
-      >
-        <div>Main Content</div>
-      </ResponsiveLayout>
-    );
-    
-    expect(screen.getByTestId('footer')).toBeInTheDocument();
-  });
-
-  it('handles keyboard navigation for sidebar toggle', () => {
-    mockMatchMedia(true); // Mobile screen
-    
-    render(
-      <ResponsiveLayout 
-        sidebar={<div data-testid="sidebar">Sidebar Content</div>}
-      >
-        <div>Main Content</div>
-      </ResponsiveLayout>
-    );
-    
-    const toggleButton = screen.getByLabelText('Toggle sidebar');
-    fireEvent.keyDown(toggleButton, { key: 'Enter' });
-    
-    expect(screen.getByTestId('sidebar')).toBeInTheDocument();
-  });
-
-  it('closes sidebar when clicking outside on mobile', () => {
-    mockMatchMedia(true); // Mobile screen
-    
-    render(
-      <ResponsiveLayout 
-        sidebar={<div data-testid="sidebar">Sidebar Content</div>}
-      >
-        <div data-testid="main-content">Main Content</div>
-      </ResponsiveLayout>
-    );
-    
-    // Open sidebar first
-    const toggleButton = screen.getByLabelText('Toggle sidebar');
-    fireEvent.click(toggleButton);
-    
-    // Click outside
-    const mainContent = screen.getByTestId('main-content');
-    fireEvent.click(mainContent);
-    
-    // Sidebar should still be accessible but overlay should handle closing
-    expect(screen.getByTestId('sidebar')).toBeInTheDocument();
-  });
-
-  it('applies correct grid layout for sidebar and main content', () => {
-    render(
-      <ResponsiveLayout 
-        sidebar={<div data-testid="sidebar">Sidebar</div>}
-      >
-        <div data-testid="main">Main</div>
-      </ResponsiveLayout>
-    );
-    
-    const layoutContainer = screen.getByTestId('layout-grid');
-    expect(layoutContainer).toHaveClass('grid', 'grid-cols-1', 'lg:grid-cols-4');
-  });
-
-  it('handles responsive breakpoints correctly', () => {
-    const { rerender } = render(
+  it('applies default layout classes', () => {
+    const { container } = render(
       <ResponsiveLayout>
         <div>Content</div>
       </ResponsiveLayout>
     );
-    
-    // Test different screen sizes
-    mockMatchMedia(true); // Mobile
-    rerender(
-      <ResponsiveLayout>
-        <div>Mobile Content</div>
+    expect(container.firstChild).toHaveClass('min-h-screen', 'bg-gradient-to-br');
+  });
+
+  it('handles variants correctly', () => {
+    const { container: fullMapContainer } = render(
+      <ResponsiveLayout variant="fullmap">
+        <div>Content</div>
       </ResponsiveLayout>
     );
-    
-    mockMatchMedia(false); // Desktop
-    rerender(
-      <ResponsiveLayout>
-        <div>Desktop Content</div>
+    expect(fullMapContainer.firstChild).toHaveClass('h-screen', 'flex', 'flex-col', 'bg-gray-50');
+
+    const { container: adminContainer } = render(
+      <ResponsiveLayout variant="admin">
+        <div>Content</div>
       </ResponsiveLayout>
     );
-    
-    expect(screen.getByText('Desktop Content')).toBeInTheDocument();
+    expect(adminContainer.firstChild).toHaveClass('min-h-screen', 'bg-gray-100');
+  });
+});
+
+describe('ResponsiveGrid Component', () => {
+  it('renders correctly with default cols', () => {
+    const { container } = render(
+      <ResponsiveGrid>
+        <div>Item</div>
+      </ResponsiveGrid>
+    );
+    expect(container.firstChild).toHaveClass('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-6');
+  });
+});
+
+describe('ResponsiveContainer Component', () => {
+  it('applies size classes correctly', () => {
+    const { container } = render(
+      <ResponsiveContainer size="sm">
+        <div>Item</div>
+      </ResponsiveContainer>
+    );
+    expect(container.firstChild).toHaveClass('max-w-2xl');
+  });
+
+  it('applies padding classes correctly', () => {
+    const { container } = render(
+      <ResponsiveContainer padding="none">
+        <div>Item</div>
+      </ResponsiveContainer>
+    );
+    expect(container.firstChild).not.toHaveClass('px-4', 'sm:px-6');
+  });
+});
+
+describe('ResponsiveText Component', () => {
+  it('renders as correct HTML element based on variant', () => {
+    render(<ResponsiveText variant="h1">Heading 1</ResponsiveText>);
+    const h1 = screen.getByText('Heading 1');
+    expect(h1.tagName).toBe('H1');
+    expect(h1).toHaveClass('text-3xl', 'font-bold');
+  });
+});
+
+describe('ResponsiveButton Component', () => {
+  it('renders with appropriate variant classes', () => {
+    render(<ResponsiveButton variant="secondary">Secondary Btn</ResponsiveButton>);
+    expect(screen.getByText('Secondary Btn')).toHaveClass('bg-gray-600', 'text-white');
+  });
+
+  it('handles fullWidth prop', () => {
+    render(<ResponsiveButton fullWidth>Wide</ResponsiveButton>);
+    expect(screen.getByText('Wide')).toHaveClass('w-full');
+  });
+});
+
+describe('ResponsiveCard Component', () => {
+  it('applies padding and shadow classes', () => {
+    const { container } = render(<ResponsiveCard padding="lg" shadow="sm">Card</ResponsiveCard>);
+    expect(container.firstChild).toHaveClass('p-6', 'sm:p-8', 'shadow-sm');
   });
 });

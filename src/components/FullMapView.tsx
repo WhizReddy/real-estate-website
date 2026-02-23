@@ -5,11 +5,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Property } from '@/types';
 import { formatPrice } from '@/lib/utils';
-import { 
-  MapPin, 
-  AlertCircle, 
-  RefreshCw, 
-  Home, 
+import {
+  MapPin,
+  AlertCircle,
+  RefreshCw,
+  Home,
   Navigation,
   Phone,
   Mail,
@@ -44,6 +44,13 @@ export default function FullMapView({
   const timeoutsRef = useRef<number[]>([]);
   const observerRef = useRef<ResizeObserver | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Simple Filters placeholder for UI consistency
+  const filtersUI = (
+    <div className="p-4 border-b">
+      <h2 className="text-lg font-semibold">Filters</h2>
+    </div>
+  );
   const [hasError, setHasError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [mapLayer, setMapLayer] = useState<'street' | 'satellite' | 'terrain'>('street');
@@ -62,10 +69,10 @@ export default function FullMapView({
     const checkMobile = () => {
       setIsMobileViewport(window.innerWidth < 640);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => {
       window.removeEventListener('resize', checkMobile);
     };
@@ -117,7 +124,7 @@ export default function FullMapView({
       mapRef.current.style.position = 'absolute';
       mapRef.current.style.top = '0';
       mapRef.current.style.left = '0';
-    } catch {}
+    } catch { }
   };
 
   const initializeMap = async () => {
@@ -181,10 +188,10 @@ export default function FullMapView({
       try {
         // Leaflet adds zoomControl when zoomControl: true; reposition it after map init
         map.zoomControl?.setPosition('bottomleft');
-      } catch {}
+      } catch { }
 
       // Add tile layer
-    addTileLayer(Leaflet, map, mapLayer);
+      addTileLayer(Leaflet, map, mapLayer);
       mapInstanceRef.current = map;
 
       // Close any existing popups on mobile to prevent errors
@@ -200,7 +207,7 @@ export default function FullMapView({
       map.whenReady(() => {
         try {
           addPropertyMarkers(Leaflet, map, properties);
-          
+
           // Fit bounds to show all properties
           const safeFitBounds = (attempt = 0) => {
             try {
@@ -216,7 +223,7 @@ export default function FullMapView({
               }
               if (properties.length > 0 && markersRef.current.length > 0) {
                 const group = Leaflet.featureGroup(markersRef.current);
-                try { if (pane) map.invalidateSize(); } catch {}
+                try { if (pane) map.invalidateSize(); } catch { }
                 map.fitBounds(group.getBounds().pad(0.1), { animate: false, maxZoom: 15 });
               }
             } catch (err) {
@@ -227,9 +234,9 @@ export default function FullMapView({
           timeoutsRef.current.push(id);
           // Ensure correct sizing after initial render
           setTimeout(() => {
-            try { map.invalidateSize(); } catch {}
+            try { map.invalidateSize(); } catch { }
           }, 0);
-          
+
           setIsLoading(false);
         } catch (error) {
           console.error('Error adding markers:', error);
@@ -242,7 +249,7 @@ export default function FullMapView({
         try {
           if (!mapInstanceRef.current) return;
           addPropertyMarkers(Leaflet, mapInstanceRef.current, filteredProperties);
-        } catch {}
+        } catch { }
       });
 
       // Prevent popup operations on mobile
@@ -258,13 +265,13 @@ export default function FullMapView({
       }
 
       map.on('resize', () => {
-        try { map.invalidateSize(); } catch {}
+        try { map.invalidateSize(); } catch { }
       });
 
       // Recalculate fallback height on viewport changes
       const onWindowResize = () => {
         ensureContainerSafe();
-        try { map.invalidateSize(); } catch {}
+        try { map.invalidateSize(); } catch { }
       };
       window.addEventListener('resize', onWindowResize);
       window.addEventListener('orientationchange', onWindowResize);
@@ -288,7 +295,7 @@ export default function FullMapView({
       timeoutsRef.current.forEach((id) => window.clearTimeout(id));
       timeoutsRef.current = [];
       if (observerRef.current) {
-        try { observerRef.current.disconnect(); } catch {}
+        try { observerRef.current.disconnect(); } catch { }
         observerRef.current = null;
       }
       // Remove window listeners if we attached them
@@ -298,7 +305,7 @@ export default function FullMapView({
           window.removeEventListener('resize', resizeHandler);
           window.removeEventListener('orientationchange', resizeHandler);
         }
-      } catch {}
+      } catch { }
       if (mapInstanceRef.current) {
         try {
           mapInstanceRef.current.remove();
@@ -316,7 +323,7 @@ export default function FullMapView({
     if (!mapInstanceRef.current) return;
     try {
       mapInstanceRef.current.invalidateSize();
-    } catch {}
+    } catch { }
   }, [selectedProperty, showPropertyDetails]);
 
   // Keep filteredProperties in sync with incoming properties (filters removed for simplicity)
@@ -349,7 +356,7 @@ export default function FullMapView({
     const updateMarkers = async () => {
       try {
         const L = await import('leaflet');
-        
+
         // Clear existing markers
         markersRef.current.forEach((marker) => {
           try {
@@ -478,7 +485,7 @@ export default function FullMapView({
 
       // Remove existing tile layer if any
       if (tileLayerRef.current) {
-        try { map.removeLayer(tileLayerRef.current); } catch {}
+        try { map.removeLayer(tileLayerRef.current); } catch { }
       }
 
       const tileLayer = L.tileLayer(spec.url, {
@@ -504,7 +511,7 @@ export default function FullMapView({
             if (next < providers.length) {
               tileProviderIndexRef.current = next;
               attachLayer(next);
-              try { map.invalidateSize(); } catch {}
+              try { map.invalidateSize(); } catch { }
             }
           }
           recentErrors = 0;
@@ -514,7 +521,7 @@ export default function FullMapView({
       tileLayer.on('tileerror', () => {
         recentErrors += 1;
         // Nudge Leaflet to redraw; some mobile browsers keep tiles blank after a transform
-        try { map.invalidateSize(); } catch {}
+        try { map.invalidateSize(); } catch { }
         tryFallback();
       });
 
@@ -558,7 +565,7 @@ export default function FullMapView({
 
     // Clear existing markers
     markersRef.current.forEach((m) => {
-      try { m.remove(); } catch {}
+      try { m.remove(); } catch { }
     });
     markersRef.current = [];
 
@@ -587,7 +594,7 @@ export default function FullMapView({
           marker.on('click', () => {
             try {
               map.setView([lat, lng], Math.min((map.getZoom?.() ?? 12) + 2, 18), { animate: true });
-            } catch {}
+            } catch { }
           });
           markersRef.current.push(marker);
         } else {
@@ -644,14 +651,14 @@ export default function FullMapView({
           const popupContent = `
             <div class="p-0 min-w-[240px] max-w-[280px] overflow-hidden rounded-xl shadow-lg border border-blue-100 bg-white">
               ${property.images && property.images[0]
-                ? `<div class="relative h-32 overflow-hidden">
+              ? `<div class="relative h-32 overflow-hidden">
                      <img src="${property.images[0]}" alt="${property.title}" class="w-full h-full object-cover" />
                      <div class="absolute inset-0 bg-linear-to-t from-black/50 via-black/10 to-transparent"></div>
                      <span class="absolute bottom-2 left-2 text-xs font-semibold text-white bg-black/40 backdrop-blur-sm px-2 py-1 rounded-full">
                        ${property.details.propertyType}
                      </span>
                    </div>`
-                : ''}
+              : ''}
               <div class="p-4 space-y-3">
                 <div>
                   <h3 class="font-semibold text-gray-900 text-sm leading-tight line-clamp-2">${property.title}</h3>
@@ -685,7 +692,7 @@ export default function FullMapView({
               </div>
             </div>
           `;
-          
+
           // NEVER bind popup on mobile - use custom preview instead
           // Only bind on desktop to prevent Leaflet errors
           if (!isMobileViewport) {
@@ -701,7 +708,7 @@ export default function FullMapView({
               console.warn('Failed to bind popup:', error);
             }
           }
-          
+
           // Remove ALL default Leaflet click handlers
           marker.off('click');
           marker.off('dblclick');
@@ -710,7 +717,7 @@ export default function FullMapView({
           marker.on('click', (e) => {
             // Stop event propagation
             L.DomEvent.stopPropagation(e);
-            
+
             if (isMobileViewport) {
               // Mobile: Show custom preview card ONLY, no Leaflet popup
               try {
@@ -718,24 +725,24 @@ export default function FullMapView({
                 const map = mapInstanceRef.current;
                 if (map) {
                   map.closePopup();
-                  
+
                   // Determine if marker is in top or bottom half of screen
                   const latLng = marker.getLatLng();
                   const point = map.latLngToContainerPoint(latLng);
                   const mapSize = map.getSize();
-                  
+
                   // If marker is in top half, show preview at bottom
                   // If marker is in bottom half, show preview at top
                   const isTopHalf = point.y < mapSize.y / 2;
                   setMobilePreviewPosition(isTopHalf ? 'bottom' : 'top');
-                  
+
                   // Pan to marker with offset based on preview position
                   const offsetY = isTopHalf ? -80 : 80; // Offset away from preview
                   const newPoint = L.point([point.x, point.y + offsetY]);
                   const newLatLng = map.containerPointToLatLng(newPoint);
                   map.panTo(newLatLng, { animate: true, duration: 0.3 });
                 }
-                
+
                 setMobilePreview(property);
                 onPropertySelect(property);
               } catch (error) {
@@ -748,25 +755,25 @@ export default function FullMapView({
               onPropertySelect(property);
             }
           });
-          
+
           // Only enable hover tooltips on desktop (not touch devices)
           if (!isMobileViewport) {
-            marker.on('mouseover', function() { 
+            marker.on('mouseover', function () {
               try {
-                this.openTooltip(); 
+                this.openTooltip();
               } catch (error) {
                 console.warn('Failed to open tooltip:', error);
               }
             });
-            marker.on('mouseout', function() { 
+            marker.on('mouseout', function () {
               try {
-                this.closeTooltip(); 
+                this.closeTooltip();
               } catch (error) {
                 console.warn('Failed to close tooltip:', error);
               }
             });
           }
-          
+
           markersRef.current.push(marker);
         }
       } catch (err) {
@@ -797,7 +804,7 @@ export default function FullMapView({
       }
     }
 
-  const clusters: Array<ClusterItem | PointItem> = [];
+    const clusters: Array<ClusterItem | PointItem> = [];
     buckets.forEach((v) => {
       if (v.count === 1) {
         clusters.push({ type: 'point', property: v.sample });
@@ -814,7 +821,7 @@ export default function FullMapView({
     if (mapInstanceRef.current) {
       // Remove existing tile layer if present
       if (tileLayerRef.current) {
-        try { mapInstanceRef.current.removeLayer(tileLayerRef.current); } catch {}
+        try { mapInstanceRef.current.removeLayer(tileLayerRef.current); } catch { }
         tileLayerRef.current = null;
       }
 
@@ -823,9 +830,9 @@ export default function FullMapView({
         if (mapInstanceRef.current) {
           addTileLayer(L, mapInstanceRef.current, layer);
           // Nudge layout after provider switch to avoid glitches
-          try { mapInstanceRef.current.invalidateSize(); } catch {}
+          try { mapInstanceRef.current.invalidateSize(); } catch { }
           const id = window.setTimeout(() => {
-            try { mapInstanceRef.current?.invalidateSize(); } catch {}
+            try { mapInstanceRef.current?.invalidateSize(); } catch { }
           }, 120);
           timeoutsRef.current.push(id as unknown as number);
         }
@@ -853,7 +860,7 @@ export default function FullMapView({
     // Center map on searched location
     if (mapInstanceRef.current) {
       mapInstanceRef.current.setView([location.coordinates.lat, location.coordinates.lng], 14);
-      
+
       // Add search radius circle
       import('leaflet').then((L) => {
         // Remove existing search circle
@@ -892,17 +899,17 @@ export default function FullMapView({
 
   return (
     <div className="relative h-full w-full">
-    {/* Search (simplified) */}
-    <div className="absolute left-4 top-4 z-50 map-filters-overlay pointer-events-none w-full max-w-[min(92vw,360px)] sm:w-auto sm:max-w-sm">
-      <div className="pointer-events-auto bg-white/95 backdrop-blur rounded-lg shadow border border-gray-200 p-2">
-        <LocationSearch
-          onLocationSelect={handleLocationSearch}
-          onClear={handleClearLocationSearch}
-          placeholder="Kërko pranë një vendndodhjeje..."
-          className="w-full"
-        />
+      {/* Search (simplified) */}
+      <div className="absolute left-4 top-4 z-50 map-filters-overlay pointer-events-none w-full max-w-[min(92vw,360px)] sm:w-auto sm:max-w-sm">
+        <div className="pointer-events-auto bg-white/95 backdrop-blur rounded-lg shadow border border-gray-200 p-2">
+          <LocationSearch
+            onLocationSelect={handleLocationSearch}
+            onClear={handleClearLocationSearch}
+            placeholder="Kërko pranë një vendndodhjeje..."
+            className="w-full"
+          />
+        </div>
       </div>
-    </div>
 
       <div
         ref={mapRef}
@@ -911,10 +918,9 @@ export default function FullMapView({
       />
 
       {mobilePreview && (
-        <div 
-          className={`sm:hidden fixed inset-x-2 z-1100 pointer-events-auto transition-all duration-300 ${
-            mobilePreviewPosition === 'top' ? 'top-2' : 'bottom-2'
-          }`}
+        <div
+          className={`sm:hidden fixed inset-x-2 z-1100 pointer-events-auto transition-all duration-300 ${mobilePreviewPosition === 'top' ? 'top-2' : 'bottom-2'
+            }`}
         >
           <div className="relative rounded-lg shadow-lg bg-white/95 backdrop-blur-sm max-w-xs mx-auto border border-gray-200">
             <button
@@ -938,11 +944,11 @@ export default function FullMapView({
                   {formatPrice(mobilePreview.price)}
                 </span>
               </div>
-              
+
               <h3 className="text-xs font-semibold text-gray-900 line-clamp-1 mb-1">
                 {mobilePreview.title}
               </h3>
-              
+
               <div className="flex items-center gap-2 text-[9px] text-gray-600 mb-1.5">
                 <span className="flex items-center gap-0.5">
                   <Bed className="h-2.5 w-2.5" />
@@ -957,7 +963,7 @@ export default function FullMapView({
                   {mobilePreview.details.squareFootage?.toLocaleString()} m²
                 </span>
               </div>
-              
+
               <button
                 onClick={() => {
                   // Open property in full screen detail view
@@ -978,361 +984,358 @@ export default function FullMapView({
       )}
 
       {/* Map Controls - Bottom Right on mobile, Top Right on desktop */}
-    <div
-      className="absolute z-50 map-controls-overlay"
-      style={{
-        right: selectedProperty && showPropertyDetails ? '22rem' : '1rem',
-        bottom: 'auto',
-        top: '1rem',
-      }}
-    >
-      <div className="flex items-center gap-2">
-        {/* Compact Layer Toggle */}
-        <div className="bg-white rounded-md shadow border border-gray-200 p-1 flex items-center gap-1">
+      <div
+        className="absolute z-50 map-controls-overlay"
+        style={{
+          right: selectedProperty && showPropertyDetails ? '22rem' : '1rem',
+          bottom: 'auto',
+          top: '1rem',
+        }}
+      >
+        <div className="flex items-center gap-2">
+          {/* Compact Layer Toggle */}
+          <div className="bg-white rounded-md shadow border border-gray-200 p-1 flex items-center gap-1">
+            <button
+              onClick={() => changeMapLayer('street')}
+              className={`px-2 py-1 text-[11px] rounded-sm transition-colors ${mapLayer === 'street' ? 'bg-blue-600 text-white' : 'text-blue-600 hover:bg-blue-50'
+                }`}
+              title="Rrugë"
+            >
+              🗺️ Rrugë
+            </button>
+            <button
+              onClick={() => changeMapLayer('satellite')}
+              className={`px-2 py-1 text-[11px] rounded-sm transition-colors ${mapLayer === 'satellite' ? 'bg-blue-600 text-white' : 'text-blue-600 hover:bg-blue-50'
+                }`}
+              title="Satelit"
+            >
+              🛰️ Satelit
+            </button>
+            <button
+              onClick={() => changeMapLayer('terrain')}
+              className={`px-2 py-1 text-[11px] rounded-sm transition-colors ${mapLayer === 'terrain' ? 'bg-blue-600 text-white' : 'text-blue-600 hover:bg-blue-50'
+                }`}
+              title="Teren"
+            >
+              🏔️ Teren
+            </button>
+          </div>
+
+          {/* Compact Reset Button */}
           <button
-            onClick={() => changeMapLayer('street')}
-            className={`px-2 py-1 text-[11px] rounded-sm transition-colors ${
-              mapLayer === 'street' ? 'bg-blue-600 text-white' : 'text-blue-600 hover:bg-blue-50'
-            }`}
-            title="Rrugë"
+            onClick={resetMapView}
+            className="bg-white hover:bg-blue-50 p-2 rounded-md shadow border border-gray-200 transition-colors"
+            title="Rivendos pamjen"
           >
-            🗺️ Rrugë
-          </button>
-          <button
-            onClick={() => changeMapLayer('satellite')}
-            className={`px-2 py-1 text-[11px] rounded-sm transition-colors ${
-              mapLayer === 'satellite' ? 'bg-blue-600 text-white' : 'text-blue-600 hover:bg-blue-50'
-            }`}
-            title="Satelit"
-          >
-            🛰️ Satelit
-          </button>
-          <button
-            onClick={() => changeMapLayer('terrain')}
-            className={`px-2 py-1 text-[11px] rounded-sm transition-colors ${
-              mapLayer === 'terrain' ? 'bg-blue-600 text-white' : 'text-blue-600 hover:bg-blue-50'
-            }`}
-            title="Teren"
-          >
-            🏔️ Teren
+            <Home className="h-3 w-3 text-blue-600" />
           </button>
         </div>
-
-        {/* Compact Reset Button */}
-        <button
-          onClick={resetMapView}
-          className="bg-white hover:bg-blue-50 p-2 rounded-md shadow border border-gray-200 transition-colors"
-          title="Rivendos pamjen"
-        >
-          <Home className="h-3 w-3 text-blue-600" />
-        </button>
       </div>
-    </div>
 
       {/* Property Details Modal/Popup - Compact and centered */}
-    {/* Property Details Modal/Popup - Right side on desktop, full screen on mobile */}
-    {selectedProperty && showPropertyDetails && (
-  <>
-  {/* Mobile: Full screen modal */}
-  <div className="sm:hidden fixed inset-0 z-1000 flex flex-col bg-white overflow-y-auto">
-      <div className="p-4 border-b border-gray-200 shrink-0 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Detajet e Pasurisë</h3>
-        <button
-          onClick={() => {
-            setShowPropertyDetails(false);
-            onPropertySelect(null);
-          }}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-        >
-          <X className="h-4 w-4 text-gray-500" />
-        </button>
-      </div>
+      {/* Property Details Modal/Popup - Right side on desktop, full screen on mobile */}
+      {selectedProperty && showPropertyDetails && (
+        <>
+          {/* Mobile: Full screen modal */}
+          <div className="sm:hidden fixed inset-0 z-1000 flex flex-col bg-white overflow-y-auto">
+            <div className="p-4 border-b border-gray-200 shrink-0 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">Detajet e Pasurisë</h3>
+              <button
+                onClick={() => {
+                  setShowPropertyDetails(false);
+                  onPropertySelect(null);
+                }}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="h-4 w-4 text-gray-500" />
+              </button>
+            </div>
 
-      <div className="p-4 space-y-4 overflow-y-auto flex-1">
-        {/* Property Images */}
-        {selectedProperty.images.length > 0 && (
-          <div className="relative aspect-video bg-gray-200 rounded-lg overflow-hidden">
-            <Image
-              src={selectedProperty.images[0]}
-              alt={selectedProperty.title}
-              fill
-              sizes="(max-width: 768px) 100vw, 320px"
-              className="object-cover"
-              priority
-            />
-          </div>
-        )}
+            <div className="p-4 space-y-4 overflow-y-auto flex-1">
+              {/* Property Images */}
+              {selectedProperty.images.length > 0 && (
+                <div className="relative aspect-video bg-gray-200 rounded-lg overflow-hidden">
+                  <Image
+                    src={selectedProperty.images[0]}
+                    alt={selectedProperty.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 320px"
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+              )}
 
-        {/* Property Title and Price */}
-        <div>
-          <h4 className="text-xl font-bold text-gray-900 mb-1">
-            {selectedProperty.title}
-          </h4>
-          <p className="text-2xl font-bold text-blue-600 mb-2">
-            {formatPrice(selectedProperty.price)}
-          </p>
-          <p className="text-sm text-gray-600">
-            {selectedProperty.address.street}, {selectedProperty.address.city}
-          </p>
-        </div>
+              {/* Property Title and Price */}
+              <div>
+                <h4 className="text-xl font-bold text-gray-900 mb-1">
+                  {selectedProperty.title}
+                </h4>
+                <p className="text-2xl font-bold text-blue-600 mb-2">
+                  {formatPrice(selectedProperty.price)}
+                </p>
+                <p className="text-sm text-gray-600">
+                  {selectedProperty.address.street}, {selectedProperty.address.city}
+                </p>
+              </div>
 
-        {/* Property Details */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Bed className="h-4 w-4" />
-            <span>{selectedProperty.details.bedrooms} dhoma</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Bath className="h-4 w-4" />
-            <span>{selectedProperty.details.bathrooms} banjo</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Square className="h-4 w-4" />
-            <span>{selectedProperty.details.squareFootage.toLocaleString()} m²</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Calendar className="h-4 w-4" />
-            <span>{selectedProperty.details.yearBuilt}</span>
-          </div>
-        </div>
+              {/* Property Details */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Bed className="h-4 w-4" />
+                  <span>{selectedProperty.details.bedrooms} dhoma</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Bath className="h-4 w-4" />
+                  <span>{selectedProperty.details.bathrooms} banjo</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Square className="h-4 w-4" />
+                  <span>{selectedProperty.details.squareFootage.toLocaleString()} m²</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Calendar className="h-4 w-4" />
+                  <span>{selectedProperty.details.yearBuilt}</span>
+                </div>
+              </div>
 
-        {/* Property Description */}
-        <div>
-          <h5 className="font-semibold text-gray-900 mb-2">Përshkrimi</h5>
-          <p className="text-sm text-gray-600 leading-relaxed">
-            {selectedProperty.description}
-          </p>
-        </div>
+              {/* Property Description */}
+              <div>
+                <h5 className="font-semibold text-gray-900 mb-2">Përshkrimi</h5>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  {selectedProperty.description}
+                </p>
+              </div>
 
-        {/* Property Features */}
-        {Array.isArray(selectedProperty.features) && selectedProperty.features.length > 0 && (
-          <div>
-            <h5 className="font-semibold text-gray-900 mb-2">Karakteristikat</h5>
-            <div className="flex flex-wrap gap-2">
-              {selectedProperty.features.filter(f => typeof f === 'string' && f.trim().length > 0).map((feature, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+              {/* Property Features */}
+              {Array.isArray(selectedProperty.features) && selectedProperty.features.length > 0 && (
+                <div>
+                  <h5 className="font-semibold text-gray-900 mb-2">Karakteristikat</h5>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProperty.features.filter(f => typeof f === 'string' && f.trim().length > 0).map((feature, index) => (
+                      <span
+                        key={index}
+                        className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+                      >
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Agent Information */}
+              <div className="border-t border-gray-200 pt-4">
+                <h5 className="font-semibold text-gray-900 mb-2">Agjenti</h5>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <span className="text-blue-600 font-semibold text-sm">
+                      {selectedProperty.agent.name.charAt(0)}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{selectedProperty.agent.name}</p>
+                    <p className="text-sm text-gray-600">{selectedProperty.agent.email}</p>
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-3">
+                  <a
+                    href={`tel:${selectedProperty.agent.phone}`}
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+                  >
+                    <Phone className="h-4 w-4" />
+                    Telefono
+                  </a>
+                  <a
+                    href={`mailto:${selectedProperty.agent.email}`}
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm"
+                  >
+                    <Mail className="h-4 w-4" />
+                    Email
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile: Sticky Action Footer */}
+            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3 pb-[calc(12px+env(safe-area-inset-bottom))] shrink-0">
+              <div className="space-y-2">
+                <Link
+                  href={`/properties/${selectedProperty.id}`}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all font-medium text-sm"
                 >
-                  {feature}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Agent Information */}
-        <div className="border-t border-gray-200 pt-4">
-          <h5 className="font-semibold text-gray-900 mb-2">Agjenti</h5>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-blue-600 font-semibold text-sm">
-                {selectedProperty.agent.name.charAt(0)}
-              </span>
-            </div>
-            <div>
-              <p className="font-medium text-gray-900">{selectedProperty.agent.name}</p>
-              <p className="text-sm text-gray-600">{selectedProperty.agent.email}</p>
-            </div>
-          </div>
-          <div className="flex gap-2 mt-3">
-            <a
-              href={`tel:${selectedProperty.agent.phone}`}
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
-            >
-              <Phone className="h-4 w-4" />
-              Telefono
-            </a>
-            <a
-              href={`mailto:${selectedProperty.agent.email}`}
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm"
-            >
-              <Mail className="h-4 w-4" />
-              Email
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile: Sticky Action Footer */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3 pb-[calc(12px+env(safe-area-inset-bottom))] shrink-0">
-        <div className="space-y-2">
-          <Link
-            href={`/properties/${selectedProperty.id}`}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all font-medium text-sm"
-          >
-            📋 Shiko Detajet e Plota
-          </Link>
-          <a
-            href={`https://www.google.com/maps/dir/?api=1&destination=${selectedProperty.address.coordinates.lat},${selectedProperty.address.coordinates.lng}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 transition-all font-medium text-sm"
-          >
-            <Navigation className="h-4 w-4" />
-            Navigim
-          </a>
-        </div>
-      </div>
-    </div>
-
-    {/* Desktop: Right-side panel */}
-  <div className="hidden sm:flex fixed right-0 top-0 bottom-0 z-1000 w-80 bg-white shadow-2xl flex-col overflow-y-auto">
-      <div className="p-4 border-b border-gray-200 shrink-0 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Detajet e Pasurisë</h3>
-        <button
-          onClick={() => {
-            setShowPropertyDetails(false);
-            onPropertySelect(null);
-          }}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-        >
-          <X className="h-4 w-4 text-gray-500" />
-        </button>
-      </div>
-
-      <div className="p-4 space-y-4 overflow-y-auto flex-1">
-        {/* Property Images */}
-        {selectedProperty.images.length > 0 && (
-          <div className="relative aspect-video bg-gray-200 rounded-lg overflow-hidden">
-            <Image
-              src={selectedProperty.images[0]}
-              alt={selectedProperty.title}
-              fill
-              sizes="(max-width: 768px) 100vw, 320px"
-              className="object-cover"
-              priority
-            />
-          </div>
-        )}
-
-        {/* Property Title and Price */}
-        <div>
-          <h4 className="text-lg font-bold text-gray-900 mb-1">
-            {selectedProperty.title}
-          </h4>
-          <p className="text-xl font-bold text-blue-600 mb-2">
-            {formatPrice(selectedProperty.price)}
-          </p>
-          <p className="text-xs text-gray-600">
-            {selectedProperty.address.street}, {selectedProperty.address.city}
-          </p>
-        </div>
-
-        {/* Property Details */}
-        <div className="grid grid-cols-2 gap-2">
-          <div className="flex items-center gap-2 text-xs text-gray-600">
-            <Bed className="h-3 w-3" />
-            <span>{selectedProperty.details.bedrooms} dhoma</span>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-gray-600">
-            <Bath className="h-3 w-3" />
-            <span>{selectedProperty.details.bathrooms} banjo</span>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-gray-600">
-            <Square className="h-3 w-3" />
-            <span>{(selectedProperty.details.squareFootage).toLocaleString()} m²</span>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-gray-600">
-            <Calendar className="h-3 w-3" />
-            <span>{selectedProperty.details.yearBuilt}</span>
-          </div>
-        </div>
-
-        {/* Property Description */}
-        <div>
-          <h5 className="font-semibold text-gray-900 mb-2 text-sm">Përshkrimi</h5>
-          <p className="text-xs text-gray-600 leading-relaxed">
-            {selectedProperty.description}
-          </p>
-        </div>
-
-        {/* Property Features */}
-        {Array.isArray(selectedProperty.features) && selectedProperty.features.length > 0 && (
-          <div>
-            <h5 className="font-semibold text-gray-900 mb-2 text-sm">Karakteristikat</h5>
-            <div className="flex flex-wrap gap-1">
-              {selectedProperty.features.filter(f => typeof f === 'string' && f.trim().length > 0).map((feature, index) => (
-                <span
-                  key={index}
-                  className="px-1.5 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full"
+                  📋 Shiko Detajet e Plota
+                </Link>
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${selectedProperty.address.coordinates.lat},${selectedProperty.address.coordinates.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 transition-all font-medium text-sm"
                 >
-                  {feature}
-                </span>
-              ))}
+                  <Navigation className="h-4 w-4" />
+                  Navigim
+                </a>
+              </div>
             </div>
           </div>
-        )}
 
-        {/* Agent Information */}
-        <div className="border-t border-gray-200 pt-3">
-          <h5 className="font-semibold text-gray-900 mb-2 text-sm">Agjenti</h5>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
-              <span className="text-blue-600 font-semibold text-xs">
-                {selectedProperty.agent.name.charAt(0)}
-              </span>
+          {/* Desktop: Right-side panel */}
+          <div className="hidden sm:flex fixed right-0 top-0 bottom-0 z-1000 w-80 bg-white shadow-2xl flex-col overflow-y-auto">
+            <div className="p-4 border-b border-gray-200 shrink-0 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">Detajet e Pasurisë</h3>
+              <button
+                onClick={() => {
+                  setShowPropertyDetails(false);
+                  onPropertySelect(null);
+                }}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="h-4 w-4 text-gray-500" />
+              </button>
             </div>
-            <div className="min-w-0">
-              <p className="font-medium text-gray-900 text-xs">{selectedProperty.agent.name}</p>
-              <p className="text-xs text-gray-600 truncate">{selectedProperty.agent.email}</p>
+
+            <div className="p-4 space-y-4 overflow-y-auto flex-1">
+              {/* Property Images */}
+              {selectedProperty.images.length > 0 && (
+                <div className="relative aspect-video bg-gray-200 rounded-lg overflow-hidden">
+                  <Image
+                    src={selectedProperty.images[0]}
+                    alt={selectedProperty.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 320px"
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+              )}
+
+              {/* Property Title and Price */}
+              <div>
+                <h4 className="text-lg font-bold text-gray-900 mb-1">
+                  {selectedProperty.title}
+                </h4>
+                <p className="text-xl font-bold text-blue-600 mb-2">
+                  {formatPrice(selectedProperty.price)}
+                </p>
+                <p className="text-xs text-gray-600">
+                  {selectedProperty.address.street}, {selectedProperty.address.city}
+                </p>
+              </div>
+
+              {/* Property Details */}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <Bed className="h-3 w-3" />
+                  <span>{selectedProperty.details.bedrooms} dhoma</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <Bath className="h-3 w-3" />
+                  <span>{selectedProperty.details.bathrooms} banjo</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <Square className="h-3 w-3" />
+                  <span>{(selectedProperty.details.squareFootage).toLocaleString()} m²</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <Calendar className="h-3 w-3" />
+                  <span>{selectedProperty.details.yearBuilt}</span>
+                </div>
+              </div>
+
+              {/* Property Description */}
+              <div>
+                <h5 className="font-semibold text-gray-900 mb-2 text-sm">Përshkrimi</h5>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  {selectedProperty.description}
+                </p>
+              </div>
+
+              {/* Property Features */}
+              {Array.isArray(selectedProperty.features) && selectedProperty.features.length > 0 && (
+                <div>
+                  <h5 className="font-semibold text-gray-900 mb-2 text-sm">Karakteristikat</h5>
+                  <div className="flex flex-wrap gap-1">
+                    {selectedProperty.features.filter(f => typeof f === 'string' && f.trim().length > 0).map((feature, index) => (
+                      <span
+                        key={index}
+                        className="px-1.5 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full"
+                      >
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Agent Information */}
+              <div className="border-t border-gray-200 pt-3">
+                <h5 className="font-semibold text-gray-900 mb-2 text-sm">Agjenti</h5>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
+                    <span className="text-blue-600 font-semibold text-xs">
+                      {selectedProperty.agent.name.charAt(0)}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-medium text-gray-900 text-xs">{selectedProperty.agent.name}</p>
+                    <p className="text-xs text-gray-600 truncate">{selectedProperty.agent.email}</p>
+                  </div>
+                </div>
+                <div className="flex gap-1 mt-2">
+                  <a
+                    href={`tel:${selectedProperty.agent.phone}`}
+                    className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition-colors"
+                  >
+                    <Phone className="h-3 w-3" />
+                    Telefono
+                  </a>
+                  <a
+                    href={`mailto:${selectedProperty.agent.email}`}
+                    className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 border border-gray-300 text-gray-700 rounded text-xs hover:bg-gray-50 transition-colors"
+                  >
+                    <Mail className="h-3 w-3" />
+                    Email
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop: Sticky Action Footer */}
+            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3 shrink-0">
+              <div className="space-y-2">
+                <Link
+                  href={`/properties/${selectedProperty.id}`}
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded text-sm hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
+                >
+                  📋 Shiko Detajet
+                </Link>
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${selectedProperty.address.coordinates.lat},${selectedProperty.address.coordinates.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-linear-to-r from-green-600 to-green-700 text-white rounded text-sm hover:from-green-700 hover:to-green-800 transition-all font-medium"
+                >
+                  <Navigation className="h-3 w-3" />
+                  Navigim
+                </a>
+              </div>
             </div>
           </div>
-          <div className="flex gap-1 mt-2">
-            <a
-              href={`tel:${selectedProperty.agent.phone}`}
-              className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition-colors"
-            >
-              <Phone className="h-3 w-3" />
-              Telefono
-            </a>
-            <a
-              href={`mailto:${selectedProperty.agent.email}`}
-              className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 border border-gray-300 text-gray-700 rounded text-xs hover:bg-gray-50 transition-colors"
-            >
-              <Mail className="h-3 w-3" />
-              Email
-            </a>
-          </div>
-        </div>
-      </div>
 
-      {/* Desktop: Sticky Action Footer */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3 shrink-0">
-        <div className="space-y-2">
-          <Link
-            href={`/properties/${selectedProperty.id}`}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded text-sm hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
-          >
-            📋 Shiko Detajet
-          </Link>
-          <a
-            href={`https://www.google.com/maps/dir/?api=1&destination=${selectedProperty.address.coordinates.lat},${selectedProperty.address.coordinates.lng}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-linear-to-r from-green-600 to-green-700 text-white rounded text-sm hover:from-green-700 hover:to-green-800 transition-all font-medium"
-          >
-            <Navigation className="h-3 w-3" />
-            Navigim
-          </a>
-        </div>
-      </div>
-    </div>
-
-    {/* Backdrop - click to close */}
-    <div
-  className="hidden sm:block fixed inset-0 z-950 bg-black/30"
-      onClick={() => {
-        setShowPropertyDetails(false);
-        onPropertySelect(null);
-      }}
-    />
-  </>
-    )}
+          {/* Backdrop - click to close */}
+          <div
+            className="hidden sm:block fixed inset-0 z-950 bg-black/30"
+            onClick={() => {
+              setShowPropertyDetails(false);
+              onPropertySelect(null);
+            }}
+          />
+        </>
+      )}
 
       {/* Loading State */}
       {isLoading && (
-  <div className="absolute inset-0 bg-linear-to-br from-blue-50 to-green-50 bg-opacity-95 flex items-center justify-center">
+        <div className="absolute inset-0 bg-linear-to-br from-blue-50 to-green-50 bg-opacity-95 flex items-center justify-center">
           <CreativeLoader type="map" size="lg" />
         </div>
       )}

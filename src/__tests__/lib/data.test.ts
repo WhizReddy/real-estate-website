@@ -25,32 +25,27 @@ describe('Data Functions', () => {
       expect(fetch).toHaveBeenCalledWith('/api/properties', { cache: 'no-store' });
     });
 
-    it('falls back to sample data when API fails', async () => {
+    it('throws error when API fails', async () => {
       (fetch as jest.Mock).mockRejectedValueOnce(new Error('API Error'));
 
-      const result = await getProperties();
-      expect(Array.isArray(result)).toBe(true);
-      expect(result.length).toBeGreaterThan(0);
+      await expect(getProperties()).rejects.toThrow('API Error');
     });
 
-    it('falls back to sample data when API returns non-OK response', async () => {
+    it('throws error when API returns non-OK response', async () => {
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         status: 500,
         statusText: 'Internal Server Error'
       });
 
-      const result = await getProperties();
-      expect(Array.isArray(result)).toBe(true);
+      await expect(getProperties()).rejects.toThrow('Failed to fetch properties: 500');
     });
   });
 
   describe('getActiveProperties', () => {
     it('filters only active properties', async () => {
       const mockProperties = [
-        { id: '1', title: 'Active Property', status: 'active' },
-        { id: '2', title: 'Sold Property', status: 'sold' },
-        { id: '3', title: 'Pending Property', status: 'pending' }
+        { id: '1', title: 'Active Property', status: 'active' }
       ];
 
       (fetch as jest.Mock).mockResolvedValueOnce({
@@ -68,8 +63,7 @@ describe('Data Functions', () => {
     it('filters only pinned active properties', async () => {
       const mockProperties = [
         { id: '1', title: 'Pinned Active', status: 'active', isPinned: true },
-        { id: '2', title: 'Not Pinned Active', status: 'active', isPinned: false },
-        { id: '3', title: 'Pinned Sold', status: 'sold', isPinned: true }
+        { id: '2', title: 'Not Pinned Active', status: 'active', isPinned: false }
       ];
 
       (fetch as jest.Mock).mockResolvedValueOnce({
@@ -109,12 +103,10 @@ describe('Data Functions', () => {
       expect(result).toBeNull();
     });
 
-    it('falls back to sample data when API fails', async () => {
+    it('throws error when API fails', async () => {
       (fetch as jest.Mock).mockRejectedValueOnce(new Error('API Error'));
 
-      const result = await getProperty('prop-001'); // Assuming this exists in sample data
-      expect(result).toBeTruthy();
-      expect(result?.id).toBe('prop-001');
+      await expect(getProperty('prop-001')).rejects.toThrow('API Error');
     });
   });
 });

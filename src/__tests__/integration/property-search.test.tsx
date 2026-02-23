@@ -15,16 +15,36 @@ jest.mock('next/link', () => {
   };
 });
 
+jest.mock('next/navigation', () => ({
+  usePathname: () => '/',
+  useRouter: () => ({ push: jest.fn(), back: jest.fn(), forward: jest.fn(), refresh: jest.fn(), replace: jest.fn(), prefetch: jest.fn() })
+}));
+
 jest.mock('next/dynamic', () => {
   return function mockDynamic(importFunc: any, options: any) {
-    const Component = importFunc();
-    return Component;
+    const React = require('react');
+    return function DynamicComponent(props: any) {
+      const [{ Component }, setComponent] = React.useState({ Component: null });
+
+      React.useEffect(() => {
+        let mounted = true;
+        Promise.resolve(importFunc()).then((mod: any) => {
+          if (mounted) {
+            setComponent({ Component: mod.default || mod });
+          }
+        }).catch(() => { });
+        return () => { mounted = false; };
+      }, []);
+
+      if (!Component) return options?.loading ? options.loading() : null;
+      return <Component {...props} />;
+    };
   };
 });
 
 // Mock the data functions
-jest.mock('@/lib/data', () => ({
-  getProperties: jest.fn().mockResolvedValue([
+
+const mockPropertiesConfig = [
     {
       id: 'prop-1',
       title: 'Modern Apartment in Tirana',
@@ -91,8 +111,20 @@ jest.mock('@/lib/data', () => ({
       createdAt: '2024-01-02T00:00:00Z',
       updatedAt: '2024-01-02T00:00:00Z'
     }
-  ])
-}));
+  ];
+global.fetch = jest.fn((url) => {
+  if (url.includes('/api/properties')) {
+    return Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({ properties: mockPropertiesConfig, pagination: { total: mockPropertiesConfig.length, hasMore: false } }),
+    });
+  }
+  return Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({}),
+  });
+}) as jest.Mock;
+
 
 // Mock dynamic components
 const MockSearchFilters = ({ properties, onFilteredResults }: any) => (
@@ -163,12 +195,11 @@ jest.mock('@/components/MobileSearchModal', () => {
 describe('Property Search Integration', () => {
   it('renders the home page with properties', async () => {
     render(<Home />);
-    
+
     // Wait for loading to complete
-    await waitFor(() => {
-      expect(screen.queryByTestId('loader')).not.toBeInTheDocument();
-    });
-    
+    await screen.findByTestId('search-input');
+    await screen.findByTestId('map-view');
+
     // Check that properties are displayed
     expect(screen.getByTestId('search-results')).toBeInTheDocument();
     expect(screen.getByTestId('property-prop-1')).toBeInTheDocument();
@@ -177,16 +208,15 @@ describe('Property Search Integration', () => {
 
   it('filters properties based on search input', async () => {
     render(<Home />);
-    
+
     // Wait for loading to complete
-    await waitFor(() => {
-      expect(screen.queryByTestId('loader')).not.toBeInTheDocument();
-    });
-    
+    await screen.findByTestId('search-input');
+    await screen.findByTestId('map-view');
+
     // Search for "apartment"
     const searchInput = screen.getByTestId('search-input');
     fireEvent.change(searchInput, { target: { value: 'apartment' } });
-    
+
     // Check that only the apartment is shown
     await waitFor(() => {
       expect(screen.getByTestId('property-prop-1')).toBeInTheDocument();
@@ -196,19 +226,18 @@ describe('Property Search Integration', () => {
 
   it('updates map when properties are filtered', async () => {
     render(<Home />);
-    
+
     // Wait for loading to complete
-    await waitFor(() => {
-      expect(screen.queryByTestId('loader')).not.toBeInTheDocument();
-    });
-    
+    await screen.findByTestId('search-input');
+    await screen.findByTestId('map-view');
+
     // Initially shows all properties on map
-    expect(screen.getByText('Map showing 2 properties')).toBeInTheDocument();
-    
+    await screen.findByText('Map showing 2 properties');
+
     // Filter properties
     const searchInput = screen.getByTestId('search-input');
     fireEvent.change(searchInput, { target: { value: 'apartment' } });
-    
+
     // Map should update to show filtered properties
     await waitFor(() => {
       expect(screen.getByText('Map showing 1 properties')).toBeInTheDocument();
@@ -217,26 +246,23 @@ describe('Property Search Integration', () => {
 
   it('displays hero section with property statistics', async () => {
     render(<Home />);
-    
+
     // Wait for loading to complete
-    await waitFor(() => {
-      expect(screen.queryByTestId('loader')).not.toBeInTheDocument();
-    });
-    
+    await screen.findByTestId('search-input');
+    await screen.findByTestId('map-view');
+
     // Check hero section content
-    expect(screen.getByText('Gjeni Shtëpinë e')).toBeInTheDocument();
-    expect(screen.getByText('Ëndrrave')).toBeInTheDocument();
-    expect(screen.getByText('Tuaja')).toBeInTheDocument();
+    expect(screen.getByText(/Gjeni Shtëpinë Tuaj të/)).toBeInTheDocument();
+    expect(screen.getByText(/Përsosur/)).toBeInTheDocument();
   });
 
   it('shows mobile components', async () => {
     render(<Home />);
-    
+
     // Wait for loading to complete
-    await waitFor(() => {
-      expect(screen.queryByTestId('loader')).not.toBeInTheDocument();
-    });
-    
+    await screen.findByTestId('search-input');
+    await screen.findByTestId('map-view');
+
     // Check mobile components are rendered
     expect(screen.getByTestId('mobile-actions')).toBeInTheDocument();
     expect(screen.getByTestId('mobile-search')).toBeInTheDocument();
@@ -244,23 +270,22 @@ describe('Property Search Integration', () => {
 
   it('handles empty search results', async () => {
     render(<Home />);
-    
+
     // Wait for loading to complete
-    await waitFor(() => {
-      expect(screen.queryByTestId('loader')).not.toBeInTheDocument();
-    });
-    
+    await screen.findByTestId('search-input');
+    await screen.findByTestId('map-view');
+
     // Search for something that doesn't exist
     const searchInput = screen.getByTestId('search-input');
     fireEvent.change(searchInput, { target: { value: 'nonexistent' } });
-    
+
     // Check that no properties are shown
     await waitFor(() => {
       expect(screen.queryByTestId('property-prop-1')).not.toBeInTheDocument();
       expect(screen.queryByTestId('property-prop-2')).not.toBeInTheDocument();
     });
-    
+
     // Map should show 0 properties
-    expect(screen.getByText('Map showing 0 properties')).toBeInTheDocument();
+    await screen.findByText('Map showing 0 properties');
   });
 });
