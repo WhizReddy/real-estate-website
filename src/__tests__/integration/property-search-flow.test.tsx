@@ -80,7 +80,7 @@ const MockPropertyGrid = ({ properties, loading }: any) => {
   if (loading) {
     return <div data-testid="loading">Loading properties...</div>;
   }
-  
+
   return (
     <div data-testid="property-grid">
       {properties.map((property: any) => (
@@ -126,29 +126,29 @@ function MockPropertySearchPage() {
   const handleFiltersChange = async (newFilters: any) => {
     setLoading(true);
     setFilters({ ...filters, ...newFilters });
-    
+
     // Simulate API call
     setTimeout(() => {
       let filteredProperties = mockProperties;
-      
+
       if (newFilters.type) {
         filteredProperties = filteredProperties.filter(
           p => p.type.toLowerCase() === newFilters.type.toLowerCase()
         );
       }
-      
+
       if (newFilters.minPrice) {
         filteredProperties = filteredProperties.filter(
           p => p.price >= parseInt(newFilters.minPrice)
         );
       }
-      
+
       if (newFilters.maxPrice) {
         filteredProperties = filteredProperties.filter(
           p => p.price <= parseInt(newFilters.maxPrice)
         );
       }
-      
+
       setProperties(filteredProperties);
       setLoading(false);
     }, 500);
@@ -157,34 +157,34 @@ function MockPropertySearchPage() {
   return (
     <div data-testid="property-search-page">
       <h1>Property Search</h1>
-      
+
       <div data-testid="search-layout" className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div data-testid="filters-sidebar">
           <MockSearchFilters onFiltersChange={handleFiltersChange} />
         </div>
-        
+
         <div data-testid="main-content" className="lg:col-span-3">
           <div data-testid="results-header">
             <p>{properties.length} properties found</p>
           </div>
-          
+
           <div data-testid="view-toggle">
-            <button data-testid="grid-view">Grid View</button>
-            <button data-testid="map-view">Map View</button>
+            <button data-testid="grid-view-toggle">Grid View</button>
+            <button data-testid="map-view-toggle">Map View</button>
           </div>
-          
+
           <MockPropertyGrid properties={properties} loading={loading} />
-          <MockMapView 
-            properties={properties} 
+          <MockMapView
+            properties={properties}
             onPropertySelect={setSelectedProperty}
           />
         </div>
       </div>
-      
+
       {selectedProperty && (
         <div data-testid="property-modal">
           <h2>Property Details</h2>
-          <button 
+          <button
             data-testid="close-modal"
             onClick={() => setSelectedProperty(null)}
           >
@@ -204,58 +204,58 @@ describe('Property Search Flow Integration', () => {
 
   it('renders the complete search interface', () => {
     render(<MockPropertySearchPage />);
-    
+
     expect(screen.getByTestId('property-search-page')).toBeInTheDocument();
     expect(screen.getByTestId('search-filters')).toBeInTheDocument();
     expect(screen.getByTestId('property-grid')).toBeInTheDocument();
-    expect(screen.getByTestId('map-view')).toBeInTheDocument();
+    expect(screen.getByTestId('map-view-toggle')).toBeInTheDocument();
   });
 
   it('displays initial property count', () => {
     render(<MockPropertySearchPage />);
-    
+
     expect(screen.getByText('2 properties found')).toBeInTheDocument();
   });
 
   it('filters properties by price range', async () => {
     render(<MockPropertySearchPage />);
-    
+
     const minPriceInput = screen.getByTestId('price-min');
     const maxPriceInput = screen.getByTestId('price-max');
-    
+
     fireEvent.change(minPriceInput, { target: { value: '900000' } });
     fireEvent.change(maxPriceInput, { target: { value: '1500000' } });
-    
+
     await waitFor(() => {
       expect(screen.getByText('1 properties found')).toBeInTheDocument();
     });
-    
-    expect(screen.getByText('Luxury Villa')).toBeInTheDocument();
+
+    expect(screen.getAllByText('Luxury Villa')[0]).toBeInTheDocument();
     expect(screen.queryByText('Modern Condo')).not.toBeInTheDocument();
   });
 
   it('filters properties by type', async () => {
     render(<MockPropertySearchPage />);
-    
+
     const propertyTypeSelect = screen.getByTestId('property-type');
     fireEvent.change(propertyTypeSelect, { target: { value: 'condo' } });
-    
+
     await waitFor(() => {
       expect(screen.getByText('1 properties found')).toBeInTheDocument();
     });
-    
-    expect(screen.getByText('Modern Condo')).toBeInTheDocument();
+
+    expect(screen.getAllByText('Modern Condo')[0]).toBeInTheDocument();
     expect(screen.queryByText('Luxury Villa')).not.toBeInTheDocument();
   });
 
   it('shows loading state during search', async () => {
     render(<MockPropertySearchPage />);
-    
+
     const propertyTypeSelect = screen.getByTestId('property-type');
     fireEvent.change(propertyTypeSelect, { target: { value: 'house' } });
-    
+
     expect(screen.getByTestId('loading')).toBeInTheDocument();
-    
+
     await waitFor(() => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });
@@ -263,10 +263,10 @@ describe('Property Search Flow Integration', () => {
 
   it('opens property details when map marker is clicked', async () => {
     render(<MockPropertySearchPage />);
-    
+
     const mapMarker = screen.getByTestId('map-marker-1');
     fireEvent.click(mapMarker);
-    
+
     await waitFor(() => {
       expect(screen.getByTestId('property-modal')).toBeInTheDocument();
     });
@@ -274,16 +274,16 @@ describe('Property Search Flow Integration', () => {
 
   it('closes property details modal', async () => {
     render(<MockPropertySearchPage />);
-    
+
     // Open modal
     const mapMarker = screen.getByTestId('map-marker-1');
     fireEvent.click(mapMarker);
-    
+
     await waitFor(() => {
       const closeButton = screen.getByTestId('close-modal');
       fireEvent.click(closeButton);
     });
-    
+
     await waitFor(() => {
       expect(screen.queryByTestId('property-modal')).not.toBeInTheDocument();
     });
@@ -291,34 +291,34 @@ describe('Property Search Flow Integration', () => {
 
   it('handles view toggle between grid and map', () => {
     render(<MockPropertySearchPage />);
-    
-    const gridViewButton = screen.getByTestId('grid-view');
-    const mapViewButton = screen.getByTestId('map-view');
-    
+
+    const gridViewButton = screen.getByTestId('grid-view-toggle');
+    const mapViewButton = screen.getByTestId('map-view-toggle');
+
     fireEvent.click(mapViewButton);
     fireEvent.click(gridViewButton);
-    
+
     expect(gridViewButton).toBeInTheDocument();
     expect(mapViewButton).toBeInTheDocument();
   });
 
   it('maintains responsive layout on different screen sizes', () => {
     render(<MockPropertySearchPage />);
-    
+
     const searchLayout = screen.getByTestId('search-layout');
     expect(searchLayout).toHaveClass('grid', 'grid-cols-1', 'lg:grid-cols-4');
-    
+
     const mainContent = screen.getByTestId('main-content');
     expect(mainContent).toHaveClass('lg:col-span-3');
   });
 
   it('handles empty search results', async () => {
     render(<MockPropertySearchPage />);
-    
+
     // Filter that returns no results
     const minPriceInput = screen.getByTestId('price-min');
     fireEvent.change(minPriceInput, { target: { value: '5000000' } });
-    
+
     await waitFor(() => {
       expect(screen.getByText('0 properties found')).toBeInTheDocument();
     });
@@ -326,18 +326,18 @@ describe('Property Search Flow Integration', () => {
 
   it('allows clearing filters to show all properties', async () => {
     render(<MockPropertySearchPage />);
-    
+
     // Apply filter
     const propertyTypeSelect = screen.getByTestId('property-type');
     fireEvent.change(propertyTypeSelect, { target: { value: 'house' } });
-    
+
     await waitFor(() => {
       expect(screen.getByText('1 properties found')).toBeInTheDocument();
     });
-    
+
     // Clear filter
     fireEvent.change(propertyTypeSelect, { target: { value: '' } });
-    
+
     await waitFor(() => {
       expect(screen.getByText('2 properties found')).toBeInTheDocument();
     });

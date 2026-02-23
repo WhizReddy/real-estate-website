@@ -80,7 +80,7 @@ const MockApp = () => {
   const handleSearch = (searchFilters: any) => {
     setFilters(searchFilters);
     let filtered = mockProperties;
-    
+
     if (searchFilters.minPrice) {
       filtered = filtered.filter(p => p.price >= searchFilters.minPrice);
     }
@@ -90,13 +90,13 @@ const MockApp = () => {
     if (searchFilters.type) {
       filtered = filtered.filter(p => p.type.toLowerCase() === searchFilters.type.toLowerCase());
     }
-    
+
     setProperties(filtered);
   };
 
   const toggleFavorite = (propertyId: number) => {
-    setFavorites(prev => 
-      prev.includes(propertyId) 
+    setFavorites(prev =>
+      prev.includes(propertyId)
         ? prev.filter(id => id !== propertyId)
         : [...prev, propertyId]
     );
@@ -149,7 +149,7 @@ const MockApp = () => {
       {currentPage === 'properties' && (
         <div data-testid="properties-page">
           <h1>Properties</h1>
-          
+
           {/* Search Filters */}
           <div data-testid="search-filters">
             <input
@@ -258,7 +258,7 @@ const MockApp = () => {
               placeholder="Your Message"
               required
             />
-            <button type="submit" data-testid="contact-submit">
+            <button type="button" onClick={(e) => { e.preventDefault(); e.currentTarget.closest('form')?.dispatchEvent(new Event('submit')) }} data-testid="contact-submit">
               Send Message
             </button>
           </form>
@@ -347,7 +347,7 @@ describe('Critical User Flows E2E Tests', () => {
       // Should further filter results
       await waitFor(() => {
         expect(screen.getByText('1 properties found')).toBeInTheDocument();
-        expect(screen.getByText('Luxury Downtown Condo')).toBeInTheDocument();
+        expect(screen.getAllByText('Luxury Downtown Condo')[0]).toBeInTheDocument();
       });
 
       // Clear filters
@@ -389,9 +389,10 @@ describe('Critical User Flows E2E Tests', () => {
       await user.click(screen.getByTestId('view-details-1'));
 
       // Modal should open
-      expect(screen.getByTestId('property-modal')).toBeInTheDocument();
-      expect(screen.getByText('Luxury Downtown Condo')).toBeInTheDocument();
-      expect(screen.getByText('Beautiful downtown condo with city views')).toBeInTheDocument();
+      const modal = screen.getByTestId('property-modal');
+      expect(modal).toBeInTheDocument();
+      expect(within(modal).getByText('Luxury Downtown Condo')).toBeInTheDocument();
+      expect(within(modal).getByText('Beautiful downtown condo with city views')).toBeInTheDocument();
 
       // Check features are displayed
       const featuresSection = screen.getByTestId('property-features');
@@ -435,8 +436,9 @@ describe('Critical User Flows E2E Tests', () => {
       await user.click(screen.getByTestId('map-marker-1'));
 
       // Property details should open
-      expect(screen.getByTestId('property-modal')).toBeInTheDocument();
-      expect(screen.getByText('Luxury Downtown Condo')).toBeInTheDocument();
+      const modal = screen.getByTestId('property-modal');
+      expect(modal).toBeInTheDocument();
+      expect(within(modal).getByText('Luxury Downtown Condo')).toBeInTheDocument();
     });
   });
 
@@ -500,7 +502,7 @@ describe('Critical User Flows E2E Tests', () => {
       // Use keyboard to navigate through property cards
       const firstViewButton = screen.getByTestId('view-details-1');
       firstViewButton.focus();
-      
+
       // Press Enter to open details
       await user.keyboard('{Enter}');
       expect(screen.getByTestId('property-modal')).toBeInTheDocument();

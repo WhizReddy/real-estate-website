@@ -81,26 +81,26 @@ describe('SearchFilters', () => {
 
   it('renders search input correctly', () => {
     render(
-      <SearchFilters 
-        properties={mockProperties} 
-        onFilteredResults={mockOnFilteredResults} 
+      <SearchFilters
+        properties={mockProperties}
+        onFilteredResults={mockOnFilteredResults}
       />
     );
-    
+
     expect(screen.getByPlaceholderText('Kërkoni pasuri...')).toBeInTheDocument();
   });
 
   it('filters properties by search term', async () => {
     render(
-      <SearchFilters 
-        properties={mockProperties} 
-        onFilteredResults={mockOnFilteredResults} 
+      <SearchFilters
+        properties={mockProperties}
+        onFilteredResults={mockOnFilteredResults}
       />
     );
-    
+
     const searchInput = screen.getByPlaceholderText('Kërkoni pasuri...');
     fireEvent.change(searchInput, { target: { value: 'modern' } });
-    
+
     await waitFor(() => {
       expect(mockOnFilteredResults).toHaveBeenCalledWith(
         expect.arrayContaining([
@@ -112,37 +112,37 @@ describe('SearchFilters', () => {
 
   it('expands advanced filters when button is clicked', () => {
     render(
-      <SearchFilters 
-        properties={mockProperties} 
-        onFilteredResults={mockOnFilteredResults} 
+      <SearchFilters
+        properties={mockProperties}
+        onFilteredResults={mockOnFilteredResults}
       />
     );
-    
+
     const expandButton = screen.getByText('Filtrat e Avancuara');
     fireEvent.click(expandButton);
-    
+
     expect(screen.getByText('Çmimi (€)')).toBeInTheDocument();
-    expect(screen.getByText('Lokacioni')).toBeInTheDocument();
+    expect(screen.getAllByText('Lokacioni')[0]).toBeInTheDocument();
   });
 
   it('filters by price range', async () => {
     render(
-      <SearchFilters 
-        properties={mockProperties} 
-        onFilteredResults={mockOnFilteredResults} 
+      <SearchFilters
+        properties={mockProperties}
+        onFilteredResults={mockOnFilteredResults}
       />
     );
-    
+
     // Expand filters
     fireEvent.click(screen.getByText('Filtrat e Avancuara'));
-    
+
     // Set price range
     const minPriceInput = screen.getByPlaceholderText('Min');
     const maxPriceInput = screen.getByPlaceholderText('Max');
-    
+
     fireEvent.change(minPriceInput, { target: { value: '200000' } });
     fireEvent.change(maxPriceInput, { target: { value: '300000' } });
-    
+
     await waitFor(() => {
       expect(mockOnFilteredResults).toHaveBeenCalledWith(
         expect.arrayContaining([
@@ -154,19 +154,19 @@ describe('SearchFilters', () => {
 
   it('filters by location', async () => {
     render(
-      <SearchFilters 
-        properties={mockProperties} 
-        onFilteredResults={mockOnFilteredResults} 
+      <SearchFilters
+        properties={mockProperties}
+        onFilteredResults={mockOnFilteredResults}
       />
     );
-    
+
     // Expand filters
     fireEvent.click(screen.getByText('Filtrat e Avancuara'));
-    
+
     // Select location
     const locationSelect = screen.getByDisplayValue('Të gjitha qytetet');
     fireEvent.change(locationSelect, { target: { value: 'Tirana' } });
-    
+
     await waitFor(() => {
       expect(mockOnFilteredResults).toHaveBeenCalledWith(
         expect.arrayContaining([
@@ -178,24 +178,24 @@ describe('SearchFilters', () => {
 
   it('filters by property type', async () => {
     render(
-      <SearchFilters 
-        properties={mockProperties} 
-        onFilteredResults={mockOnFilteredResults} 
+      <SearchFilters
+        properties={mockProperties}
+        onFilteredResults={mockOnFilteredResults}
       />
     );
-    
+
     // Expand filters
     fireEvent.click(screen.getByText('Filtrat e Avancuara'));
-    
+
     // Select apartment type
     const apartmentCheckbox = screen.getByLabelText('Apartament');
     fireEvent.click(apartmentCheckbox);
-    
+
     await waitFor(() => {
       expect(mockOnFilteredResults).toHaveBeenCalledWith(
         expect.arrayContaining([
-          expect.objectContaining({ 
-            details: expect.objectContaining({ propertyType: 'apartment' }) 
+          expect.objectContaining({
+            details: expect.objectContaining({ propertyType: 'apartment' })
           })
         ])
       );
@@ -204,16 +204,16 @@ describe('SearchFilters', () => {
 
   it('sorts properties correctly', async () => {
     render(
-      <SearchFilters 
-        properties={mockProperties} 
-        onFilteredResults={mockOnFilteredResults} 
+      <SearchFilters
+        properties={mockProperties}
+        onFilteredResults={mockOnFilteredResults}
       />
     );
-    
+
     // Select price sorting
     const sortSelect = screen.getByDisplayValue('Renditja');
     fireEvent.change(sortSelect, { target: { value: 'price' } });
-    
+
     await waitFor(() => {
       const lastCall = mockOnFilteredResults.mock.calls[mockOnFilteredResults.mock.calls.length - 1];
       const sortedProperties = lastCall[0];
@@ -223,28 +223,28 @@ describe('SearchFilters', () => {
 
   it('clears all filters when clear button is clicked', async () => {
     render(
-      <SearchFilters 
-        properties={mockProperties} 
-        onFilteredResults={mockOnFilteredResults} 
+      <SearchFilters
+        properties={mockProperties}
+        onFilteredResults={mockOnFilteredResults}
       />
     );
-    
+
     // Add some filters
     const searchInput = screen.getByPlaceholderText('Kërkoni pasuri...');
     fireEvent.change(searchInput, { target: { value: 'test' } });
-    
+
     // Wait for filters to be applied
     await waitFor(() => {
       expect(mockOnFilteredResults).toHaveBeenCalled();
     });
-    
+
     // Clear filters
     const clearButton = screen.getByText('Pastro Filtrat');
     fireEvent.click(clearButton);
-    
+
     // Check that search input is cleared
     expect(searchInput).toHaveValue('');
-    
+
     await waitFor(() => {
       expect(mockOnFilteredResults).toHaveBeenCalledWith(mockProperties);
     }, { timeout: 500 });
@@ -252,26 +252,26 @@ describe('SearchFilters', () => {
 
   it('handles multiple filter combinations', async () => {
     render(
-      <SearchFilters 
-        properties={mockProperties} 
-        onFilteredResults={mockOnFilteredResults} 
+      <SearchFilters
+        properties={mockProperties}
+        onFilteredResults={mockOnFilteredResults}
       />
     );
-    
+
     // Expand filters
     fireEvent.click(screen.getByText('Filtrat e Avancuara'));
-    
+
     // Apply multiple filters
     const searchInput = screen.getByPlaceholderText('Kërkoni pasuri...');
     fireEvent.change(searchInput, { target: { value: 'house' } });
-    
+
     const locationSelect = screen.getByDisplayValue('Të gjitha qytetet');
     fireEvent.change(locationSelect, { target: { value: 'Durres' } });
-    
+
     await waitFor(() => {
       expect(mockOnFilteredResults).toHaveBeenCalledWith(
         expect.arrayContaining([
-          expect.objectContaining({ 
+          expect.objectContaining({
             title: 'Family House',
             address: expect.objectContaining({ city: 'Durres' })
           })

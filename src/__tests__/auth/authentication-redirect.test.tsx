@@ -16,6 +16,7 @@ jest.mock('next-auth/react', () => ({
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
+  redirect: jest.fn(),
 }));
 
 // Mock performance monitor

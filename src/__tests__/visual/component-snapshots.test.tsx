@@ -17,27 +17,47 @@ jest.mock('next/navigation', () => ({
   usePathname: () => '/',
 }));
 
+// Mock next-auth and Toast for PropertyCard
+jest.mock('next-auth/react', () => ({
+  useSession: () => ({ data: null, status: 'unauthenticated' }),
+  SessionProvider: ({ children }: any) => <>{children}</>,
+}));
+
+jest.mock('@/components/ui/Toast', () => ({
+  useToast: () => ({ toast: jest.fn() }),
+  ToastProvider: ({ children }: any) => <>{children}</>,
+}));
+
 // Import components for snapshot testing
 import PropertyCard from '../../components/PropertyCard';
 import SearchFilters from '../../components/SearchFilters';
 import MobileNavigation from '../../components/MobileNavigation';
 import ResponsiveLayout from '../../components/ResponsiveLayout';
 
-const mockProperty = {
-  id: 1,
+const mockProperty: any = {
+  id: '1',
   title: 'Beautiful Modern Home',
   price: 850000,
-  location: 'San Francisco, CA',
-  coordinates: { lat: 37.7749, lng: -122.4194 },
+  address: {
+    city: 'San Francisco',
+    state: 'CA',
+    street: '123 Main St',
+    zipCode: '94105',
+    coordinates: { lat: 37.7749, lng: -122.4194 }
+  },
   image: '/images/property-1.jpg',
-  beds: 3,
-  baths: 2,
-  sqft: 2200,
-  type: 'House',
+  images: ['/images/property-1.jpg'],
+  details: {
+    bedrooms: 3,
+    bathrooms: 2,
+    squareFootage: 2200,
+    propertyType: 'House',
+    yearBuilt: 2020,
+  },
   description: 'A stunning modern home with great views',
   features: ['Pool', 'Garage', 'Garden'],
-  yearBuilt: 2020,
   status: 'active',
+  listingType: 'sale',
 };
 
 const mockNavigationItems = [
@@ -107,10 +127,10 @@ describe('Component Visual Regression Tests', () => {
         beds: 3,
         baths: 2,
       };
-      
+
       const { container } = render(
-        <SearchFilters 
-          onFiltersChange={jest.fn()} 
+        <SearchFilters
+          onFiltersChange={jest.fn()}
           initialFilters={appliedFilters}
         />
       );
@@ -150,7 +170,7 @@ describe('Component Visual Regression Tests', () => {
 
     it('renders mobile navigation with custom logo', () => {
       const customLogo = <div className="text-xl font-bold">Custom Logo</div>;
-      
+
       const { container } = render(
         <MobileNavigation items={mockNavigationItems} logo={customLogo} />
       );
@@ -244,7 +264,7 @@ describe('Component Visual Regression Tests', () => {
             <SearchFilters onFiltersChange={jest.fn()} />
           </ResponsiveLayout>
         );
-        
+
         expect(container.firstChild).toMatchSnapshot(`responsive-layout-${name}`);
       });
     });

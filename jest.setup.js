@@ -1,5 +1,18 @@
 import '@testing-library/jest-dom'
 
+// Note: Polyfill Request, Response, and TextEncoder which JSDOM strips
+const { TextEncoder, TextDecoder } = require('util');
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
+if (typeof global.Request === 'undefined') {
+  const { Request, Response, fetch, Headers } = require('undici');
+  global.Request = Request;
+  global.Response = Response;
+  global.fetch = fetch;
+  global.Headers = Headers;
+}
+
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
   constructor() { }
@@ -32,8 +45,14 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 })
 
-// Mock window.scrollTo
+// Mock window.scrollTo and window.alert
 Object.defineProperty(window, 'scrollTo', {
+  writable: true,
+  configurable: true,
+  value: jest.fn(),
+})
+
+Object.defineProperty(window, 'alert', {
   writable: true,
   configurable: true,
   value: jest.fn(),

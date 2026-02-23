@@ -20,6 +20,17 @@ jest.mock('next/link', () => {
   };
 });
 
+// Mock next-auth for FavoriteButton
+jest.mock('next-auth/react', () => ({
+  useSession: () => ({ data: { user: { name: 'Test User' } }, status: 'authenticated' }),
+  SessionProvider: ({ children }: any) => <>{children}</>,
+}));
+
+jest.mock('@/components/ui/Toast', () => ({
+  useToast: () => ({ toast: jest.fn() }),
+  ToastProvider: ({ children }: any) => <>{children}</>,
+}));
+
 const mockProperty: Property = {
   id: 'test-property-1',
   title: 'Test Property',
@@ -64,7 +75,7 @@ describe('Accessibility Tests', () => {
 
     it('has proper heading structure', () => {
       render(<PropertyCard property={mockProperty} />);
-      
+
       // Property title should be a heading
       const heading = screen.getByRole('heading', { name: /test property/i });
       expect(heading).toBeInTheDocument();
@@ -72,7 +83,7 @@ describe('Accessibility Tests', () => {
 
     it('has proper link accessibility', () => {
       render(<PropertyCard property={mockProperty} />);
-      
+
       // Main property link should be accessible
       const propertyLink = screen.getByRole('link');
       expect(propertyLink).toHaveAttribute('href', '/properties/test-property-1');
@@ -80,18 +91,18 @@ describe('Accessibility Tests', () => {
 
     it('has proper button accessibility for agent contact', () => {
       render(<PropertyCard property={mockProperty} />);
-      
+
       // Agent contact buttons should have proper titles
       const phoneButton = screen.getByTitle('Call agent');
       const emailButton = screen.getByTitle('Email agent');
-      
+
       expect(phoneButton).toBeInTheDocument();
       expect(emailButton).toBeInTheDocument();
     });
 
     it('has proper image alt text', () => {
       render(<PropertyCard property={mockProperty} />);
-      
+
       const image = screen.getByAltText('Test Property');
       expect(image).toBeInTheDocument();
     });
@@ -102,9 +113,9 @@ describe('Accessibility Tests', () => {
 
     it('should not have accessibility violations', async () => {
       const { container } = render(
-        <SearchFilters 
-          properties={[mockProperty]} 
-          onFilteredResults={mockOnFilteredResults} 
+        <SearchFilters
+          properties={[mockProperty]}
+          onFilteredResults={mockOnFilteredResults}
         />
       );
       const results = await axe(container);
@@ -113,12 +124,12 @@ describe('Accessibility Tests', () => {
 
     it('has proper form labels', () => {
       render(
-        <SearchFilters 
-          properties={[mockProperty]} 
-          onFilteredResults={mockOnFilteredResults} 
+        <SearchFilters
+          properties={[mockProperty]}
+          onFilteredResults={mockOnFilteredResults}
         />
       );
-      
+
       // Search input should have proper labeling
       const searchInput = screen.getByRole('textbox', { name: /search properties/i });
       expect(searchInput).toBeInTheDocument();
@@ -126,12 +137,12 @@ describe('Accessibility Tests', () => {
 
     it('has proper button accessibility', () => {
       render(
-        <SearchFilters 
-          properties={[mockProperty]} 
-          onFilteredResults={mockOnFilteredResults} 
+        <SearchFilters
+          properties={[mockProperty]}
+          onFilteredResults={mockOnFilteredResults}
         />
       );
-      
+
       // Advanced filters button should have proper ARIA attributes
       const expandButton = screen.getByRole('button', { name: /advanced filters/i });
       expect(expandButton).toHaveAttribute('aria-expanded', 'false');
@@ -140,12 +151,12 @@ describe('Accessibility Tests', () => {
 
     it('has proper select accessibility', () => {
       render(
-        <SearchFilters 
-          properties={[mockProperty]} 
-          onFilteredResults={mockOnFilteredResults} 
+        <SearchFilters
+          properties={[mockProperty]}
+          onFilteredResults={mockOnFilteredResults}
         />
       );
-      
+
       // Sort select should be accessible
       const sortSelect = screen.getByDisplayValue('Renditja');
       expect(sortSelect).toBeInTheDocument();
@@ -154,16 +165,16 @@ describe('Accessibility Tests', () => {
 
     it('has proper checkbox accessibility', () => {
       render(
-        <SearchFilters 
-          properties={[mockProperty]} 
-          onFilteredResults={mockOnFilteredResults} 
+        <SearchFilters
+          properties={[mockProperty]}
+          onFilteredResults={mockOnFilteredResults}
         />
       );
-      
+
       // Expand filters to show checkboxes
       const expandButton = screen.getByRole('button', { name: /advanced filters/i });
       expandButton.click();
-      
+
       // Property type checkboxes should be accessible
       const apartmentCheckbox = screen.getByRole('checkbox', { name: /apartament/i });
       expect(apartmentCheckbox).toBeInTheDocument();
@@ -171,16 +182,16 @@ describe('Accessibility Tests', () => {
 
     it('has proper region labeling for advanced filters', () => {
       render(
-        <SearchFilters 
-          properties={[mockProperty]} 
-          onFilteredResults={mockOnFilteredResults} 
+        <SearchFilters
+          properties={[mockProperty]}
+          onFilteredResults={mockOnFilteredResults}
         />
       );
-      
+
       // Expand filters
       const expandButton = screen.getByRole('button', { name: /advanced filters/i });
       expandButton.click();
-      
+
       // Advanced filters region should be properly labeled
       const filtersRegion = screen.getByRole('region', { name: /advanced search filters/i });
       expect(filtersRegion).toBeInTheDocument();
@@ -190,10 +201,10 @@ describe('Accessibility Tests', () => {
   describe('Keyboard Navigation', () => {
     it('PropertyCard is keyboard accessible', () => {
       render(<PropertyCard property={mockProperty} />);
-      
+
       const propertyLink = screen.getByRole('link');
       expect(propertyLink).toBeInTheDocument();
-      
+
       // Link should be focusable
       propertyLink.focus();
       expect(propertyLink).toHaveFocus();
@@ -201,19 +212,19 @@ describe('Accessibility Tests', () => {
 
     it('SearchFilters controls are keyboard accessible', () => {
       render(
-        <SearchFilters 
-          properties={[mockProperty]} 
-          onFilteredResults={jest.fn()} 
+        <SearchFilters
+          properties={[mockProperty]}
+          onFilteredResults={jest.fn()}
         />
       );
-      
+
       const searchInput = screen.getByRole('textbox');
       const expandButton = screen.getByRole('button');
-      
+
       // Elements should be focusable
       searchInput.focus();
       expect(searchInput).toHaveFocus();
-      
+
       expandButton.focus();
       expect(expandButton).toHaveFocus();
     });
@@ -222,7 +233,7 @@ describe('Accessibility Tests', () => {
   describe('Screen Reader Support', () => {
     it('provides proper context for property information', () => {
       render(<PropertyCard property={mockProperty} />);
-      
+
       // Important information should be accessible to screen readers
       expect(screen.getByText('Test Property')).toBeInTheDocument();
       expect(screen.getByText('€150,000')).toBeInTheDocument();
@@ -231,12 +242,12 @@ describe('Accessibility Tests', () => {
 
     it('provides proper context for search filters', () => {
       render(
-        <SearchFilters 
-          properties={[mockProperty]} 
-          onFilteredResults={jest.fn()} 
+        <SearchFilters
+          properties={[mockProperty]}
+          onFilteredResults={jest.fn()}
         />
       );
-      
+
       // Search input should have proper labeling for screen readers
       const searchInput = screen.getByLabelText(/search properties/i);
       expect(searchInput).toBeInTheDocument();
