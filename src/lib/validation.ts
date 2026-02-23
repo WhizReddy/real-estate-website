@@ -32,7 +32,7 @@ export interface Property {
 export interface ValidationResult {
   isValid: boolean;
   errors: ValidationError[];
-  sanitizedData?: Partial<Property>;
+  sanitizedData?: any;
 }
 
 // HTML sanitization to prevent XSS
