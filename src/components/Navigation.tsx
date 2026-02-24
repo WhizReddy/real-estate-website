@@ -30,7 +30,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-[100] transition-all duration-300">
+    <nav className="bg-slate-900/95 backdrop-blur-md border-b border-slate-700/50 sticky top-0 z-[100] transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-18">
           {/* Logo */}
@@ -45,10 +45,10 @@ export default function Navigation() {
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-pulse"></div>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+              <h1 className="text-2xl font-bold text-white tracking-tight">
                 Real Estate Tiranë
               </h1>
-              <p className="text-slate-500 text-sm font-medium">Premium Properties • {new Date().getFullYear()}</p>
+              <p className="text-slate-400 text-sm font-medium">Premium Properties • {new Date().getFullYear()}</p>
             </div>
           </Link>
 
