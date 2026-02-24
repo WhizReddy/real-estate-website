@@ -23,6 +23,30 @@ const translations: Record<SupportedLocale, Record<string, string>> = {
         // Map controls
         switchMap: 'Ndrysho hartën',
         home: 'Qendra',
+        // Draw controls (not currently used in UI, reserved for future i18n)
+        drawArea: 'Vizato Zonën',
+        clearArea: 'Fshi Zonën',
+        // Home page hero and contact section
+        exclusiveAgency: 'Agjencia Ekskluzive e Tiranës',
+        findYourPerfectHome: 'Gjeni Shtëpinë Tuaj të Përsosur',
+        heroDescription: 'Zbulimi i pasurive premium në lokacionet më të kërkuara të Tiranës. Shërbim elitar për klientë që kërkojnë përsosmërinë.',
+        viewListings: 'Shiko Shpalljet',
+        interactiveMap: 'Harta Interaktive',
+        activeProperties: 'Pasuri Aktive',
+        reliability: 'Besueshmëri',
+        support: 'Mbështetje',
+        locations: 'Lokacionet',
+        openFullMap: 'Hap Hartën e Plotë',
+        contact: 'Kontaktoni',
+        readyToMove: 'Gati për të Lëvizur?',
+        teamHelpDescription: 'Ekipi ynë i ekspertëve është gati t’ju ndihmojë në çdo hap të procesit të pasurive të patundshme.',
+        callUs: 'Na telefononi',
+        contactUs: 'Na Kontaktoni',
+        contactDescription: 'Na tregoni se çfarë po kërkoni dhe ne do t’ju kontaktojmë me ofertat më të mira.',
+        namePlaceholder: 'Emri juaj',
+        emailPlaceholder: 'Email-i juaj',
+        messagePlaceholder: 'Mesazhi juaj...',
+        sendMessage: 'Dërgo Mesazh',
     },
     // English translations
     en: {
@@ -39,6 +63,30 @@ const translations: Record<SupportedLocale, Record<string, string>> = {
         // Map controls
         switchMap: 'Switch map view',
         home: 'Home',
+        // Draw controls (not currently used in UI, reserved for future i18n)
+        drawArea: 'Draw Area',
+        clearArea: 'Clear Area',
+        // Home page hero and contact section
+        exclusiveAgency: 'Exclusive Agency of Tirana',
+        findYourPerfectHome: 'Find Your Perfect Home',
+        heroDescription: 'Discover premium properties in Tirana’s most sought-after locations. Elite service for clients who demand excellence.',
+        viewListings: 'View Listings',
+        interactiveMap: 'Interactive Map',
+        activeProperties: 'Active Properties',
+        reliability: 'Reliability',
+        support: 'Support',
+        locations: 'Locations',
+        openFullMap: 'Open Full Map',
+        contact: 'Contact',
+        readyToMove: 'Ready to Move?',
+        teamHelpDescription: 'Our team of experts is ready to assist you at every step of the real estate process.',
+        callUs: 'Call Us',
+        contactUs: 'Contact Us',
+        contactDescription: 'Tell us what you’re looking for and we’ll reach out with the best offers.',
+        namePlaceholder: 'Your name',
+        emailPlaceholder: 'Your email',
+        messagePlaceholder: 'Your message...',
+        sendMessage: 'Send Message',
     },
 };
 
