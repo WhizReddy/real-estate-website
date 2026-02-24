@@ -146,67 +146,74 @@ export default function Home() {
       <StructuredData type="website" />
       <StructuredData type="organization" />
 
-      {/* Hero - Soft Blue flowing gradient */}
-      <div className="w-full relative bg-gradient-to-b from-blue-50 via-blue-100/70 to-gray-100">
-        <section className="relative overflow-hidden pt-16 pb-24 sm:pt-20 sm:pb-32">
-          {/* Soft decorative circles */}
-          <div className="absolute top-10 left-10 w-72 h-72 bg-blue-200/30 rounded-full blur-[100px]" />
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-200/20 rounded-full blur-[120px]" />
+      {/* Hero with real estate photo background */}
+      <div className="w-full relative">
+        <section className="relative overflow-hidden min-h-[600px] flex items-center">
+          {/* Background Image */}
+          <div className="absolute inset-0">
+            <img
+              src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&h=1080&fit=crop&q=80"
+              alt=""
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-slate-900/50" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-slate-900/30" />
+          </div>
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-4xl mx-auto">
-              <div className="inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm border border-blue-200 rounded-full text-blue-700 text-sm font-semibold mb-6 shadow-sm">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center px-4 py-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-sm font-semibold mb-6">
                 <HomeIcon className="h-4 w-4 mr-2" />
                 Agjencia Ekskluzive e Tiranës
               </div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-[1.15] tracking-tight">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight">
                 Gjeni Shtëpinë Tuaj të{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500 italic">
+                <span className="text-blue-400">
                   Përsosur
                 </span>
               </h1>
-              <p className="text-lg sm:text-xl text-gray-600 mb-10 leading-relaxed max-w-2xl mx-auto">
+              <p className="text-lg sm:text-xl text-white/80 mb-10 leading-relaxed max-w-lg">
                 Zbulimi i pasurive premium në lokacionet më të kërkuara të Tiranës.
                 Shërbim elitar për klientë që kërkojnë përsosmërinë.
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="flex flex-col sm:flex-row items-start gap-4">
                 <a
                   href="#properties"
-                  className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/25 hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-500 transition-all shadow-lg hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Shiko Shpalljet
                 </a>
                 <Link
                   href="/map"
-                  className="w-full sm:w-auto px-8 py-4 bg-white/80 backdrop-blur-sm text-gray-700 font-bold rounded-2xl border border-gray-200 hover:border-blue-300 hover:bg-white transition-all flex items-center justify-center gap-2 shadow-sm"
+                  className="w-full sm:w-auto px-8 py-4 bg-white/15 backdrop-blur-sm text-white font-bold rounded-xl border border-white/30 hover:bg-white/25 transition-all flex items-center justify-center gap-2"
                 >
-                  <Map className="h-5 w-5 text-blue-600" />
+                  <Map className="h-5 w-5" />
                   Harta Interaktive
                 </Link>
               </div>
 
               {/* Trust badges */}
-              <div className="mt-16 pt-8 border-t border-blue-200/50 grid grid-cols-3 gap-8">
+              <div className="mt-14 flex gap-10">
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">{allProperties.length}+</div>
-                  <div className="text-sm text-gray-500">Pasuri Aktive</div>
+                  <div className="text-2xl font-bold text-white">{allProperties.length}+</div>
+                  <div className="text-sm text-white/60">Pasuri Aktive</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">5★</div>
-                  <div className="text-sm text-gray-500">Besueshmëri</div>
+                  <div className="text-2xl font-bold text-white">5★</div>
+                  <div className="text-sm text-white/60">Besueshmëri</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">24/7</div>
-                  <div className="text-sm text-gray-500">Mbështetje</div>
+                  <div className="text-2xl font-bold text-white">24/7</div>
+                  <div className="text-sm text-white/60">Mbështetje</div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Properties Section - flowing gradient continues */}
-        <div className="bg-gradient-to-b from-gray-100 via-gray-50 to-slate-100 relative pb-20">
+        {/* Properties Section */}
+        <div className="bg-gray-50 relative pb-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20">
             <DynamicSearchFilters
               properties={allProperties}
@@ -253,8 +260,8 @@ export default function Home() {
           </section>
         </div>
 
-        {/* Contact Section - transitions into dark footer */}
-        <section id="contact" className="bg-gradient-to-b from-slate-100 via-slate-700 to-slate-900 pt-20 pb-20 overflow-hidden">
+        {/* Contact Section */}
+        <section id="contact" className="bg-slate-900 py-20 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
