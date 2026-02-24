@@ -148,32 +148,32 @@ export default function Home() {
 
       {/* Hero with Albania background */}
       <div className="w-full relative">
-        <section className="relative overflow-hidden min-h-[600px] flex items-center">
-          {/* Background Image */}
-          <div className="absolute inset-0">
-            <img
-              src="/images/albania-hero.png"
-              alt="Albania aerial view"
-              className="w-full h-full object-cover"
-            />
-            {/* Light overlay for text readability - keep the blue tones visible */}
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-900/70 via-slate-900/30 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/40 via-transparent to-gray-50" />
-          </div>
-
+        <section
+          className="relative overflow-hidden min-h-[620px] flex items-center"
+          style={{
+            backgroundImage: `
+              linear-gradient(to bottom, rgba(15,23,42,0.45) 0%, rgba(15,23,42,0.05) 50%, rgba(248,250,252,0.95) 100%),
+              linear-gradient(to right, rgba(15,23,42,0.65) 0%, rgba(15,23,42,0.15) 55%, transparent 100%),
+              url('/images/albania-hero.png')
+            `,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        >
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
             <div className="max-w-2xl">
               <div className="inline-flex items-center px-4 py-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-sm font-semibold mb-6">
                 <HomeIcon className="h-4 w-4 mr-2" />
                 Agjencia Ekskluzive e Tiranës
               </div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight drop-shadow-lg">
                 Gjeni Shtëpinë Tuaj të{" "}
                 <span className="text-blue-400">
                   Përsosur
                 </span>
               </h1>
-              <p className="text-lg sm:text-xl text-white/80 mb-10 leading-relaxed max-w-lg">
+              <p className="text-lg sm:text-xl text-white/85 mb-10 leading-relaxed max-w-lg drop-shadow">
                 Zbulimi i pasurive premium në lokacionet më të kërkuara të Tiranës.
                 Shërbim elitar për klientë që kërkojnë përsosmërinë.
               </p>
@@ -197,21 +197,22 @@ export default function Home() {
               {/* Trust badges */}
               <div className="mt-14 flex gap-10">
                 <div>
-                  <div className="text-2xl font-bold text-white">{allProperties.length}+</div>
-                  <div className="text-sm text-white/60">Pasuri Aktive</div>
+                  <div className="text-2xl font-bold text-white drop-shadow">{allProperties.length}+</div>
+                  <div className="text-sm text-white/70">Pasuri Aktive</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-white">5★</div>
-                  <div className="text-sm text-white/60">Besueshmëri</div>
+                  <div className="text-2xl font-bold text-white drop-shadow">5★</div>
+                  <div className="text-sm text-white/70">Besueshmëri</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-white">24/7</div>
-                  <div className="text-sm text-white/60">Mbështetje</div>
+                  <div className="text-2xl font-bold text-white drop-shadow">24/7</div>
+                  <div className="text-sm text-white/70">Mbështetje</div>
                 </div>
               </div>
             </div>
           </div>
         </section>
+
 
         {/* Properties Section */}
         <div className="bg-gray-50 relative pb-20">
