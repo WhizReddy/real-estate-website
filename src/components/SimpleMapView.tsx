@@ -1,12 +1,15 @@
-
-'use client';
+"use client";
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import type { Layer, Map as LeafletMap, TileLayer as LeafletTileLayer } from 'leaflet';
 import { Property } from '@/types';
 import { formatPrice } from '@/lib/utils';
 import MapFallback from './MapFallback';
+import { getTranslation } from '@/lib/i18n';
 
+// Props for the simple map view.  Consumers provide a list of property objects
+// and can optionally specify a custom height.  The component is client-side
+// only to avoid SSR issues with Leaflet.
 interface SimpleMapViewProps {
   properties: Property[];
   height?: string;
@@ -21,47 +24,53 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
   const tileLayerRef = useRef<LeafletTileLayer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // Removed isMapReady as it's unused
   const [retryCount, setRetryCount] = useState(0);
 
-  // Cleanup function to properly destroy map instance
+  // Determine locale using the browser language as a heuristic.  Default
+  // gracefully to Albanian if the language cannot be determined or is not
+  // explicitly English.  Supported locales are defined in src/lib/i18n.ts.
+  const locale: 'sq' | 'en' =
+    typeof navigator !== 'undefined' && navigator.language?.toLowerCase().startsWith('en')
+      ? 'en'
+      : 'sq';
+  const t = (key: string) => getTranslation(key, locale);
+
+  // Cleanup function to properly destroy the map instance and remove layers.
   const cleanupMap = useCallback(() => {
     if (mapInstanceRef.current) {
       try {
         // Remove all layers and markers
         if (typeof mapInstanceRef.current.eachLayer === 'function') {
           mapInstanceRef.current.eachLayer((layer: Layer) => {
-            mapInstanceRef.current.removeLayer(layer as Layer);
+            mapInstanceRef.current?.removeLayer(layer as Layer);
           });
         }
-        
         // Remove the map instance
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
-        
         // Clear the container HTML
         if (mapRef.current) {
           mapRef.current.innerHTML = '';
         }
-        
-        // no-op
-      } catch (error) {
-        console.warn('Error during map cleanup:', error);
-        // Force clear the container even if cleanup fails
+      } catch (cleanupError) {
+        console.warn('Error during map cleanup:', cleanupError);
         if (mapRef.current) {
           mapRef.current.innerHTML = '';
         }
         mapInstanceRef.current = null;
-        // no-op
       }
     }
   }, []);
 
   useEffect(() => {
     if (!Array.isArray(properties) || properties.length === 0) {
-      console.warn('SimpleMapView: No properties to display on map.', properties);
+      // No properties to display; the render function will show the empty state.
+      return;
     }
-    // Helper: wait until container has a real, visible size
+
+    // Helper: wait until container has a real, visible size.  Leaflet can
+    // misbehave if the container has zero dimensions when the map is
+    // instantiated.
     const waitForVisibleContainer = async (el: HTMLDivElement, maxMs = 1500) => {
       const isVisible = () => {
         const rect = el.getBoundingClientRect();
@@ -86,7 +95,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
         observerRef.current = ro;
         ro.observe(el);
 
-        // Fallback timeout
+        // Fallback timeout to ensure we don't wait indefinitely
         const id = window.setTimeout(() => {
           if (!resolved) {
             ro.disconnect();
@@ -98,23 +107,23 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
         timeoutsRef.current.push(id);
       });
 
-      // Two RAFs to ensure layout/paint settled (modal animations etc.)
+      // Two requestAnimationFrame calls ensure that any layout and paint
+      // processes have settled before we proceed.
       await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
     };
 
     let canceled = false;
     const initMap = async () => {
-      // Ensure we have a valid container
       if (!mapRef.current) return;
-
-      // Cleanup any existing map first
+      // Clean up any existing map before initializing a new one
       cleanupMap();
 
       try {
         setIsLoading(true);
         setError(null);
 
-        // Dynamically load Leaflet CSS if not already loaded
+        // Dynamically load Leaflet CSS if not already present.  Without this
+        // the map will render incorrectly in many environments.
         if (!document.getElementById('leaflet-css')) {
           const link = document.createElement('link');
           link.id = 'leaflet-css';
@@ -123,9 +132,11 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
           document.head.appendChild(link);
         }
 
-  const L = await import('leaflet');
-        
-        // Create custom marker icon to fix display issues
+        const L = await import('leaflet');
+
+        // Create custom marker icon for individual property markers.  This
+        // matches the blue theme used throughout the website and aligns
+        // correctly on the map.
         const customIcon = L.divIcon({
           html: `
             <div style="
@@ -152,84 +163,91 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
           className: 'custom-marker',
           iconSize: [24, 24],
           iconAnchor: [12, 24],
-          popupAnchor: [0, -24]
+          popupAnchor: [0, -24],
         });
 
-        // Also fix default Leaflet icons as fallback
-  // @ts-expect-error Accessing private Leaflet property to override default icons
-  delete (L.Icon.Default.prototype as unknown)._getIconUrl;
+        // Override default Leaflet icons so that fallbacks load correctly.
+        // @ts-expect-error Accessing private Leaflet property to override default icons
+        delete (L.Icon.Default.prototype as unknown)._getIconUrl;
         L.Icon.Default.mergeOptions({
           iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-          iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+          iconRetinaUrl:
+            'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
           shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
           iconSize: [25, 41],
           iconAnchor: [12, 41],
           popupAnchor: [1, -34],
-          shadowSize: [41, 41]
+          shadowSize: [41, 41],
         });
 
-        // Ensure container is completely clean
+        // Clear any previous content and assign a unique ID to the container
         if (mapRef.current) {
           mapRef.current.innerHTML = '';
-          // Set unique ID to prevent container reuse
           mapRef.current.id = containerIdRef.current;
         }
 
-        // Wait until container is visible and has size (prevents _leaflet_pos issues)
+        // Wait until the container has dimensions before creating the map
         await waitForVisibleContainer(mapRef.current, 1200);
 
-        // Mobile fallback: ensure the element has at least the requested height
-        try {
-          const isSmallScreen = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 640px)').matches;
-          const cap = isSmallScreen ? 320 : 480; // avoid tall containers on mobile to reduce scroll
-          const numericHeight = typeof height === 'string' && height.endsWith('px')
-            ? parseInt(height)
-            : 0;
-          if (numericHeight > 0 && mapRef.current) {
-            const rect = mapRef.current.getBoundingClientRect();
-            const top = Math.max(0, rect.top);
-            const available = Math.floor(window.innerHeight - top);
-            if (available > 0 && rect.height < Math.max(numericHeight, available) - 8) {
-              mapRef.current.style.minHeight = Math.max(numericHeight, Math.min(available, cap)) + 'px';
-            }
-          }
-        } catch {}
-
-        // Verify container still exists and is clean
+        // Bail if the container no longer exists or if a map was already created
         if (!mapRef.current || mapInstanceRef.current) {
           return;
         }
 
-        // Determine if we should disable animations on small/mobile screens to reduce flicker/white tiles
-        const isSmallScreen = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 640px)').matches;
+        // Disable animations on small/mobile screens to reduce flicker and tile
+        // gaps, as recommended in prior map improvement notes.
+        const isSmallScreen =
+          typeof window !== 'undefined' &&
+          window.matchMedia &&
+          window.matchMedia('(max-width: 640px)').matches;
 
-        // Create map with unique container
         const map = L.map(mapRef.current, {
           center: [41.3275, 19.8187],
           zoom: 13,
           zoomControl: true,
           scrollWheelZoom: true,
           attributionControl: false,
-          // Disable animations on smaller screens where they can cause tile gaps/flicker
           fadeAnimation: !isSmallScreen,
           zoomAnimation: !isSmallScreen,
           markerZoomAnimation: !isSmallScreen,
           preferCanvas: true,
         });
-        try { map.zoomControl?.setPosition('bottomleft'); } catch {}
-        
-        // Add tile layer with error handling and fallback providers
+        try {
+          map.zoomControl?.setPosition('bottomleft');
+        } catch {}
+
+        // Define multiple tile providers, including satellite imagery.  If a
+        // provider fails to load tiles, the component will automatically
+        // fallback to the next provider in the list.  A toggle control lets
+        // users cycle between providers on demand.
         type ProviderSpec = { url: string; attribution: string; options?: Parameters<typeof L.tileLayer>[1] };
         const providers: ProviderSpec[] = [
-          { url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', attribution: '© OpenStreetMap contributors', options: { maxZoom: 19 } },
-          { url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', attribution: '&copy; OpenStreetMap & CARTO', options: { maxZoom: 20, subdomains: 'abcd' as unknown as string[] } },
+          {
+            url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            attribution: '© OpenStreetMap contributors',
+            options: { maxZoom: 19 },
+          },
+          {
+            url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+            attribution: '&copy; OpenStreetMap & CARTO',
+            options: { maxZoom: 20, subdomains: 'abcd' as unknown as string[] },
+          },
+          {
+            url:
+              'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            attribution: 'Tiles © Esri',
+            options: { maxZoom: 20 },
+          },
         ];
+        const providerIndexRef = { current: 0 };
 
         const attachTiles = (index: number) => {
           const spec = providers[index];
           if (!spec) return;
           if (tileLayerRef.current) {
-            try { map.removeLayer(tileLayerRef.current); } catch {}
+            try {
+              map.removeLayer(tileLayerRef.current);
+            } catch {}
             tileLayerRef.current = null;
           }
           const tl = L.tileLayer(spec.url, {
@@ -238,88 +256,255 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
             crossOrigin: true,
             updateWhenIdle: true,
             keepBuffer: 2,
-            errorTileUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0iI2Y5ZmFmYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNjM3MzgwIiBmb250LXNpemU9IjE0Ij5NYXAgVGlsZSBOb3QgQXZhaWxhYmxlPC90ZXh0Pjwvc3ZnPg==',
-            ...(spec.options || {})
+            ...(spec.options || {}),
           }).addTo(map);
           tileLayerRef.current = tl;
           let errCount = 0;
           tl.on('tileerror', () => {
             errCount += 1;
-            try { map.invalidateSize(); } catch {}
-            if (errCount >= 3 && index + 1 < providers.length) {
-              attachTiles(index + 1);
+            try {
+              map.invalidateSize();
+            } catch {}
+            if (errCount >= 3 && providerIndexRef.current + 1 < providers.length) {
+              providerIndexRef.current += 1;
+              attachTiles(providerIndexRef.current);
             }
           });
         };
         attachTiles(0);
 
-        // Add markers with error handling
-        const validProperties = properties.filter(property => {
+        // Add a toggle control that cycles through tile providers.  The control
+        // appears in the top-right corner of the map and uses a simple emoji
+        // to indicate map switching.
+        const toggleControl = L.control({ position: 'topright' });
+        toggleControl.onAdd = function () {
+          const button = L.DomUtil.create('button', 'leaflet-bar');
+          button.innerHTML = '🗺️';
+          button.title = 'Switch map view';
+          button.style.backgroundColor = '#2563eb';
+          button.style.color = '#fff';
+          button.style.padding = '4px 8px';
+          button.style.border = 'none';
+          button.style.cursor = 'pointer';
+          L.DomEvent.on(button, 'click', (e: any) => {
+            L.DomEvent.stopPropagation(e);
+            L.DomEvent.preventDefault(e);
+            providerIndexRef.current = (providerIndexRef.current + 1) % providers.length;
+            attachTiles(providerIndexRef.current);
+          });
+          return button;
+        };
+        toggleControl.addTo(map);
+
+        // Filter out any properties lacking valid coordinates.  Invalid values
+        // cause Leaflet errors if passed directly to markers.
+        const validProperties = properties.filter((property) => {
           const coords = property.address.coordinates;
           return coords.lat && coords.lng && !isNaN(coords.lat) && !isNaN(coords.lng);
         });
 
-  const markers: Array<ReturnType<typeof L.marker>> = [];
+        const markers: Array<ReturnType<typeof L.marker>> = [];
+        const clusterThreshold = 50;
+        const useCluster = validProperties.length > clusterThreshold;
 
-        validProperties.forEach(property => {
-          try {
-            const coords = property.address.coordinates;
-            // Use the custom icon for the marker
-            const marker = L.marker([coords.lat, coords.lng], { icon: customIcon }).addTo(map);
-            
-            // Improved popup with better styling
-            marker.bindPopup(`
-              <div style="min-width: 240px; max-width: 280px; padding: 12px;">
-                <div style="margin-bottom: 8px;">
-                  <h3 style="font-weight: 700; font-size: 15px; line-height: 1.3; margin: 0 0 8px 0; color: #1f2937;">${property.title}</h3>
-                  <p style="font-weight: 600; font-size: 16px; color: #2563eb; margin: 0 0 8px 0;">${formatPrice(property.price)}</p>
-                </div>
-                <div style="display: flex; gap: 8px; font-size: 12px; color: #6b7280; margin-bottom: 10px; flex-wrap: wrap;">
-                  <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">🛏️ ${property.details.bedrooms} dhoma</span>
-                  <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">🚿 ${property.details.bathrooms} banjo</span>
-                  <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">📐 ${property.details.squareFootage}m²</span>
-                </div>
-                <div style="margin-top: 12px;">
-                  <a 
-                    href="/properties/${property.id}" 
-                    style="
-                      display: inline-block;
-                      background: #2563eb;
-                      color: white;
-                      padding: 8px 16px;
-                      border-radius: 6px;
-                      text-decoration: none;
-                      font-size: 13px;
-                      font-weight: 500;
-                      transition: background 0.2s;
-                      width: 100%;
-                      text-align: center;
-                    "
-                    onmouseover="this.style.background='#1d4ed8'"
-                    onmouseout="this.style.background='#2563eb'"
-                  >
-                    Shiko Detajet →
-                  </a>
-                </div>
-              </div>
-            `, {
-              maxWidth: 300,
-              className: 'custom-popup'
+        if (useCluster) {
+          // Manual clustering: group properties by rounding their coordinates to
+          // two decimal places (~1 km).  Each cluster is represented either by
+          // a single marker (if only one property falls into the cell) or a
+          // cluster marker showing the count.  Cluster popups list up to five
+          // property links and indicate if more exist.
+          type Cluster = { lat: number; lng: number; properties: Property[] };
+          const clusters: Record<string, Cluster> = {};
+          validProperties.forEach((property) => {
+            const { lat, lng } = property.address.coordinates;
+            const keyLat = Math.round(lat * 100) / 100;
+            const keyLng = Math.round(lng * 100) / 100;
+            const key = `${keyLat}_${keyLng}`;
+            if (!clusters[key]) {
+              clusters[key] = { lat: 0, lng: 0, properties: [] };
+            }
+            clusters[key].properties.push(property);
+          });
+          // Compute the average lat/lng for each cluster to position the marker.
+          Object.values(clusters).forEach((cluster) => {
+            let sumLat = 0;
+            let sumLng = 0;
+            cluster.properties.forEach((p) => {
+              sumLat += p.address.coordinates.lat;
+              sumLng += p.address.coordinates.lng;
             });
+            cluster.lat = sumLat / cluster.properties.length;
+            cluster.lng = sumLng / cluster.properties.length;
+          });
+          // Create markers for each cluster
+          Object.values(clusters).forEach((cluster) => {
+            if (cluster.properties.length === 1) {
+              const property = cluster.properties[0];
+              const marker = L.marker([cluster.lat, cluster.lng], {
+                icon: customIcon,
+              }).addTo(map);
+              const coords = property.address.coordinates;
+              marker.bindPopup(
+                `
+                <div style="min-width: 240px; max-width: 280px; padding: 12px;">
+                  <div style="margin-bottom: 8px;">
+                    <h3 style="font-weight: 700; font-size: 15px; line-height: 1.3; margin: 0 0 8px 0; color: #1f2937;">${property.title}</h3>
+                    <p style="font-weight: 600; font-size: 16px; color: #2563eb; margin: 0 0 8px 0;">${formatPrice(
+                  property.price
+                )}</p>
+                  </div>
+                  <div style="display: flex; gap: 8px; font-size: 12px; color: #6b7280; margin-bottom: 10px; flex-wrap: wrap;">
+                    <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${property.details.bedrooms} ${t(
+                  'bedrooms'
+                )}</span>
+                    <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${property.details.bathrooms} ${t(
+                  'bathrooms'
+                )}</span>
+                    <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${property.details.squareFootage}${t(
+                  'squareMeters'
+                )}</span>
+                  </div>
+                  <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                    <a href="/properties/${property.id}" style="display: inline-block; background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 500; transition: background 0.2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">${t(
+                  'viewDetails'
+                )}</a>
+                    <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coords.lat},${coords.lng}" target="_blank" rel="noopener" style="display: inline-block; background: #f3f4f6; color: #2563eb; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 500;">${t(
+                  'streetView'
+                )}</a>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}" target="_blank" rel="noopener" style="display: inline-block; background: #f3f4f6; color: #2563eb; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 500;">${t(
+                  'directions'
+                )}</a>
+                  </div>
+                </div>
+              `,
+                {
+                  maxWidth: 300,
+                  className: 'custom-popup',
+                }
+              );
+              marker.on('click', () => {
+                try {
+                  map.setView([coords.lat, coords.lng], Math.min(map.getZoom() + 3, 18));
+                } catch {}
+              });
+              markers.push(marker);
+            } else {
+              // Build a custom cluster marker showing the count.  The style
+              // matches the overall aesthetic of the application.
+              const count = cluster.properties.length;
+              const clusterIcon = L.divIcon({
+                html: `
+                  <div style="
+                    position: relative;
+                    width: 32px;
+                    height: 32px;
+                    line-height: 32px;
+                    border-radius: 50%;
+                    background: #2563eb;
+                    color: #fff;
+                    text-align: center;
+                    font-weight: bold;
+                    font-size: 13px;
+                    border: 3px solid #fff;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                  ">
+                    ${count}
+                  </div>
+                `,
+                className: 'cluster-marker',
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+                popupAnchor: [0, -32],
+              });
+              const marker = L.marker([cluster.lat, cluster.lng], {
+                icon: clusterIcon,
+              }).addTo(map);
+              // Build popup listing up to five property links and showing if more
+              let content = `<div style="min-width: 200px; max-width: 280px; padding: 8px;">`;
+              content += `<div style="font-weight: 600; margin-bottom: 6px;">${count} ${t('properties')}</div><ul style="padding-left: 16px; margin: 0;">`;
+              const list = cluster.properties.slice(0, 5);
+              list.forEach((p) => {
+                content += `<li style="margin-bottom: 4px;"><a href="/properties/${p.id}" style="color: #2563eb; text-decoration: none;">${p.title}</a></li>`;
+              });
+              if (cluster.properties.length > list.length) {
+                const more = cluster.properties.length - list.length;
+                content += `<li style="color: #6b7280;">… ${more} ${t('clusterMore')}</li>`;
+              }
+              content += `</ul></div>`;
+              marker.bindPopup(content);
+              marker.on('click', () => {
+                try {
+                  map.setView([cluster.lat, cluster.lng], Math.min(map.getZoom() + 2, 18));
+                } catch {}
+              });
+              markers.push(marker);
+            }
+          });
+        } else {
+          // Standard markers without clustering.  Each property marker uses the
+          // custom icon and binds a detailed popup containing property
+          // information and map/direction links.
+          validProperties.forEach((property) => {
+            try {
+              const coords = property.address.coordinates;
+              const marker = L.marker([coords.lat, coords.lng], { icon: customIcon }).addTo(map);
+              marker.bindPopup(
+                `
+                <div style="min-width: 240px; max-width: 280px; padding: 12px;">
+                  <div style="margin-bottom: 8px;">
+                    <h3 style="font-weight: 700; font-size: 15px; line-height: 1.3; margin: 0 0 8px 0; color: #1f2937;">${property.title}</h3>
+                    <p style="font-weight: 600; font-size: 16px; color: #2563eb; margin: 0 0 8px 0;">${formatPrice(
+                  property.price
+                )}</p>
+                  </div>
+                  <div style="display: flex; gap: 8px; font-size: 12px; color: #6b7280; margin-bottom: 10px; flex-wrap: wrap;">
+                    <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${property.details.bedrooms} ${t(
+                  'bedrooms'
+                )}</span>
+                    <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${property.details.bathrooms} ${t(
+                  'bathrooms'
+                )}</span>
+                    <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${property.details.squareFootage}${t(
+                  'squareMeters'
+                )}</span>
+                  </div>
+                  <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                    <a href="/properties/${property.id}" style="display: inline-block; background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 500; transition: background 0.2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">${t(
+                  'viewDetails'
+                )}</a>
+                    <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coords.lat},${coords.lng}" target="_blank" rel="noopener" style="display: inline-block; background: #f3f4f6; color: #2563eb; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 500;">${t(
+                  'streetView'
+                )}</a>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}" target="_blank" rel="noopener" style="display: inline-block; background: #f3f4f6; color: #2563eb; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 500;">${t(
+                  'directions'
+                )}</a>
+                  </div>
+                </div>
+              `,
+                {
+                  maxWidth: 300,
+                  className: 'custom-popup',
+                }
+              );
+              marker.on('click', () => {
+                try {
+                  map.setView([coords.lat, coords.lng], Math.min(map.getZoom() + 3, 18));
+                } catch {}
+              });
+              markers.push(marker);
+            } catch (markerError) {
+              console.warn('Error adding marker for property:', property.id, markerError);
+            }
+          });
+        }
 
-            markers.push(marker);
-          } catch (markerError) {
-            console.warn('Error adding marker for property:', property.id, markerError);
-          }
-        });
-
-        // Safely fit bounds only when the map container has a real size
+        // Helper to fit the map bounds around all markers.  Waits for the
+        // internal Leaflet panes to be ready before performing fitBounds.
         const safeFitBounds = (attempt = 0) => {
           try {
             if (canceled || !map) return;
             const size = map.getSize?.();
             const pane = map.getPane?.('mapPane');
-            // Ensure internal pane exists and map is loaded before attempting view changes
             const internalPaneOk = !!(map as unknown as { _mapPane?: HTMLElement })._mapPane;
             const loaded = !!(map as unknown as { _loaded?: boolean })._loaded;
             if (!pane || !internalPaneOk || !loaded || !size || size.x === 0 || size.y === 0) {
@@ -335,13 +520,17 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
                 const hasPane = !!map.getPane?.('mapPane');
                 if (hasPane) map.invalidateSize();
               } catch {}
-              // Defer to next frame to avoid layout thrash on initial paint
               requestAnimationFrame(() => {
                 if (canceled) return;
                 try {
-                  const stillOk = !!(map as unknown as { _mapPane?: HTMLElement })._mapPane && !!(map as unknown as { _loaded?: boolean })._loaded;
+                  const stillOk =
+                    !!(map as unknown as { _mapPane?: HTMLElement })._mapPane &&
+                    !!(map as unknown as { _loaded?: boolean })._loaded;
                   if (stillOk) {
-                    map.fitBounds(group.getBounds().pad(0.1), { animate: false, maxZoom: 15 });
+                    map.fitBounds(group.getBounds().pad(0.1), {
+                      animate: false,
+                      maxZoom: 15,
+                    });
                   }
                 } catch (err) {
                   console.warn('fitBounds deferred error:', err);
@@ -354,20 +543,25 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
         };
 
         if (markers.length > 0) {
-          // Use both 'load' and 'whenReady' to be extra sure on mobile
           const scheduleFit = () => {
             const id = window.setTimeout(() => safeFitBounds(0), 120);
             timeoutsRef.current.push(id);
           };
-          try { map.once('load', scheduleFit); } catch {}
-          try { map.whenReady(scheduleFit); } catch {}
+          try {
+            map.once('load', scheduleFit);
+          } catch {}
+          try {
+            map.whenReady(scheduleFit);
+          } catch {}
         }
 
-  mapInstanceRef.current = map;
-  // no-op
+        mapInstanceRef.current = map;
         setIsLoading(false);
         setError(null);
-        // Force map to recalculate size after mount and after properties change
+
+        // Force map to recalculate its size shortly after mount and whenever
+        // properties change.  Without this invalidation the map can appear
+        // misaligned in certain responsive layouts.
         {
           const id = window.setTimeout(() => {
             try {
@@ -377,7 +571,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
           timeoutsRef.current.push(id);
         }
 
-        // Keep map responsive to container size changes
+        // Keep the map responsive to container resizes and orientation changes.
         map.on('resize', () => {
           try {
             if (map.getPane?.('mapPane')) map.invalidateSize();
@@ -385,37 +579,39 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
         });
 
         const onWinResize = () => {
-          try { map.invalidateSize(); } catch {}
+          try {
+            map.invalidateSize();
+          } catch {}
         };
         window.addEventListener('resize', onWinResize);
         window.addEventListener('orientationchange', onWinResize);
-        // Store handler on map instance for cleanup
         (map as unknown as { __onWinResize?: () => void }).__onWinResize = onWinResize;
-
-      } catch (error) {
-        console.error('Map initialization error:', error);
+      } catch (initError) {
+        console.error('Map initialization error:', initError);
         setError('Failed to load map');
         setIsLoading(false);
       }
     };
 
-    // Debounce map initialization to prevent rapid re-initialization
+    // Debounce map initialization to avoid thrashing when properties change
     const timeoutId = window.setTimeout(initMap, 50);
     timeoutsRef.current.push(timeoutId);
 
     return () => {
       canceled = true;
-      // Clear scheduled timeouts
-      timeoutsRef.current.forEach(id => window.clearTimeout(id));
+      timeoutsRef.current.forEach((id) => window.clearTimeout(id));
       timeoutsRef.current = [];
       if (observerRef.current) {
-        try { observerRef.current.disconnect(); } catch {}
+        try {
+          observerRef.current.disconnect();
+        } catch {}
         observerRef.current = null;
       }
       clearTimeout(timeoutId);
       cleanupMap();
       try {
-        const handler = (mapInstanceRef.current as unknown as { __onWinResize?: () => void })?.__onWinResize;
+        const handler = (mapInstanceRef.current as unknown as { __onWinResize?: () => void })
+          ?.__onWinResize;
         if (handler) {
           window.removeEventListener('resize', handler);
           window.removeEventListener('orientationchange', handler);
@@ -424,51 +620,62 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
     };
   }, [properties, height, cleanupMap, retryCount]);
 
-  // Retry function for map initialization
+  // Retry button handler.  After three attempts the page will reload.
   const handleRetry = useCallback(() => {
     if (retryCount < 3) {
-      setRetryCount(prev => prev + 1);
+      setRetryCount((prev) => prev + 1);
       setError(null);
       setIsLoading(true);
-      // Generate new container ID to ensure fresh start
       containerIdRef.current = `map-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     } else {
-      // After 3 retries, reload the page
       window.location.reload();
     }
   }, [retryCount]);
 
+  // Render empty state when there are no properties.  Uses the translation
+  // helper defined in src/lib/i18n.ts.
   if (!Array.isArray(properties) || properties.length === 0) {
     return (
       <div className="w-full h-64 flex items-center justify-center bg-gray-100 rounded-lg border border-gray-200">
-        <span className="text-gray-500 text-sm">Nuk ka pasuri për të shfaqur në hartë.</span>
+        <span className="text-gray-500 text-sm">{t('noProperties')}</span>
       </div>
     );
   }
-  if (error) {
+
+  // Show fallback loader while the map is being initialized.
+  if (isLoading) {
     return (
-      <MapFallback 
-        properties={properties} 
-        height={height} 
-        onRetry={retryCount < 3 ? handleRetry : undefined}
-      />
+      <div className="w-full" style={{ minHeight: height }}>
+        <MapFallback />
+      </div>
     );
   }
-  return (
-    <div className="relative">
-      <div
-        ref={mapRef}
-        style={{ height }}
-        className="w-full rounded-lg border border-gray-200 overflow-hidden"
-      />
-      {isLoading && (
-        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center rounded-lg">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-            <div className="text-gray-600 text-sm">Loading map...</div>
-          </div>
+
+  // Display an error message with a retry option if initialization fails.
+  if (error) {
+    return (
+      <div className="w-full" style={{ minHeight: height }}>
+        <div className="flex flex-col items-center justify-center p-6 bg-red-50 text-red-700 rounded-lg border border-red-200">
+          <p className="mb-2"> {error} </p>
+          <button
+            onClick={handleRetry}
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+          >
+            Retry
+          </button>
         </div>
-      )}
-    </div>
+      </div>
+    );
+  }
+
+  // The map container; Leaflet will take over this element.  Note: an empty
+  // div is required for Leaflet to mount the map.
+  return (
+    <div
+      ref={mapRef}
+      id={containerIdRef.current}
+      className="relative w-full rounded-lg overflow-hidden"
+      style={{ height }}
+    ></div>
   );
 }
