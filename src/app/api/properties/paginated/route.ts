@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCachedData } from "@/lib/cache";
 
 export const dynamic = 'force-dynamic';
 
@@ -12,32 +13,38 @@ export async function GET(request: Request) {
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '18')));
     const skip = (page - 1) * limit;
 
+    const cacheKey = `properties-paginated-${page}-${limit}`;
+
     // Fetch properties and total count in parallel
-    const [properties, total] = await Promise.all([
-      prisma.property.findMany({
-        where: {
-          status: "ACTIVE"
-        },
-        include: {
-          owner: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
+    const [properties, total] = await getCachedData(
+      cacheKey,
+      () => Promise.all([
+        prisma.property.findMany({
+          where: {
+            status: "ACTIVE"
+          },
+          include: {
+            owner: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              }
             }
-          }
-        },
-        orderBy: [
-          { isPinned: "desc" }, // Pinned properties first
-          { createdAt: "desc" }
-        ],
-        skip,
-        take: limit,
-      }),
-      prisma.property.count({
-        where: { status: "ACTIVE" }
-      })
-    ]);
+          },
+          orderBy: [
+            { isPinned: "desc" }, // Pinned properties first
+            { createdAt: "desc" }
+          ],
+          skip,
+          take: limit,
+        }),
+        prisma.property.count({
+          where: { status: "ACTIVE" }
+        })
+      ]),
+      60000 // Cache for 1 minute
+    );
 
     const totalPages = Math.ceil(total / limit);
     const hasMore = page < totalPages;

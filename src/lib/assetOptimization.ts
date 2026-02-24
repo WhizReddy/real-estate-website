@@ -100,7 +100,7 @@ export async function compressImage(
     img.onload = () => {
       // Calculate new dimensions
       let { width, height } = img;
-      
+
       if (width > height) {
         if (width > maxWidth) {
           height = (height * maxWidth) / width;
@@ -207,10 +207,10 @@ export function registerServiceWorker() {
 
   window.addEventListener('load', async () => {
     try {
-      // Service worker registration temporarily disabled
-      console.log('SW registration disabled in assetOptimization.ts');
-      // const registration = await navigator.serviceWorker.register('/sw.js');
-      // console.log('SW registered: ', registration);
+      if (process.env.NODE_ENV === 'production') {
+        const registration = await navigator.serviceWorker.register('/sw.js');
+        console.log('SW registered: ', registration);
+      }
     } catch (registrationError) {
       console.log('SW registration failed: ', registrationError);
     }

@@ -1,10 +1,10 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { 
-  registerSW, 
-  isStandalone, 
-  isOnline, 
+import {
+  registerSW,
+  isStandalone,
+  isOnline,
   onNetworkChange,
   PWAUpdateManager,
   PushNotifications,
@@ -50,14 +50,14 @@ export default function PWAProvider({ children }: PWAProviderProps) {
   const initializePWA = async () => {
     // Check if app is installed
     setIsInstalled(isStandalone());
-    
+
     // Check initial online status
     setIsOnlineState(isOnline());
-    
+
     // Listen for network changes
     const cleanup = onNetworkChange((online) => {
       setIsOnlineState(online);
-      
+
       if (online) {
         // Sync offline data when back online
         syncOfflineData();
@@ -71,7 +71,7 @@ export default function PWAProvider({ children }: PWAProviderProps) {
         for (const registration of registrations) {
           await registration.unregister();
         }
-        
+
         // Also clear all caches
         if ('caches' in window) {
           const cacheNames = await caches.keys();
@@ -86,27 +86,27 @@ export default function PWAProvider({ children }: PWAProviderProps) {
       console.error('Failed to unregister service workers:', error);
     }
 
-    // Register service worker - TEMPORARILY DISABLED to fix navigation issues
-    // TODO: Re-enable after fixing service worker offline redirect logic
+    // Register service worker
     try {
-      // Service Worker registration is disabled in development
-      // const registration = await registerSW({
-      //   onUpdate: (reg) => {
-      //     PWAUpdateManager.init(reg);
-      //     setUpdateAvailable(true);
-      //   },
-      //   onSuccess: (reg) => {
-      //     PWAUpdateManager.init(reg);
-      //     console.log('Service Worker registered successfully');
-      //   },
-      //   onError: (error) => {
-      //     console.error('Service Worker registration failed:', error);
-      //   }
-      // });
+      if (process.env.NODE_ENV === 'production') {
+        const registration = await registerSW({
+          onUpdate: (reg) => {
+            PWAUpdateManager.init(reg);
+            setUpdateAvailable(true);
+          },
+          onSuccess: (reg) => {
+            PWAUpdateManager.init(reg);
+            console.log('Service Worker registered successfully');
+          },
+          onError: (error) => {
+            console.error('Service Worker registration failed:', error);
+          }
+        });
 
-      // if (registration) {
-      //   PWAUpdateManager.init(registration);
-      // }
+        if (registration) {
+          PWAUpdateManager.init(registration);
+        }
+      }
     } catch (error) {
       console.error('Failed to register service worker:', error);
     }
@@ -210,7 +210,7 @@ export default function PWAProvider({ children }: PWAProviderProps) {
   const subscribeToNotifications = async (): Promise<PushSubscription | null> => {
     try {
       const subscription = await PushNotifications.subscribe();
-      
+
       if (subscription) {
         // Send subscription to server
         await fetch('/api/notifications/subscribe', {
@@ -219,7 +219,7 @@ export default function PWAProvider({ children }: PWAProviderProps) {
           body: JSON.stringify(subscription)
         });
       }
-      
+
       return subscription;
     } catch (error) {
       console.error('Failed to subscribe to notifications:', error);
@@ -230,14 +230,14 @@ export default function PWAProvider({ children }: PWAProviderProps) {
   const unsubscribeFromNotifications = async (): Promise<boolean> => {
     try {
       const success = await PushNotifications.unsubscribe();
-      
+
       if (success) {
         // Notify server about unsubscription
         await fetch('/api/notifications/unsubscribe', {
           method: 'POST'
         });
       }
-      
+
       return success;
     } catch (error) {
       console.error('Failed to unsubscribe from notifications:', error);
@@ -266,7 +266,7 @@ export default function PWAProvider({ children }: PWAProviderProps) {
 // Hook for offline functionality
 export function useOffline() {
   const { isOnline } = usePWA();
-  
+
   const saveForLater = (key: string, data: unknown) => {
     if (!isOnline) {
       OfflineStorage.setItem(key, data);
@@ -274,11 +274,11 @@ export function useOffline() {
     }
     return false;
   };
-  
+
   const getOfflineData = (key: string, maxAge?: number) => {
     return OfflineStorage.getItem(key, maxAge);
   };
-  
+
   const clearOfflineData = (key?: string) => {
     if (key) {
       OfflineStorage.removeItem(key);
@@ -286,7 +286,7 @@ export function useOffline() {
       OfflineStorage.clear();
     }
   };
-  
+
   return {
     isOnline,
     saveForLater,
@@ -346,12 +346,12 @@ export function usePWAInstall() {
 
 // Hook for push notifications
 export function usePushNotifications() {
-  const { 
-    requestNotificationPermission, 
-    subscribeToNotifications, 
-    unsubscribeFromNotifications 
+  const {
+    requestNotificationPermission,
+    subscribeToNotifications,
+    unsubscribeFromNotifications
   } = usePWA();
-  
+
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [subscription, setSubscription] = useState<PushSubscription | null>(null);
 

@@ -1,20 +1,25 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCachedData } from "@/lib/cache";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 60; // Cache for 60 seconds
 
 export async function GET() {
   try {
-    const properties = await prisma.property.findMany({
-      where: {
-        status: "ACTIVE",
-      },
-      orderBy: [
-        { isPinned: "desc" }, // Pinned properties first
-        { createdAt: "desc" }, // Then by creation date
-      ],
-    });
+    const properties = await getCachedData(
+      'properties-active-all',
+      () => prisma.property.findMany({
+        where: {
+          status: "ACTIVE",
+        },
+        orderBy: [
+          { isPinned: "desc" }, // Pinned properties first
+          { createdAt: "desc" }, // Then by creation date
+        ],
+      }),
+      60000
+    );
 
     // Transform the data to match the expected format
     const transformedProperties = properties.map((property) => ({

@@ -253,16 +253,16 @@ export function generateImageSrcSet(
 export function registerServiceWorker() {
   if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      // Service worker registration temporarily disabled
-      console.log('SW registration disabled in performance-optimizations.ts');
-      // navigator.serviceWorker
-      //   .register('/sw.js')
-      //   .then(registration => {
-      //     console.log('SW registered: ', registration);
-      //   })
-      //   .catch(registrationError => {
-      //     console.log('SW registration failed: ', registrationError);
-      //   });
+      if (process.env.NODE_ENV === 'production') {
+        navigator.serviceWorker
+          .register('/sw.js')
+          .then(registration => {
+            console.log('SW registered: ', registration);
+          })
+          .catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      }
     });
   }
 }
