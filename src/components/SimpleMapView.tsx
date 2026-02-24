@@ -214,7 +214,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
         });
         try {
           map.zoomControl?.setPosition('bottomleft');
-        } catch {}
+        } catch { }
 
         // Define multiple tile providers, including satellite imagery.  If a
         // provider fails to load tiles, the component will automatically
@@ -247,7 +247,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
           if (tileLayerRef.current) {
             try {
               map.removeLayer(tileLayerRef.current);
-            } catch {}
+            } catch { }
             tileLayerRef.current = null;
           }
           const tl = L.tileLayer(spec.url, {
@@ -264,7 +264,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
             errCount += 1;
             try {
               map.invalidateSize();
-            } catch {}
+            } catch { }
             if (errCount >= 3 && providerIndexRef.current + 1 < providers.length) {
               providerIndexRef.current += 1;
               attachTiles(providerIndexRef.current);
@@ -276,25 +276,27 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
         // Add a toggle control that cycles through tile providers.  The control
         // appears in the top-right corner of the map and uses a simple emoji
         // to indicate map switching.
-        const toggleControl = L.control({ position: 'topright' });
-        toggleControl.onAdd = function () {
-          const button = L.DomUtil.create('button', 'leaflet-bar');
-          button.innerHTML = '🗺️';
-          button.title = 'Switch map view';
-          button.style.backgroundColor = '#2563eb';
-          button.style.color = '#fff';
-          button.style.padding = '4px 8px';
-          button.style.border = 'none';
-          button.style.cursor = 'pointer';
-          L.DomEvent.on(button, 'click', (e: any) => {
-            L.DomEvent.stopPropagation(e);
-            L.DomEvent.preventDefault(e);
-            providerIndexRef.current = (providerIndexRef.current + 1) % providers.length;
-            attachTiles(providerIndexRef.current);
-          });
-          return button;
-        };
-        toggleControl.addTo(map);
+        const ToggleControl = L.Control.extend({
+          options: { position: 'topright' },
+          onAdd: function () {
+            const button = L.DomUtil.create('button', 'leaflet-bar');
+            button.innerHTML = '🗺️';
+            button.title = 'Switch map view';
+            button.style.backgroundColor = '#2563eb';
+            button.style.color = '#fff';
+            button.style.padding = '4px 8px';
+            button.style.border = 'none';
+            button.style.cursor = 'pointer';
+            L.DomEvent.on(button, 'click', (e: any) => {
+              L.DomEvent.stopPropagation(e);
+              L.DomEvent.preventDefault(e);
+              providerIndexRef.current = (providerIndexRef.current + 1) % providers.length;
+              attachTiles(providerIndexRef.current);
+            });
+            return button;
+          }
+        });
+        new ToggleControl().addTo(map);
 
         // Filter out any properties lacking valid coordinates.  Invalid values
         // cause Leaflet errors if passed directly to markers.
@@ -385,7 +387,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
               marker.on('click', () => {
                 try {
                   map.setView([coords.lat, coords.lng], Math.min(map.getZoom() + 3, 18));
-                } catch {}
+                } catch { }
               });
               markers.push(marker);
             } else {
@@ -435,7 +437,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
               marker.on('click', () => {
                 try {
                   map.setView([cluster.lat, cluster.lng], Math.min(map.getZoom() + 2, 18));
-                } catch {}
+                } catch { }
               });
               markers.push(marker);
             }
@@ -489,7 +491,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
               marker.on('click', () => {
                 try {
                   map.setView([coords.lat, coords.lng], Math.min(map.getZoom() + 3, 18));
-                } catch {}
+                } catch { }
               });
               markers.push(marker);
             } catch (markerError) {
@@ -519,7 +521,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
               try {
                 const hasPane = !!map.getPane?.('mapPane');
                 if (hasPane) map.invalidateSize();
-              } catch {}
+              } catch { }
               requestAnimationFrame(() => {
                 if (canceled) return;
                 try {
@@ -549,10 +551,10 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
           };
           try {
             map.once('load', scheduleFit);
-          } catch {}
+          } catch { }
           try {
             map.whenReady(scheduleFit);
-          } catch {}
+          } catch { }
         }
 
         mapInstanceRef.current = map;
@@ -566,7 +568,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
           const id = window.setTimeout(() => {
             try {
               if (map && map.getPane?.('mapPane')) map.invalidateSize();
-            } catch {}
+            } catch { }
           }, 200);
           timeoutsRef.current.push(id);
         }
@@ -575,13 +577,13 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
         map.on('resize', () => {
           try {
             if (map.getPane?.('mapPane')) map.invalidateSize();
-          } catch {}
+          } catch { }
         });
 
         const onWinResize = () => {
           try {
             map.invalidateSize();
-          } catch {}
+          } catch { }
         };
         window.addEventListener('resize', onWinResize);
         window.addEventListener('orientationchange', onWinResize);
@@ -604,7 +606,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
       if (observerRef.current) {
         try {
           observerRef.current.disconnect();
-        } catch {}
+        } catch { }
         observerRef.current = null;
       }
       clearTimeout(timeoutId);
@@ -616,7 +618,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
           window.removeEventListener('resize', handler);
           window.removeEventListener('orientationchange', handler);
         }
-      } catch {}
+      } catch { }
     };
   }, [properties, height, cleanupMap, retryCount]);
 
@@ -646,7 +648,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
   if (isLoading) {
     return (
       <div className="w-full" style={{ minHeight: height }}>
-        <MapFallback />
+        <MapFallback properties={properties} />
       </div>
     );
   }
