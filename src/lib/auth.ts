@@ -3,7 +3,6 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { env } from "@/lib/env";
 
 // Password hashing utilities
 export async function hashPassword(password: string): Promise<string> {
@@ -73,7 +72,7 @@ export const authOptions: NextAuthOptions = {
           };
         } catch (error) {
           console.error("Authentication error:", error);
-          
+
           // Fallback demo credentials if database is not available
           if (credentials.email === "admin@example.com" && credentials.password === "admin123") {
             return {
@@ -83,7 +82,7 @@ export const authOptions: NextAuthOptions = {
               role: "admin",
             };
           }
-          
+
           return null;
         }
       }
@@ -125,6 +124,6 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/signin",
     error: "/auth/error",
   },
-  secret: env.NEXTAUTH_SECRET,
-  debug: !env.NODE_ENV || env.NODE_ENV === "development",
+  secret: process.env.NEXTAUTH_SECRET || 'dev-secret-change-in-production-minimum-32-chars',
+  debug: process.env.NODE_ENV === 'development',
 };

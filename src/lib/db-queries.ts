@@ -63,7 +63,8 @@ export async function getPropertyDirect(id: string): Promise<Property | null> {
         return transformProperty(property);
     } catch (error) {
         console.error('Failed to fetch property directly from DB:', error);
-        return null;
+        // Re-throw so the page shows a proper error, not a silent 404
+        throw error;
     }
 }
 
