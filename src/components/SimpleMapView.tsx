@@ -273,20 +273,30 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
         };
         attachTiles(0);
 
-        // Add a toggle control that cycles through tile providers.  The control
-        // appears in the top-right corner of the map and uses a simple emoji
-        // to indicate map switching.
+        // Add a toggle control that cycles through tile providers.
+        // The control appears in the top-right corner of the map and uses
+        // a custom styled button to match the application's blue theme.
         const ToggleControl = L.Control.extend({
           options: { position: 'topright' },
           onAdd: function () {
             const button = L.DomUtil.create('button', 'leaflet-bar');
+            // Use a map emoji to hint at switching layers; localize the title.
             button.innerHTML = '🗺️';
-            button.title = 'Switch map view';
+            button.title = t('switchMap');
+            // Apply custom styling for cohesion with the site's design.
             button.style.backgroundColor = '#2563eb';
             button.style.color = '#fff';
-            button.style.padding = '4px 8px';
+            button.style.padding = '6px';
             button.style.border = 'none';
+            button.style.borderRadius = '6px';
+            button.style.width = '32px';
+            button.style.height = '32px';
+            button.style.lineHeight = '20px';
+            button.style.display = 'flex';
+            button.style.alignItems = 'center';
+            button.style.justifyContent = 'center';
             button.style.cursor = 'pointer';
+            // On click, cycle to the next provider in the list
             L.DomEvent.on(button, 'click', (e: any) => {
               L.DomEvent.stopPropagation(e);
               L.DomEvent.preventDefault(e);
@@ -297,6 +307,40 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
           }
         });
         new ToggleControl().addTo(map);
+
+        // Add a Home control that resets the map view to the default center (Tirana).
+        const HomeControl = L.Control.extend({
+          options: { position: 'topright' },
+          onAdd: function () {
+            const button = L.DomUtil.create('button', 'leaflet-bar');
+            // Use a house emoji; localize the title.
+            button.innerHTML = '🏠';
+            button.title = t('home');
+            button.style.backgroundColor = '#2563eb';
+            button.style.color = '#fff';
+            button.style.padding = '6px';
+            button.style.border = 'none';
+            button.style.borderRadius = '6px';
+            button.style.width = '32px';
+            button.style.height = '32px';
+            button.style.lineHeight = '20px';
+            button.style.display = 'flex';
+            button.style.alignItems = 'center';
+            button.style.justifyContent = 'center';
+            button.style.marginLeft = '4px';
+            button.style.cursor = 'pointer';
+            L.DomEvent.on(button, 'click', (e: any) => {
+              L.DomEvent.stopPropagation(e);
+              L.DomEvent.preventDefault(e);
+              // Reset map to Tirana coordinates with a moderate zoom level
+              try {
+                map.setView([41.3275, 19.8187], 13);
+              } catch { }
+            });
+            return button;
+          }
+        });
+        new HomeControl().addTo(map);
 
         // Filter out any properties lacking valid coordinates.  Invalid values
         // cause Leaflet errors if passed directly to markers.
