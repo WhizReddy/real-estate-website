@@ -153,13 +153,12 @@ export default function Home() {
           <div className="absolute inset-0">
             <img
               src="/images/albania-hero.png"
-              alt=""
+              alt="Albania aerial view"
               className="w-full h-full object-cover"
             />
-            {/* Gradient overlays to blend into page on all sides */}
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-900/40 to-slate-900/60" />
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent to-slate-900/50" />
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 to-transparent" />
+            {/* Light overlay for text readability - keep the blue tones visible */}
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-900/70 via-slate-900/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/40 via-transparent to-gray-50" />
           </div>
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
