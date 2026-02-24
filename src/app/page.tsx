@@ -146,34 +146,44 @@ export default function Home() {
       <StructuredData type="website" />
       <StructuredData type="organization" />
 
-      {/* Hero with Albania background */}
+      {/* Premium Gradient Hero - No Photo */}
       <div className="w-full relative">
-        <section
-          className="relative overflow-hidden min-h-[620px] flex items-center"
-          style={{
-            backgroundImage: `
-              linear-gradient(to bottom, rgba(15,23,42,0.45) 0%, rgba(15,23,42,0.05) 50%, rgba(248,250,252,0.95) 100%),
-              linear-gradient(to right, rgba(15,23,42,0.65) 0%, rgba(15,23,42,0.15) 55%, transparent 100%),
-              url('/images/albania-hero.png')
-            `,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-          }}
+        <section className="relative overflow-hidden min-h-[640px] flex items-center"
+          style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #1e40af 75%, #0f172a 100%)' }}
         >
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
+          {/* Animated glowing orbs */}
+          <div className="absolute top-[-80px] left-[-80px] w-[500px] h-[500px] rounded-full opacity-20"
+            style={{ background: 'radial-gradient(circle, #3b82f6 0%, transparent 70%)', animation: 'pulse 8s ease-in-out infinite' }} />
+          <div className="absolute bottom-[-100px] right-[-50px] w-[600px] h-[600px] rounded-full opacity-15"
+            style={{ background: 'radial-gradient(circle, #60a5fa 0%, transparent 70%)', animation: 'pulse 10s ease-in-out infinite reverse' }} />
+          <div className="absolute top-[30%] right-[20%] w-[300px] h-[300px] rounded-full opacity-10"
+            style={{ background: 'radial-gradient(circle, #93c5fd 0%, transparent 70%)' }} />
+
+          {/* Subtle dot grid pattern */}
+          <div className="absolute inset-0 opacity-10"
+            style={{ backgroundImage: 'radial-gradient(circle, #94a3b8 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+
+          {/* City skyline SVG at the bottom */}
+          <div className="absolute bottom-0 left-0 right-0 opacity-15">
+            <svg viewBox="0 0 1440 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full h-40">
+              <path fill="#60a5fa" d="M0,200 L0,140 L40,140 L40,120 L60,120 L60,100 L80,100 L80,120 L100,120 L100,80 L110,80 L110,60 L120,60 L120,80 L130,80 L130,120 L150,120 L150,140 L170,140 L170,100 L185,100 L185,70 L195,70 L195,100 L210,100 L210,130 L230,130 L230,110 L245,110 L245,90 L255,90 L255,110 L270,110 L270,130 L300,130 L300,150 L320,150 L320,120 L340,120 L340,90 L355,90 L355,70 L365,70 L365,50 L375,50 L375,70 L385,70 L385,90 L400,90 L400,120 L420,120 L420,140 L450,140 L450,110 L470,110 L470,85 L480,85 L480,110 L500,110 L500,130 L530,130 L530,150 L560,150 L560,120 L580,120 L580,95 L595,95 L595,75 L605,75 L605,55 L615,55 L615,75 L625,75 L625,95 L640,95 L640,120 L660,120 L660,140 L690,140 L690,115 L710,115 L710,90 L725,90 L725,115 L745,115 L745,130 L770,130 L770,150 L800,150 L800,125 L820,125 L820,100 L835,100 L835,80 L845,80 L845,60 L855,60 L855,80 L865,80 L865,100 L880,100 L880,125 L900,125 L900,140 L930,140 L930,115 L950,115 L950,95 L960,95 L960,115 L975,115 L975,130 L1000,130 L1000,150 L1030,150 L1030,120 L1050,120 L1050,100 L1065,100 L1065,80 L1075,80 L1075,100 L1090,100 L1090,120 L1110,120 L1110,140 L1140,140 L1140,110 L1160,110 L1160,90 L1175,90 L1175,110 L1195,110 L1195,130 L1220,130 L1220,150 L1250,150 L1250,125 L1270,125 L1270,105 L1285,105 L1285,85 L1295,85 L1295,65 L1305,65 L1305,85 L1315,85 L1315,105 L1330,105 L1330,125 L1350,125 L1350,140 L1380,140 L1380,160 L1440,160 L1440,200 Z" />
+            </svg>
+          </div>
+
+          {/* Content */}
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center px-4 py-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-sm font-semibold mb-6">
+              <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-blue-200 text-sm font-semibold mb-6">
                 <HomeIcon className="h-4 w-4 mr-2" />
                 Agjencia Ekskluzive e Tiranës
               </div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight drop-shadow-lg">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight">
                 Gjeni Shtëpinë Tuaj të{" "}
-                <span className="text-blue-400">
+                <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(90deg, #60a5fa, #a78bfa)' }}>
                   Përsosur
                 </span>
               </h1>
-              <p className="text-lg sm:text-xl text-white/85 mb-10 leading-relaxed max-w-lg drop-shadow">
+              <p className="text-lg sm:text-xl text-blue-100/80 mb-10 leading-relaxed max-w-lg">
                 Zbulimi i pasurive premium në lokacionet më të kërkuara të Tiranës.
                 Shërbim elitar për klientë që kërkojnë përsosmërinë.
               </p>
@@ -181,33 +191,31 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-start gap-4">
                 <a
                   href="#properties"
-                  className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-500 transition-all shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full sm:w-auto px-8 py-4 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-400 transition-all shadow-lg shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Shiko Shpalljet
                 </a>
                 <Link
                   href="/map"
-                  className="w-full sm:w-auto px-8 py-4 bg-white/15 backdrop-blur-sm text-white font-bold rounded-xl border border-white/30 hover:bg-white/25 transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-bold rounded-xl border border-white/25 hover:bg-white/20 transition-all flex items-center justify-center gap-2"
                 >
                   <Map className="h-5 w-5" />
                   Harta Interaktive
                 </Link>
               </div>
 
-              {/* Trust badges */}
-              <div className="mt-14 flex gap-10">
-                <div>
-                  <div className="text-2xl font-bold text-white drop-shadow">{allProperties.length}+</div>
-                  <div className="text-sm text-white/70">Pasuri Aktive</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-white drop-shadow">5★</div>
-                  <div className="text-sm text-white/70">Besueshmëri</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-white drop-shadow">24/7</div>
-                  <div className="text-sm text-white/70">Mbështetje</div>
-                </div>
+              {/* Trust badges — glassmorphism cards */}
+              <div className="mt-14 flex gap-4">
+                {[
+                  { value: `${allProperties.length}+`, label: 'Pasuri Aktive' },
+                  { value: '5★', label: 'Besueshmëri' },
+                  { value: '24/7', label: 'Mbështetje' },
+                ].map((badge) => (
+                  <div key={badge.label} className="px-5 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15">
+                    <div className="text-xl font-bold text-white">{badge.value}</div>
+                    <div className="text-xs text-blue-200/70">{badge.label}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
