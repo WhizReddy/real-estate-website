@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 60; // Cache for 60 seconds
 
 export async function GET() {
@@ -53,9 +54,9 @@ export async function GET() {
       updatedAt: property.updatedAt.toISOString(),
     }));
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       properties: transformedProperties,
-      count: transformedProperties.length 
+      count: transformedProperties.length
     });
   } catch (error) {
     console.error("Error fetching active properties:", error);

@@ -6,6 +6,8 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { resolveAuthenticatedDbUser } from "@/lib/serverAuth";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const properties = await prisma.property.findMany({
@@ -29,47 +31,47 @@ export async function GET() {
       const owner = property.owner;
 
       return {
-      id: property.id,
-      title: property.title,
-      description: property.description,
-      price: property.price,
-      address: {
-        street: property.street,
-        city: property.city,
-        state: property.state,
-        zipCode: property.zipCode,
-        coordinates: {
-          lat: property.latitude,
-          lng: property.longitude,
+        id: property.id,
+        title: property.title,
+        description: property.description,
+        price: property.price,
+        address: {
+          street: property.street,
+          city: property.city,
+          state: property.state,
+          zipCode: property.zipCode,
+          coordinates: {
+            lat: property.latitude,
+            lng: property.longitude,
+          },
         },
-      },
-      details: {
-        bedrooms: property.bedrooms,
-        bathrooms: property.bathrooms,
-        squareFootage: property.squareFootage,
-        propertyType: property.propertyType.toLowerCase(),
-        yearBuilt: property.yearBuilt,
-      },
-      images: JSON.parse(property.images || "[]"),
-      features: JSON.parse(property.features || "[]"),
-      status: property.status.toLowerCase(),
-      listingType: property.listingType.toLowerCase(),
-      isPinned: property.isPinned,
-      agent: owner
-        ? {
+        details: {
+          bedrooms: property.bedrooms,
+          bathrooms: property.bathrooms,
+          squareFootage: property.squareFootage,
+          propertyType: property.propertyType.toLowerCase(),
+          yearBuilt: property.yearBuilt,
+        },
+        images: JSON.parse(property.images || "[]"),
+        features: JSON.parse(property.features || "[]"),
+        status: property.status.toLowerCase(),
+        listingType: property.listingType.toLowerCase(),
+        isPinned: property.isPinned,
+        agent: owner
+          ? {
             id: owner.id,
             name: owner.name ?? 'Agjent i Pasurive',
             email: owner.email,
             role: owner.role.toLowerCase(),
           }
-        : {
+          : {
             id: 'default-agent',
             name: 'Real Estate Agent',
             email: 'agent@realestate-tirana.al',
             role: 'agent',
           },
-      createdAt: property.createdAt.toISOString(),
-      updatedAt: property.updatedAt.toISOString(),
+        createdAt: property.createdAt.toISOString(),
+        updatedAt: property.updatedAt.toISOString(),
       };
     });
 
@@ -201,17 +203,17 @@ export async function POST(request: NextRequest) {
       isPinned: property.isPinned,
       agent: property.owner
         ? {
-            id: property.owner.id,
-            name: property.owner.name ?? 'Agjent i Pasurive',
-            email: property.owner.email,
-            role: property.owner.role.toLowerCase(),
-          }
+          id: property.owner.id,
+          name: property.owner.name ?? 'Agjent i Pasurive',
+          email: property.owner.email,
+          role: property.owner.role.toLowerCase(),
+        }
         : {
-            id: 'default-agent',
-            name: 'Real Estate Agent',
-            email: 'agent@realestate-tirana.al',
-            role: 'agent',
-          },
+          id: 'default-agent',
+          name: 'Real Estate Agent',
+          email: 'agent@realestate-tirana.al',
+          role: 'agent',
+        },
       createdAt: property.createdAt.toISOString(),
       updatedAt: property.updatedAt.toISOString(),
     };
@@ -222,7 +224,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error creating property:", error);
-    
+
     // Handle specific database errors
     if (error instanceof Error) {
       if (error.message.includes('Unique constraint')) {
@@ -239,7 +241,7 @@ export async function POST(request: NextRequest) {
           { status: 409 }
         );
       }
-      
+
       if (error.message.includes('Foreign key constraint')) {
         return NextResponse.json(
           {

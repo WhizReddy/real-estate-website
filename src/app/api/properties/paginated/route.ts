@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Parse pagination params with safe defaults
     const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '18')));
@@ -13,7 +15,7 @@ export async function GET(request: Request) {
     // Fetch properties and total count in parallel
     const [properties, total] = await Promise.all([
       prisma.property.findMany({
-        where: { 
+        where: {
           status: "ACTIVE"
         },
         include: {
@@ -32,8 +34,8 @@ export async function GET(request: Request) {
         skip,
         take: limit,
       }),
-      prisma.property.count({ 
-        where: { status: "ACTIVE" } 
+      prisma.property.count({
+        where: { status: "ACTIVE" }
       })
     ]);
 
@@ -101,8 +103,8 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("Error fetching paginated properties:", error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: "Failed to fetch properties",
         properties: [],
         pagination: {
