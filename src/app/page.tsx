@@ -146,8 +146,8 @@ export default function Home() {
       <StructuredData type="website" />
       <StructuredData type="organization" />
 
-      {/* Refined Premium Light Hero */}
-      <div className="w-full relative bg-white">
+      {/* Refined Premium Hero with Gradient */}
+      <div className="w-full relative bg-gradient-to-b from-blue-50 via-white to-white">
         <section className="relative overflow-hidden pt-16 pb-24 sm:pt-20 sm:pb-32">
           {/* Subtle Background Pattern */}
           <div className="absolute inset-0 opacity-[0.03]">

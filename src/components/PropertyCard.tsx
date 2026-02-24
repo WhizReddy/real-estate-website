@@ -74,18 +74,19 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
         </div>
 
         {/* Property Details */}
-        <div className="p-5 sm:p-6 flex flex-col flex-1 h-full">
-          <div className="flex justify-between items-start mb-2 gap-3">
-            <h3 className="text-lg sm:text-xl font-extrabold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors duration-300">
+        <div className="p-5 sm:p-6 flex flex-col flex-1">
+          {/* Price - prominent, full width */}
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="text-base font-bold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors duration-300 flex-1 mr-2">
               {property.title}
             </h3>
-            <span className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700 whitespace-nowrap tracking-tight">
+            <span className="text-lg sm:text-xl font-black text-blue-700 whitespace-nowrap">
               {formatPrice(property.price)}
             </span>
           </div>
 
-          <div className="flex items-center text-gray-500 text-sm mb-4">
-            <MapPin className="h-4 w-4 mr-1.5 flex-shrink-0" />
+          <div className="flex items-center text-gray-500 text-xs mb-3">
+            <MapPin className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
             <span className="line-clamp-1 font-medium">{formatAddress(property.address)}</span>
           </div>
 
