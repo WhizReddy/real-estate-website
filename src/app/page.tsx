@@ -146,19 +146,22 @@ export default function Home() {
       <StructuredData type="website" />
       <StructuredData type="organization" />
 
-      {/* Clean Bright Hero */}
-      <div className="w-full relative bg-gradient-to-b from-white via-blue-50/50 to-gray-50">
+      {/* Hero - Soft Blue flowing gradient */}
+      <div className="w-full relative bg-gradient-to-b from-blue-50 via-blue-100/70 to-gray-100">
         <section className="relative overflow-hidden pt-16 pb-24 sm:pt-20 sm:pb-32">
+          {/* Soft decorative circles */}
+          <div className="absolute top-10 left-10 w-72 h-72 bg-blue-200/30 rounded-full blur-[100px]" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-200/20 rounded-full blur-[120px]" />
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-4xl mx-auto">
-              <div className="inline-flex items-center px-4 py-2 bg-blue-100 rounded-full text-blue-700 text-sm font-semibold mb-6">
+              <div className="inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm border border-blue-200 rounded-full text-blue-700 text-sm font-semibold mb-6 shadow-sm">
                 <HomeIcon className="h-4 w-4 mr-2" />
                 Agjencia Ekskluzive e Tiranës
               </div>
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-[1.15] tracking-tight">
                 Gjeni Shtëpinë Tuaj të{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-400 italic">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500 italic">
                   Përsosur
                 </span>
               </h1>
@@ -170,13 +173,13 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a
                   href="#properties"
-                  className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/25 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Shiko Shpalljet
                 </a>
                 <Link
                   href="/map"
-                  className="w-full sm:w-auto px-8 py-4 bg-white text-gray-700 font-bold rounded-2xl border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all flex items-center justify-center gap-2 shadow-sm"
+                  className="w-full sm:w-auto px-8 py-4 bg-white/80 backdrop-blur-sm text-gray-700 font-bold rounded-2xl border border-gray-200 hover:border-blue-300 hover:bg-white transition-all flex items-center justify-center gap-2 shadow-sm"
                 >
                   <Map className="h-5 w-5 text-blue-600" />
                   Harta Interaktive
@@ -184,7 +187,7 @@ export default function Home() {
               </div>
 
               {/* Trust badges */}
-              <div className="mt-16 pt-8 border-t border-gray-200 grid grid-cols-3 gap-8">
+              <div className="mt-16 pt-8 border-t border-blue-200/50 grid grid-cols-3 gap-8">
                 <div>
                   <div className="text-2xl font-bold text-gray-900">{allProperties.length}+</div>
                   <div className="text-sm text-gray-500">Pasuri Aktive</div>
@@ -202,8 +205,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Search Section Transition */}
-        <div className="bg-slate-50 relative pb-20">
+        {/* Properties Section - flowing gradient continues */}
+        <div className="bg-gradient-to-b from-gray-100 via-gray-50 to-slate-100 relative pb-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20">
             <DynamicSearchFilters
               properties={allProperties}
@@ -250,54 +253,54 @@ export default function Home() {
           </section>
         </div>
 
-        {/* Contact Section - Bright Clean Style */}
-        <section id="contact" className="bg-blue-50 py-20 overflow-hidden">
+        {/* Contact Section - transitions into dark footer */}
+        <section id="contact" className="bg-gradient-to-b from-slate-100 via-slate-700 to-slate-900 pt-20 pb-20 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
-                <div className="inline-flex items-center px-3 py-1 bg-blue-100 rounded-full text-blue-700 text-xs font-semibold mb-4">
+                <div className="inline-flex items-center px-3 py-1 bg-blue-500/20 border border-blue-400/30 rounded-full text-blue-300 text-xs font-semibold mb-4">
                   Kontaktoni
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">Gati për të Lëvizur?</h2>
-                <p className="text-gray-600 text-lg mb-8 max-w-md">
+                <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">Gati për të Lëvizur?</h2>
+                <p className="text-slate-300 text-lg mb-8 max-w-md">
                   Ekipi ynë i ekspertëve është gati t&apos;ju ndihmojë në çdo hap të procesit të pasurive të patundshme.
                 </p>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-200 shadow-sm">
+                  <div className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl border border-white/10 backdrop-blur-sm">
                     <div className="p-3 bg-blue-600 rounded-xl text-white">
                       <Phone className="h-6 w-6" />
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500">Na telefononi</div>
-                      <div className="font-bold text-gray-900">+355 69 123 4567</div>
+                      <div className="text-sm text-slate-400">Na telefononi</div>
+                      <div className="font-bold text-white">+355 69 123 4567</div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-xl relative">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Na Kontaktoni</h3>
-                <p className="text-gray-500 mb-6 text-sm">
+              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 shadow-2xl relative">
+                <h3 className="text-xl font-bold text-white mb-2">Na Kontaktoni</h3>
+                <p className="text-slate-300 mb-6 text-sm">
                   Na tregoni se çfarë po kërkoni dhe ne do t&apos;ju kontaktojmë me ofertat më të mira.
                 </p>
                 <div className="space-y-4 mb-6">
                   <input
                     type="text"
                     placeholder="Emri juaj"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all"
                   />
                   <input
                     type="email"
                     placeholder="Email-i juaj"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all"
                   />
                   <textarea
                     placeholder="Mesazhi juaj..."
                     rows={3}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all resize-none"
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all resize-none"
                   />
                 </div>
                 <button
-                  className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-center transition-all hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-600/20"
+                  className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-center transition-all hover:bg-blue-500 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-600/30"
                 >
                   Dërgo Mesazh
                 </button>

@@ -30,7 +30,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-[100] shadow-sm">
+    <nav className="bg-blue-50/90 backdrop-blur-md border-b border-blue-100 sticky top-0 z-[100] shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-18">
           {/* Logo */}
@@ -100,7 +100,7 @@ export default function Navigation() {
 
       {/* Mobile menu */}
       <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'}`}>
-        <div className="px-4 pt-4 pb-6 space-y-2 bg-white border-t border-gray-100">
+        <div className="px-4 pt-4 pb-6 space-y-2 bg-blue-50 border-t border-blue-100">
           {navigation.map((item) => {
             const Icon = item.icon;
             return (
