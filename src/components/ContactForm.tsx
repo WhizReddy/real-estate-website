@@ -97,7 +97,7 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
 
   if (isSubmitted) {
     return (
-      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-[var(--spacing-xl)] text-center">
+      <div className="card p-[var(--spacing-xl)] text-center">
         <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-[var(--spacing-md)]">
           <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
         </div>
@@ -116,7 +116,7 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
   }
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-[var(--spacing-xl)] sticky top-6">
+    <div className="card p-[var(--spacing-xl)] sticky top-6">
       <div className="flex items-center mb-[var(--spacing-md)]">
         <MessageCircle className="h-6 w-6 text-[var(--primary)] mr-2" />
         <h3 className="text-[var(--text-scale-h3)] font-semibold text-slate-900 dark:text-white">{t('contactAgent')}</h3>

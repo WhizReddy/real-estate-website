@@ -15,7 +15,7 @@ const InquirySchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Build filter conditions
     const where: any = {};
 
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate the request body
     const validatedData = InquirySchema.parse(body);
 
@@ -112,13 +112,16 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // TODO: Send email notification to agent
-    // This would be implemented in a separate email service
+    // Simulate email notification to agent
+    console.log(`[EMAIL DISPATCH] New inquiry mapped to DB.`);
+    console.log(`          To: agent@realestate-app.com`);
+    console.log(`     Subject: New inquiry from ${inquiry.name} for property ${inquiry.property?.title}`);
+    console.log(`============ END MOCK EMAIL ============`);
 
     return NextResponse.json(inquiry, { status: 201 });
   } catch (error) {
     console.error('Error creating inquiry:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation failed', details: error.errors },

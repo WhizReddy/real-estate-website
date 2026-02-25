@@ -116,7 +116,7 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                                     Përsosur
                                 </span>
                             </h1>
-                            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 mb-10 leading-relaxed max-w-2xl mx-auto">
+                            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 mb-10 leading-relaxed w-full px-4 sm:px-0 sm:max-w-2xl mx-auto">
                                 Zbulimi i pasurive premium në lokacionet më të kërkuara të Tiranës.
                                 Shërbim elitar për klientë që kërkojnë përsosmërinë.
                             </p>
