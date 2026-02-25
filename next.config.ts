@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Don't transpile leaflet - it should only run client-side
   transpilePackages: [],
-  
+
   images: {
     remotePatterns: [
       {
@@ -22,18 +22,17 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60 * 60 * 24 * 365, // 1 year
   },
-  
+
   // Performance optimizations
   compress: true,
   poweredByHeader: false,
   generateEtags: true,
-  
+
   // Experimental features for Next.js 15 with Turbopack optimizations
   experimental: {
-    optimizeCss: true,
     optimizePackageImports: ['lucide-react'],
   },
-  
+
   // Webpack configuration for fallback when Turbopack fails
   webpack: (config, { dev, isServer }) => {
     if (isServer) {
@@ -51,7 +50,7 @@ const nextConfig: NextConfig = {
         };
       }
     }
-    
+
     // Fix for chunk loading issues
     if (!isServer) {
       config.resolve.fallback = {
@@ -61,10 +60,10 @@ const nextConfig: NextConfig = {
         tls: false,
       };
     }
-    
+
     return config;
   },
-  
+
   // Headers for better caching and security
   async headers() {
     return [
