@@ -110,7 +110,7 @@ export default function SearchResults({
 function NoResultsMessage({ searchTerm }: { searchTerm?: string }) {
   return (
     <div className="text-center py-16 card shadow-sm">
-      <div className="max-w-md mx-auto">
+      <div className="w-full px-4 sm:px-0 sm:max-w-md mx-auto">
         <div className="mb-6">
           <Search className="h-16 w-16 text-gray-300  mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">

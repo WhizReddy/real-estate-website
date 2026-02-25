@@ -22,7 +22,7 @@ export default function ContactPage() {
                         Kthehu në Kryesore
                     </Link>
                     <h1 className="text-4xl font-bold text-[var(--foreground)] mb-2">Na Kontaktoni</h1>
-                    <p className="text-[var(--foreground)] opacity-80 text-lg">
+                    <p className="text-[var(--foreground)] opacity-80 text-lg w-full px-4 sm:px-0 sm:max-w-2xl">
                         Jemi këtu për t&apos;ju ndihmuar të gjeni pasurinë e ëndrrave tuaja.
                     </p>
                 </div>
