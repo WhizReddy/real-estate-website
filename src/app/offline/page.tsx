@@ -1,117 +1,135 @@
 "use client";
 
+// Offline page component with basic internationalisation support.
+//
+// This page is shown when the user is offline.  It provides a status
+// indicator, retry button, quick actions, and helpful tips.  All user
+//‑facing text is translated via the `i18n` helper.  The component
+// determines the locale based on the browser language (defaulting to
+// Albanian) and uses keys defined in `src/lib/i18n.ts`.
+
 import { useEffect, useState } from "react";
-import { WifiOff, RefreshCw, Home, Search, Map } from "lucide-react";
+import {
+  WifiOff,
+  RefreshCw,
+  Home as HomeIcon,
+  Search as SearchIcon,
+  Map as MapIcon,
+} from "lucide-react";
 import Link from "next/link";
 import {
   ResponsiveContainer,
   ResponsiveCard,
 } from "@/components/ResponsiveContainer";
 import { ResponsiveButton } from "@/components/ResponsiveForms";
+import { getTranslation, SupportedLocale } from "@/lib/i18n";
 
+/**
+ * OfflinePage renders a friendly page for users who have lost their
+ * internet connection.  It supports retrying the connection, quick
+ * navigation to cached areas of the app, and displays helpful tips.
+ */
 export default function OfflinePage() {
   const [isOnline, setIsOnline] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
+  const [locale, setLocale] = useState<SupportedLocale>('sq');
 
+  // Determine online status and locale on mount
   useEffect(() => {
-    // Check initial online status
     setIsOnline(navigator.onLine);
+    const language = navigator.language?.toLowerCase() || '';
+    setLocale(language.startsWith('sq') ? 'sq' : 'en');
 
-    // Listen for online/offline events
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
-
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
   }, []);
 
+  // Attempt to reconnect by pinging the health endpoint
   const handleRetry = async () => {
     setIsRetrying(true);
-
     try {
-      // Try to fetch a simple endpoint to test connectivity
       const response = await fetch("/api/health", {
         method: "GET",
         cache: "no-cache",
       });
-
       if (response.ok) {
-        // Redirect to home page if connection is restored
         window.location.href = "/";
       }
     } catch {
-      console.log("Still offline");
+      // Ignore errors; user remains offline
     } finally {
       setIsRetrying(false);
     }
   };
 
+  // Define quick actions with translated labels
   const quickActions = [
     {
-      title: "Home",
-      description: "Return to homepage",
-      href: "/",
-      icon: Home,
-      color: "blue",
+      title: getTranslation('quickActionHome', locale),
+      description: getTranslation('quickActionHomeDesc', locale),
+      href: '/',
+      icon: HomeIcon,
+      color: 'blue',
     },
     {
-      title: "Search",
-      description: "Browse cached properties",
-      href: "/search",
-      icon: Search,
-      color: "green",
+      title: getTranslation('quickActionSearch', locale),
+      description: getTranslation('quickActionSearchDesc', locale),
+      href: '/search',
+      icon: SearchIcon,
+      color: 'green',
     },
     {
-      title: "Map View",
-      description: "View properties on map",
-      href: "/map",
-      icon: Map,
-      color: "purple",
+      title: getTranslation('quickActionMap', locale),
+      description: getTranslation('quickActionMapDesc', locale),
+      href: '/map',
+      icon: MapIcon,
+      color: 'purple',
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4">
       <ResponsiveContainer maxWidth="md" className="text-center">
         <ResponsiveCard padding="lg" className="space-y-6">
           {/* Offline Icon */}
           <div className="flex justify-center">
-            <div className="rounded-full bg-gray-100 p-6">
-              <WifiOff className="h-12 w-12 text-gray-400" />
+            <div className="rounded-full bg-slate-100 dark:bg-slate-800 p-6">
+              <WifiOff className="h-12 w-12 text-slate-400 dark:text-slate-500" />
             </div>
           </div>
 
           {/* Status Message */}
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-gray-900">
-              {isOnline ? "Connection Restored!" : "You're Offline"}
-            </h1>
-            <p className="text-gray-600">
+            <h1 className="text-2xl font-bold text-[var(--foreground)]">
               {isOnline
-                ? "Your internet connection has been restored. You can now access all features."
-                : "It looks like you're not connected to the internet. Some features may be limited, but you can still browse cached content."}
+                ? getTranslation('offlineTitleOnline', locale)
+                : getTranslation('offlineTitleOffline', locale)}
+            </h1>
+            <p className="text-slate-600 dark:text-slate-400">
+              {isOnline
+                ? getTranslation('offlineDescOnline', locale)
+                : getTranslation('offlineDescOffline', locale)}
             </p>
           </div>
 
           {/* Connection Status Indicator */}
           <div
-            className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${
-              isOnline
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
+            className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${isOnline ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' : 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
+              }`}
           >
             <div
-              className={`w-2 h-2 rounded-full ${
-                isOnline ? "bg-green-500" : "bg-red-500"
-              }`}
+              className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500' : 'bg-red-500'
+                }`}
             />
-            {isOnline ? "Online" : "Offline"}
+            {isOnline
+              ? getTranslation('online', locale)
+              : getTranslation('offline', locale)}
           </div>
 
           {/* Retry Button */}
@@ -124,44 +142,43 @@ export default function OfflinePage() {
               className="w-full sm:w-auto"
             >
               <RefreshCw className="h-4 w-4 mr-2" />
-              {isRetrying ? "Checking Connection..." : "Try Again"}
+              {isRetrying
+                ? getTranslation('checkingConnection', locale)
+                : getTranslation('tryAgain', locale)}
             </ResponsiveButton>
           )}
 
           {/* Back Online Button */}
           {isOnline && (
             <ResponsiveButton
-              onClick={() => (window.location.href = "/")}
+              onClick={() => (window.location.href = '/')}
               variant="primary"
               className="w-full sm:w-auto"
             >
-              <Home className="h-4 w-4 mr-2" />
-              Go to Homepage
+              <HomeIcon className="h-4 w-4 mr-2" />
+              {getTranslation('goToHomepage', locale)}
             </ResponsiveButton>
           )}
 
           {/* Quick Actions */}
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900">
-              What you can do offline:
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">
+              {getTranslation('whatYouCanDoOffline', locale)}
             </h2>
-
             <div className="grid gap-3 sm:grid-cols-3">
               {quickActions.map((action) => {
                 const Icon = action.icon;
-                const colorClasses = {
-                  blue: "bg-blue-50 text-blue-600 border-blue-200",
-                  green: "bg-green-50 text-green-600 border-green-200",
-                  purple: "bg-purple-50 text-purple-600 border-purple-200",
+                const colorClasses: Record<string, string> = {
+                  blue: 'bg-blue-50 dark:bg-blue-900/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800/50',
+                  green: 'bg-green-50 dark:bg-green-900/10 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800/50',
+                  purple: 'bg-purple-50 dark:bg-purple-900/10 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800/50',
                 };
-
                 return (
                   <Link
                     key={action.title}
                     href={action.href}
-                    className={`block p-4 rounded-lg border-2 transition-colors hover:bg-opacity-80 ${
-                      colorClasses[action.color as keyof typeof colorClasses]
-                    }`}
+                    className={`block p-4 rounded-lg border-2 transition-colors hover:bg-opacity-80 ${colorClasses[action.color]
+                      }`}
                   >
                     <div className="flex flex-col items-center text-center space-y-2">
                       <Icon className="h-6 w-6" />
@@ -179,11 +196,12 @@ export default function OfflinePage() {
           </div>
 
           {/* Offline Features Info */}
-          <div className="bg-blue-50 rounded-lg p-4 text-left">
-            <h3 className="font-medium text-blue-900 mb-2">
-              Available Offline:
+          <div className="bg-blue-50 dark:bg-blue-900/10 rounded-lg p-4 text-left">
+            <h3 className="font-medium text-blue-900 dark:text-blue-200 mb-2">
+              {getTranslation('availableOfflineTitle', locale)}
             </h3>
-            <ul className="text-sm text-blue-800 space-y-1">
+            <ul className="text-sm text-blue-800 dark:text-blue-300/80 space-y-1">
+              {/* Keeping these strings static for now.  Consider adding to i18n if needed. */}
               <li>• Browse recently viewed properties</li>
               <li>• View cached property details</li>
               <li>• Access saved favorites</li>
@@ -192,15 +210,15 @@ export default function OfflinePage() {
           </div>
 
           {/* Tips */}
-          <div className="bg-gray-50 rounded-lg p-4 text-left">
-            <h3 className="font-medium text-gray-900 mb-2">Tips:</h3>
-            <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Check your internet connection</li>
-              <li>• Try moving to a different location</li>
-              <li>• Restart your router if using WiFi</li>
-              <li>
-                • Contact your internet service provider if issues persist
-              </li>
+          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4 text-left">
+            <h3 className="font-medium text-[var(--foreground)] mb-2">
+              {getTranslation('tipsTitle', locale)}
+            </h3>
+            <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+              <li>• {getTranslation('tipCheckConnection', locale)}</li>
+              <li>• {getTranslation('tipMoveLocation', locale)}</li>
+              <li>• {getTranslation('tipRestartRouter', locale)}</li>
+              <li>• {getTranslation('tipContactProvider', locale)}</li>
             </ul>
           </div>
         </ResponsiveCard>

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Property } from '@/types';
 import { formatPrice } from '@/lib/utils';
-import { MapPin, Home, Filter } from 'lucide-react';
+import { MapPin, Home, Filter, Maximize, Navigation } from 'lucide-react';
 import CreativeLoader from '@/components/CreativeLoader';
 import { MapError, NetworkError } from '@/components/ErrorComponents';
 import { useErrorHandler, useNetworkError } from '@/hooks/useErrorHandler';
@@ -59,7 +59,7 @@ export default function MapView({
       // Dynamically import Leaflet with timeout
       const L = await Promise.race([
         import('leaflet'),
-        new Promise((_, reject) => 
+        new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Leaflet loading timeout')), 10000)
         )
       ]) as any;
@@ -138,12 +138,12 @@ export default function MapView({
       map.whenReady(() => {
         try {
           addPropertyMarkers(L, map, properties, onPropertySelect);
-          
+
           // Simple view setting without complex bounds fitting
           if (properties.length > 0) {
             map.setView(mapCenter, zoom);
           }
-          
+
           setIsLoading(false);
         } catch (error) {
           console.error('Error adding markers:', error);
@@ -154,12 +154,12 @@ export default function MapView({
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
       console.error('Map initialization error:', err);
-      
+
       // Check if it's a network error
       if (networkError.checkNetworkError(err)) {
         // Handle network error specifically
       }
-      
+
       errorHandler.handleError(err);
       setIsLoading(false);
     }
@@ -215,7 +215,7 @@ export default function MapView({
     const updateMarkers = async () => {
       try {
         const L = await import('leaflet');
-        
+
         // Clear existing markers
         markersRef.current.forEach((marker) => {
           try {
@@ -278,20 +278,20 @@ export default function MapView({
     // Performance optimization: batch marker creation with requestAnimationFrame
     const createMarkersInBatches = (properties: Property[], batchSize = 10) => {
       let index = 0;
-      
+
       const processBatch = () => {
         const endIndex = Math.min(index + batchSize, properties.length);
-        
+
         for (let i = index; i < endIndex; i++) {
           const property = properties[i];
           const coords = property.address.coordinates;
-          
+
           // Skip invalid coordinates
           if (!coords.lat || !coords.lng || isNaN(coords.lat) || isNaN(coords.lng)) {
             console.warn('Invalid coordinates for property:', property.id);
             continue;
           }
-          
+
           // Create mobile-friendly marker icon
           const markerIcon = L.divIcon({
             html: `
@@ -304,7 +304,7 @@ export default function MapView({
             iconAnchor: [40, 28],
           });
 
-          const marker = L.marker([coords.lat, coords.lng], { 
+          const marker = L.marker([coords.lat, coords.lng], {
             icon: markerIcon,
             // Add property data to marker for easy access
             propertyData: property
@@ -368,16 +368,16 @@ export default function MapView({
 
           // Optimized event handlers - only on non-touch devices
           if (!('ontouchstart' in window)) {
-            marker.on('mouseover', function() {
+            marker.on('mouseover', function () {
               this.openTooltip();
             });
 
-            marker.on('mouseout', function() {
+            marker.on('mouseout', function () {
               this.closeTooltip();
             });
           }
 
-          marker.on('click', function() {
+          marker.on('click', function () {
             this.openPopup();
             // Add click handler for property selection
             if (onSelect) {
@@ -389,9 +389,9 @@ export default function MapView({
           layerGroup.addLayer(marker);
           markersRef.current.push(marker);
         }
-        
+
         index = endIndex;
-        
+
         // Continue processing if there are more properties
         if (index < properties.length) {
           requestAnimationFrame(processBatch);
@@ -400,7 +400,7 @@ export default function MapView({
           map.addLayer(layerGroup);
         }
       };
-      
+
       // Start processing
       requestAnimationFrame(processBatch);
     };
@@ -431,7 +431,7 @@ export default function MapView({
       import('leaflet').then((L) => {
         let tileUrl = '';
         let attribution = '';
-        
+
         switch (layer) {
           case 'satellite':
             tileUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
@@ -461,7 +461,7 @@ export default function MapView({
     }
   };
 
-  
+
 
   return (
     <div className="relative">
@@ -472,33 +472,30 @@ export default function MapView({
       />
 
       {/* Mobile-Optimized Map Controls */}
-  <div className="absolute top-2 right-2 flex flex-col gap-1 z-1000">
+      <div className="absolute top-2 right-2 flex flex-col gap-1 z-1000">
 
         {/* Map Layer Selector - Smaller for mobile */}
         <div className="bg-white rounded-md shadow-md border border-gray-200 overflow-hidden">
           <button
             onClick={() => changeMapLayer('street')}
-            className={`p-1.5 w-full text-xs transition-colors ${
-              mapLayer === 'street' ? 'bg-blue-600 text-white' : 'text-blue-600'
-            }`}
+            className={`p-1.5 w-full text-xs transition-colors ${mapLayer === 'street' ? 'bg-blue-600 text-white' : 'text-blue-600'
+              }`}
             title="Harta e rrugëve"
           >
             🗺️
           </button>
           <button
             onClick={() => changeMapLayer('satellite')}
-            className={`p-1.5 w-full text-xs transition-colors ${
-              mapLayer === 'satellite' ? 'bg-blue-600 text-white' : 'text-blue-600'
-            }`}
+            className={`p-1.5 w-full text-xs transition-colors ${mapLayer === 'satellite' ? 'bg-blue-600 text-white' : 'text-blue-600'
+              }`}
             title="Pamja satelitore"
           >
             🛰️
           </button>
           <button
             onClick={() => changeMapLayer('terrain')}
-            className={`p-1.5 w-full text-xs transition-colors ${
-              mapLayer === 'terrain' ? 'bg-blue-600 text-white' : 'text-blue-600'
-            }`}
+            className={`p-1.5 w-full text-xs transition-colors ${mapLayer === 'terrain' ? 'bg-blue-600 text-white' : 'text-blue-600'
+              }`}
             title="Terreni"
           >
             🏔️
@@ -537,9 +534,7 @@ export default function MapView({
           className="bg-white hover:bg-blue-50 p-1.5 rounded-md shadow-md border border-gray-200 transition-colors duration-200"
           title="Harta në ekran të plotë"
         >
-          <svg className="h-3 w-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-          </svg>
+          <Maximize className="h-4 w-4 text-blue-600" aria-hidden="true" />
         </button>
 
         {/* My Location Button */}
@@ -550,7 +545,7 @@ export default function MapView({
                 (position) => {
                   const { latitude, longitude } = position.coords;
                   mapInstanceRef.current.setView([latitude, longitude], 15);
-                  
+
                   // Add a temporary marker for user location
                   import('leaflet').then((L) => {
                     const userMarker = L.marker([latitude, longitude], {
@@ -561,7 +556,7 @@ export default function MapView({
                         iconAnchor: [8, 8],
                       })
                     }).addTo(mapInstanceRef.current);
-                    
+
                     // Remove the marker after 5 seconds
                     setTimeout(() => {
                       mapInstanceRef.current.removeLayer(userMarker);
@@ -580,21 +575,18 @@ export default function MapView({
           className="bg-white p-1.5 rounded-md shadow-md border border-gray-200 transition-colors duration-200"
           title="Shko te lokacioni im"
         >
-          <svg className="h-3 w-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
+          <Navigation className="h-4 w-4 text-blue-600" aria-hidden="true" />
         </button>
       </div>
 
       {/* Mobile-Friendly Map Filters */}
-  <div className="absolute top-3 left-3 z-1000">
+      <div className="absolute top-3 left-3 z-1000">
         <div className="bg-white rounded-lg shadow-md border border-gray-200 p-3 max-w-xs sm:max-w-sm">
           <div className="flex items-center gap-2 mb-2">
             <Filter className="h-4 w-4 text-blue-600" />
             <span className="text-sm font-medium text-gray-700">Filtrat e Hartës</span>
           </div>
-          
+
           <div className="space-y-2">
             {/* Price Range Filter */}
             <div>
@@ -636,7 +628,7 @@ export default function MapView({
           </div>
         </div>
       </div>
-      
+
       {/* Loading State */}
       {isLoading && (
         <div className="absolute inset-0 bg-linear-to-br from-blue-50 to-green-50 bg-opacity-95 flex items-center justify-center rounded-lg">
@@ -647,7 +639,7 @@ export default function MapView({
       {/* Network Error State */}
       {networkError.networkError && (
         <div className="absolute inset-0 bg-white bg-opacity-95 flex items-center justify-center rounded-lg">
-          <NetworkError 
+          <NetworkError
             onRetry={handleRetry}
             message={networkError.networkError}
           />
@@ -657,7 +649,7 @@ export default function MapView({
       {/* General Error State */}
       {errorHandler.hasError && !networkError.networkError && (
         <div className="absolute inset-0 bg-white bg-opacity-95 flex items-center justify-center rounded-lg">
-          <MapError 
+          <MapError
             onRetry={handleRetry}
             error={errorHandler.error?.message}
           />
@@ -676,14 +668,14 @@ export default function MapView({
           </div>
         </div>
       )}
-      
+
       {/* Map controls info - only show when map is loaded */}
       {!isLoading && !errorHandler.hasError && !networkError.networkError && properties.length > 0 && (
         <>
           <div className="absolute bottom-2 left-2 bg-white bg-opacity-90 rounded px-2 py-1 text-xs text-gray-600 hidden sm:block">
             Lëviz hartën • Zoom me scroll • Hover për info • Klik për detaje
           </div>
-          
+
           <div className="absolute bottom-2 left-2 bg-white bg-opacity-90 rounded px-2 py-1 text-xs text-gray-600 sm:hidden">
             Lëviz • Zoom • Prek për detaje
           </div>

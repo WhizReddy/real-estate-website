@@ -2,12 +2,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Property } from '@/types';
 import { formatPrice, formatAddress } from '@/lib/utils';
-import { Bed, Bath, Square, MapPin, Star, Map, Navigation } from 'lucide-react';
+import { Bed, Bath, Square, MapPin, Star, Map, Navigation, Phone, Mail } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 const PropertyImageGallery = dynamic(() => import('./PropertyImageGallery'), { ssr: false });
 import { ViewOnMapButtonCompact } from './ViewOnMapButton';
 import FavoriteButton from './FavoriteButton';
+import Badge from './Badge';
 
 interface PropertyCardProps {
   property: Property;
@@ -29,9 +30,9 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
   }, []);
 
   return (
-    <Link href={`/properties/${property.id}`} className="group">
+    <Link href={`/properties/${property.id}`} className="group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-2xl block">
       <div
-        className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-500 transform hover:-translate-y-1.5 border border-gray-100 ring-1 ring-transparent hover:ring-blue-500/10 active:scale-[0.98] touch-manipulation"
+        className="card-interactive"
         style={{ touchAction: 'manipulation' }}
       >
         {/* Property Image with Mobile Swipe Support */}
@@ -52,19 +53,18 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
 
           {/* Status Badges - Top Left */}
-          <div className="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[calc(100%-2rem)]">
-            <span className="bg-white/95 backdrop-blur-md text-gray-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm ring-1 ring-black/5">
+          <div className="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[calc(100%-2rem)] z-10">
+            <Badge variant="glass-light">
               {getListingTypeLabel(property.listingType)}
-            </span>
+            </Badge>
             {property.isPinned && (
-              <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center shadow-md ring-1 ring-white/20">
-                <Star className="h-3.5 w-3.5 mr-1" />
+              <Badge variant="warning" icon={Star}>
                 I Zgjedhur
-              </span>
+              </Badge>
             )}
-            <span className="bg-black/60 backdrop-blur-md text-white text-xs font-medium px-3 py-1.5 rounded-full border border-white/10">
+            <Badge variant="glass-dark">
               {getPropertyTypeLabel(property.details.propertyType)}
-            </span>
+            </Badge>
           </div>
 
           {/* Favorite Button - Top Right */}
@@ -77,15 +77,15 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
         <div className="p-5 sm:p-6 flex flex-col flex-1">
           {/* Price - prominent, full width */}
           <div className="flex items-center justify-between mb-1">
-            <h3 className="text-base font-bold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors duration-300 flex-1 mr-2">
+            <h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-primary transition-colors duration-300 flex-1 mr-2">
               {property.title}
             </h3>
-            <span className="text-lg sm:text-xl font-black text-blue-700 whitespace-nowrap">
+            <span className="text-xl font-black text-primary whitespace-nowrap">
               {formatPrice(property.price)}
             </span>
           </div>
 
-          <div className="flex items-center text-gray-500 text-xs mb-3">
+          <div className="flex items-center text-gray-500 text-sm mb-3">
             <MapPin className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
             <span className="line-clamp-1 font-medium">{formatAddress(property.address)}</span>
           </div>
@@ -127,30 +127,28 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
                 </div>
                 <div className="flex space-x-1">
                   <button
+                    aria-label={`Call ${property.agent.name}`}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                       window.location.href = `tel:${property.agent.phone}`;
                     }}
-                    className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                    className="p-1.5 text-primary hover:bg-primary/10 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     title="Call agent"
                   >
-                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
+                    <Phone className="h-4 w-4" />
                   </button>
                   <button
+                    aria-label={`Email ${property.agent.name}`}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                       window.location.href = `mailto:${property.agent.email}`;
                     }}
-                    className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                    className="p-1.5 text-primary hover:bg-primary/10 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     title="Email agent"
                   >
-                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
+                    <Mail className="h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -162,23 +160,24 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
             <div className="flex items-center gap-2">
               <ViewOnMapButtonCompact
                 property={property}
-                className="z-10 bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors border border-gray-200"
+                className="z-10 bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors border border-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               />
               <button
+                aria-label="Merr udhëzime"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${property.address.coordinates.lat},${property.address.coordinates.lng}`;
                   window.open(directionsUrl, '_blank', 'noopener,noreferrer');
                 }}
-                className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors border border-gray-200 hover:border-green-200"
+                className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors border border-gray-200 hover:border-green-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
                 title="Merr udhëzime"
               >
                 <Navigation className="h-4 w-4" />
               </button>
             </div>
 
-            <span className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-bold group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+            <span className="btn-primary py-1.5 text-sm group-hover:scale-105">
               Shiko Detajet
             </span>
           </div>

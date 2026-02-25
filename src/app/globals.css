@@ -1,10 +1,53 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+
+  /* Mathematical Spacing Scale */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-section: 64px;
+
+  /* Typographic Hierarchy Scale */
+  --text-scale-sm: 0.875rem;
+  --text-scale-base: 1rem;
+  --text-scale-h3: 1.25rem;
+  --text-scale-h2: 1.5rem;
+  --text-scale-h1: 2rem;
+  --text-scale-hero: 2.5rem;
+}
+
 @layer base {
   :root {
     --background: #FFFFFF;
     --foreground: #0F172A;
-    --primary: #1E378D;
+    --primary: #2563eb;
+    /* blue-600 */
+    --primary-light: #60a5fa;
+    /* blue-400 */
+    --primary-dark: #1d4ed8;
+    /* blue-700 */
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #0B1120;
+      /* slate-950 */
+      --foreground: #F8FAFC;
+      /* slate-50 */
+      --primary: #3b82f6;
+      /* blue-500 for better dark contrast */
+      --primary-light: #93c5fd;
+      /* blue-300 */
+      --primary-dark: #2563eb;
+      /* blue-600 */
+    }
   }
 }
 
@@ -19,6 +62,52 @@ body {
 .property-card,
 .map-container {
   contain: layout style;
+}
+
+/* Global Micro-interactions */
+@layer base {
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    @apply transition-colors duration-150 ease-out outline-none;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    @apply ring-2 ring-[var(--primary)] ring-offset-2 dark:ring-offset-slate-900;
+  }
+}
+
+/* --- Reusable Components (Tailwind v4 @utility) --- */
+
+@utility container-custom {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+@utility card {
+  @apply bg-[var(--background)] rounded-2xl shadow-[0_8px_30px] shadow-black/[0.04] border border-gray-100 dark:border-slate-800 overflow-hidden;
+}
+
+@utility card-interactive {
+  @apply card hover:shadow-[0_20px_40px] hover:shadow-black/[0.08] transition-all duration-300 transform hover:-translate-y-1.5 ring-1 ring-transparent hover:ring-primary/10 active:scale-[0.98];
+}
+
+@utility btn-primary {
+  @apply inline-flex items-center justify-center px-4 py-2 bg-[var(--primary)] text-white font-medium rounded-xl hover:bg-[var(--primary-dark)] transition-all shadow-md shadow-primary/20 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+}
+
+@utility btn-secondary {
+  @apply inline-flex items-center justify-center px-4 py-2 bg-[var(--background)] text-[var(--foreground)] font-medium rounded-xl border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+}
+
+@utility input-field {
+  @apply w-full px-4 py-2.5 bg-[var(--background)] border border-gray-200 dark:border-slate-700 text-[var(--foreground)] rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary transition-all placeholder:text-gray-400 dark:placeholder:text-slate-500;
 }
 
 /* Animations */
@@ -40,6 +129,6 @@ body {
 
 /* Global focus styles */
 :focus-visible {
-  outline: 2px solid theme('colors.blue.500');
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }

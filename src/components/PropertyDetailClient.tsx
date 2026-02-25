@@ -12,6 +12,8 @@ import ContactForm from '@/components/ContactForm';
 import MortgageCalculator from '@/components/MortgageCalculator';
 import Layout from '@/components/Layout';
 import StructuredData from '@/components/StructuredData';
+import PropertyBadge from '@/components/PropertyBadge';
+import Badge from '@/components/Badge';
 import { ArrowLeft, MapPin, Home, Bed, Bath, Square, Calendar, Euro, Star, Navigation, Map } from 'lucide-react';
 
 interface PropertyDetailClientProps {
@@ -54,98 +56,82 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
   return (
     <Layout variant="property">
       <StructuredData property={property} type="property" />
-      <div className="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+      <article className="bg-[var(--background)] min-h-screen text-[var(--foreground)] transition-colors duration-300">
         {/* Breadcrumb Header */}
-        <section className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <header className="bg-primary/5 dark:bg-primary/10 border-b border-primary/20">
+          <div className="container-custom py-[var(--spacing-lg)]">
             <div className="flex items-center">
               <Link
                 href="/"
-                className="flex items-center text-blue-100 hover:text-white mr-6 transition-colors duration-200"
+                className="flex items-center text-primary-dark hover:text-primary dark:text-primary-light dark:hover:text-white mr-[var(--spacing-md)] transition-colors duration-200"
+                aria-label="Kthehu mbrapa"
               >
                 <ArrowLeft className="h-5 w-5 mr-2" />
-                <span className="font-medium">Kthehu</span>
+                <span className="font-medium text-[var(--text-scale-base)]">Kthehu</span>
               </Link>
               <div>
-                <h1 className="text-3xl font-bold text-white mb-2">{property.title}</h1>
-                <div className="flex items-center text-blue-200">
+                <h1 className="text-[var(--text-scale-hero)] font-bold text-[var(--foreground)] leading-tight mb-2">{property.title}</h1>
+                <div className="flex items-center text-[var(--text-scale-lg)] text-slate-600 dark:text-slate-400">
                   <MapPin className="h-5 w-5 mr-2" />
-                  <span className="text-lg">{property.address.street}, {property.address.city}</span>
+                  <span>{property.address.street}, {property.address.city}</span>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+        </header>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <main className="container-custom py-[var(--spacing-xl)]">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-[var(--spacing-lg)]">
             {/* Main Content */}
-            <div className="lg:col-span-2 space-y-8">
+            <div className="lg:col-span-2 space-y-[var(--spacing-lg)]">
               {/* Image Gallery */}
               <div className="bg-white rounded-lg shadow-md overflow-hidden">
                 <ImageGallery images={property.images} title={property.title} />
               </div>
 
               {/* Property Details */}
-              <div className="bg-white rounded-xl shadow-lg p-8 border border-blue-100">
-                <div className="flex items-center justify-between mb-8">
+              <section className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-[var(--spacing-xl)]">
+                <div className="flex items-center justify-between mb-[var(--spacing-xl)]">
                   <div>
-                    <div className="flex items-center space-x-3 mb-3">
-                      <span className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 text-sm font-semibold px-4 py-2 rounded-full border border-blue-200">
+                    <div className="flex items-center space-x-[var(--spacing-xs)] mb-[var(--spacing-sm)]">
+                      <Badge variant="primary" className="px-4 py-2 text-[var(--text-scale-sm)] font-semibold">
                         {getListingTypeLabel(property.listingType)}
-                      </span>
+                      </Badge>
                       {property.isPinned && (
-                        <span className="bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800 text-sm font-semibold px-4 py-2 rounded-full border border-yellow-200 flex items-center">
-                          <Star className="h-4 w-4 mr-2 fill-current" />
+                        <Badge variant="warning" icon={Star} className="px-4 py-2 border border-amber-200 dark:border-amber-800 text-[var(--text-scale-sm)] font-semibold">
                           I Zgjedhur
-                        </span>
+                        </Badge>
                       )}
                     </div>
-                    <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent flex items-center">
-                      <Euro className="h-10 w-10 mr-3 text-blue-600" />
+                    <h2 className="text-[var(--text-scale-h1)] font-bold text-primary dark:text-primary-light flex items-center">
+                      <Euro className="h-8 w-8 mr-3" />
                       {formatPrice(property.price)}
                     </h2>
                   </div>
                 </div>
 
                 {/* Key Details */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                  <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 hover:shadow-md transition-shadow duration-200">
-                    <Bed className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-                    <div className="text-3xl font-bold text-blue-900">{property.details.bedrooms}</div>
-                    <div className="text-sm text-blue-700 font-medium">Dhoma Gjumi</div>
-                  </div>
-                  <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 hover:shadow-md transition-shadow duration-200">
-                    <Bath className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-                    <div className="text-3xl font-bold text-blue-900">{property.details.bathrooms}</div>
-                    <div className="text-sm text-blue-700 font-medium">Banjo</div>
-                  </div>
-                  <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 hover:shadow-md transition-shadow duration-200">
-                    <Square className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-                    <div className="text-3xl font-bold text-blue-900">{property.details.squareFootage}</div>
-                    <div className="text-sm text-blue-700 font-medium">m²</div>
-                  </div>
-                  <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 hover:shadow-md transition-shadow duration-200">
-                    <Home className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-                    <div className="text-lg font-bold text-blue-900">{getPropertyTypeLabel(property.details.propertyType)}</div>
-                    <div className="text-sm text-blue-700 font-medium">Lloji</div>
-                  </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-[var(--spacing-md)] mb-[var(--spacing-xl)]">
+                  <PropertyBadge icon={Bed} value={property.details.bedrooms} label="Dhoma Gjumi" />
+                  <PropertyBadge icon={Bath} value={property.details.bathrooms} label="Banjo" />
+                  <PropertyBadge icon={Square} value={property.details.squareFootage} label="m²" />
+                  <PropertyBadge icon={Home} value={getPropertyTypeLabel(property.details.propertyType)} label="Lloji" />
                 </div>
 
                 {/* Description */}
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Përshkrimi</h3>
-                  <p className="text-gray-600 leading-relaxed">{property.description}</p>
+                <div className="mb-[var(--spacing-xl)]">
+                  <h3 className="text-[var(--text-scale-h3)] font-semibold text-[var(--foreground)] mb-[var(--spacing-sm)]">Përshkrimi</h3>
+                  <p className="text-[var(--text-scale-base)] text-slate-600 dark:text-slate-400 leading-relaxed">{property.description}</p>
                 </div>
 
                 {/* Features */}
                 {property.features.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Karakteristikat</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  <div className="mb-[var(--spacing-xl)]">
+                    <h3 className="text-[var(--text-scale-h3)] font-semibold text-[var(--foreground)] mb-[var(--spacing-sm)]">Karakteristikat</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-[var(--spacing-sm)]">
                       {property.features.map((feature, index) => (
-                        <div key={index} className="flex items-center text-gray-600">
-                          <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
+                        <div key={index} className="flex items-center text-[var(--text-scale-base)] text-slate-600 dark:text-slate-400">
+                          <div className="w-2 h-2 bg-[var(--primary)] rounded-full mr-3"></div>
                           <span className="capitalize">{feature}</span>
                         </div>
                       ))}
@@ -154,44 +140,44 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                 )}
 
                 {/* Additional Details */}
-                <div className="border-t border-gray-200 pt-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Detaje Shtesë</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Adresa e plotë:</span>
-                      <span className="font-medium">{property.address.street}, {property.address.city}</span>
+                <div className="border-t border-gray-200 dark:border-slate-800 pt-[var(--spacing-lg)]">
+                  <h3 className="text-[var(--text-scale-h3)] font-semibold text-[var(--foreground)] mb-[var(--spacing-sm)]">Detaje Shtesë</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-[var(--spacing-md)] text-[var(--text-scale-base)]">
+                    <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                      <span className="text-slate-500 dark:text-slate-400">Adresa e plotë:</span>
+                      <span className="font-medium text-[var(--foreground)]">{property.address.street}, {property.address.city}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Kodi postar:</span>
-                      <span className="font-medium">{property.address.zipCode}</span>
+                    <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                      <span className="text-slate-500 dark:text-slate-400">Kodi postar:</span>
+                      <span className="font-medium text-[var(--foreground)]">{property.address.zipCode}</span>
                     </div>
                     {property.details.yearBuilt && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Viti i ndërtimit:</span>
-                        <span className="font-medium flex items-center">
-                          <Calendar className="h-4 w-4 mr-1" />
+                      <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                        <span className="text-slate-500 dark:text-slate-400">Viti i ndërtimit:</span>
+                        <span className="font-medium text-[var(--foreground)] flex items-center">
+                          <Calendar className="h-4 w-4 mr-2 text-[var(--primary)]" />
                           {property.details.yearBuilt}
                         </span>
                       </div>
                     )}
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Statusi:</span>
-                      <span className="font-medium capitalize">{property.status}</span>
+                    <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                      <span className="text-slate-500 dark:text-slate-400">Statusi:</span>
+                      <span className="font-medium text-[var(--foreground)] capitalize">{property.status}</span>
                     </div>
                   </div>
                 </div>
-              </div>
+              </section>
 
               {/* Enhanced Map and Location Section */}
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="card border-none">
                 {/* Map Tabs - Neighborhood now powered by OpenStreetMap */}
-                <div className="border-b border-gray-200">
+                <div className="border-b border-gray-200 dark:border-slate-800">
                   <div className="flex">
                     <button
                       onClick={() => setActiveMapTab('location')}
                       className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${activeMapTab === 'location'
-                        ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                        ? 'text-[var(--primary)] border-b-2 border-[var(--primary)] bg-[var(--primary)]/10'
+                        : 'text-gray-500 hover:text-[var(--foreground)] hover:bg-gray-50 dark:hover:bg-slate-800'
                         }`}
                     >
                       <div className="flex items-center justify-center gap-2">
@@ -202,8 +188,8 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                     <button
                       onClick={() => setActiveMapTab('neighborhood')}
                       className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${activeMapTab === 'neighborhood'
-                        ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                        ? 'text-[var(--primary)] border-b-2 border-[var(--primary)] bg-[var(--primary)]/10'
+                        : 'text-gray-500 hover:text-[var(--foreground)] hover:bg-gray-50 dark:hover:bg-slate-800'
                         }`}
                     >
                       <div className="flex items-center justify-center gap-2">
@@ -218,8 +204,8 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                 {activeMapTab === 'location' && (
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                        <MapPin className="h-5 w-5 text-blue-600" />
+                      <h3 className="text-lg font-semibold text-[var(--foreground)] flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-[var(--primary)]" />
                         Property Location
                       </h3>
                       <div className="flex gap-2">
@@ -232,7 +218,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                           href={`https://www.google.com/maps/dir/?api=1&destination=${property.address.coordinates.lat},${property.address.coordinates.lng}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg shadow-sm hover:shadow-md transition-all"
+                          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg shadow-sm hover:shadow-md transition-all"
                         >
                           <Navigation className="h-4 w-4" />
                           Directions
@@ -282,11 +268,11 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
               </div>
             </div>
           </div>
-        </div>
+        </main>
 
         {/* Mobile Floating Action Button */}
         <ViewOnMapFAB property={property} className="lg:hidden" />
-      </div>
+      </article>
     </Layout>
   );
 }

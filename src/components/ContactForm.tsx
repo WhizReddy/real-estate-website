@@ -5,7 +5,8 @@ import { useForm } from 'react-hook-form';
 import { ContactInquiry } from '@/types';
 import { generateId, getCurrentTimestamp } from '@/lib/utils';
 import { sanitizeInquiryData, isValidEmail, isValidPhone, contactFormLimiter } from '@/lib/security';
-import { Mail, Phone, Clock, MessageCircle, User, Send } from 'lucide-react';
+import { getTranslation } from '@/lib/i18n';
+import { Mail, Phone, Clock, MessageCircle, User, Send, Check } from 'lucide-react';
 
 interface ContactFormProps {
   propertyId: string;
@@ -23,8 +24,11 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  // toast notifications can be wired later if needed
-  
+
+  // Use simple i18n detection
+  const locale = typeof window !== 'undefined' && window.location.pathname.startsWith("/en") ? "en" : "sq";
+  const t = (key: string) => getTranslation(key, locale as any);
+
   const {
     register,
     handleSubmit,
@@ -35,25 +39,25 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     setSubmitError(null);
-    
+
     try {
       // Rate limiting check
       const clientId = `contact-${propertyId}`;
       if (!contactFormLimiter.isAllowed(clientId)) {
-        setSubmitError('Keni dërguar shumë mesazhe. Ju lutem prisni disa minuta para se të provoni përsëri.');
+        setSubmitError(t('rateLimitError'));
         setIsSubmitting(false);
         return;
       }
 
       // Additional validation
       if (!isValidEmail(data.email)) {
-        setSubmitError('Adresa e email-it nuk është e vlefshme.');
+        setSubmitError(t('emailInvalid'));
         setIsSubmitting(false);
         return;
       }
 
       if (data.phone && !isValidPhone(data.phone)) {
-        setSubmitError('Numri i telefonit nuk është i vlefshëm.');
+        setSubmitError(t('phoneInvalid'));
         setIsSubmitting(false);
         return;
       }
@@ -85,7 +89,7 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
       reset();
     } catch (error) {
       console.error('Error submitting inquiry:', error);
-      setSubmitError('Ka ndodhur një gabim gjatë dërgimit të mesazhit. Ju lutem provoni përsëri.');
+      setSubmitError(t('sendError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -93,138 +97,138 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
 
   if (isSubmitted) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Mesazhi u Dërgua!</h3>
-          <p className="text-gray-600 mb-4">
-            Faleminderit për interesimin tuaj për këtë pasuri. Do t&#39;ju kontaktojmë së shpejti.
-          </p>
-          <button
-            onClick={() => setIsSubmitted(false)}
-            className="text-blue-600 hover:text-blue-800 font-medium"
-          >
-            Dërgo një Mesazh Tjetër
-          </button>
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-[var(--spacing-xl)] text-center">
+        <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-[var(--spacing-md)]">
+          <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
         </div>
+        <h3 className="text-[var(--text-scale-h3)] font-semibold text-slate-900 dark:text-white mb-2">{t('formSubmitSuccess')}</h3>
+        <p className="text-[var(--text-scale-base)] text-slate-600 dark:text-slate-400 mb-[var(--spacing-lg)]">
+          {t('formSuccessDesc')}
+        </p>
+        <button
+          onClick={() => setIsSubmitted(false)}
+          className="text-primary hover:text-primary-dark dark:text-primary-light dark:hover:text-white font-medium focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none rounded-md px-2 py-1 transition-colors"
+        >
+          {t('sendAnotherMessage')}
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 sticky top-6">
-      <div className="flex items-center mb-4">
-        <MessageCircle className="h-6 w-6 text-blue-600 mr-2" />
-        <h3 className="text-xl font-semibold text-gray-900">Kontaktoni Agjentin</h3>
+    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-[var(--spacing-xl)] sticky top-6">
+      <div className="flex items-center mb-[var(--spacing-md)]">
+        <MessageCircle className="h-6 w-6 text-[var(--primary)] mr-2" />
+        <h3 className="text-[var(--text-scale-h3)] font-semibold text-slate-900 dark:text-white">{t('contactAgent')}</h3>
       </div>
-      <p className="text-gray-600 mb-6">
-  Jeni të interesuar për <span className="font-medium text-gray-900">{propertyTitle}</span>? 
-  Dërgoni një mesazh dhe do t&#39;ju kthejmë përgjigje.
+      <p className="text-[var(--text-scale-base)] text-slate-600 dark:text-slate-400 mb-[var(--spacing-lg)] leading-relaxed">
+        {t('interestedIn')} <span className="font-medium text-slate-900 dark:text-white">{propertyTitle}</span>?
+        {' '} {t('interestedDesc')}
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-[var(--spacing-md)]">
         {/* Name */}
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="name" className="block text-[var(--text-scale-sm)] font-medium text-slate-700 dark:text-slate-300 mb-1">
             <User className="inline h-4 w-4 mr-1" />
-            Emri i Plotë *
+            {t('formNameLabel')}
           </label>
           <input
             type="text"
             id="name"
-            {...register('name', { 
-              required: 'Emri është i detyrueshëm',
+            aria-label={t('formNameLabel')}
+            {...register('name', {
+              required: t('nameRequired'),
               minLength: {
                 value: 2,
-                message: 'Emri duhet të ketë të paktën 2 karaktere'
+                message: t('nameMinLength')
               }
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Emri dhe mbiemri juaj"
+            className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-gray-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-[var(--text-scale-base)] text-slate-900 dark:text-white transition-all shadow-xs"
+            placeholder="..."
           />
           {errors.name && (
-            <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>
+            <p className="text-red-500 text-[var(--text-scale-sm)] mt-1">{errors.name.message}</p>
           )}
         </div>
 
         {/* Email */}
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="email" className="block text-[var(--text-scale-sm)] font-medium text-slate-700 dark:text-slate-300 mb-1">
             <Mail className="inline h-4 w-4 mr-1" />
-            Adresa e Email-it *
+            {t('formEmailLabel')}
           </label>
           <input
             type="email"
             id="email"
+            aria-label={t('formEmailLabel')}
             {...register('email', {
-              required: 'Email-i është i detyrueshëm',
+              required: t('emailRequired'),
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: 'Adresa e email-it nuk është e vlefshme',
+                message: t('emailInvalid'),
               },
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="emri.juaj@email.com"
+            className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-gray-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-[var(--text-scale-base)] text-slate-900 dark:text-white transition-all shadow-xs"
+            placeholder="..."
           />
           {errors.email && (
-            <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>
+            <p className="text-red-500 text-[var(--text-scale-sm)] mt-1">{errors.email.message}</p>
           )}
         </div>
 
         {/* Phone */}
         <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="phone" className="block text-[var(--text-scale-sm)] font-medium text-slate-700 dark:text-slate-300 mb-1">
             <Phone className="inline h-4 w-4 mr-1" />
-            Numri i Telefonit
+            {t('formPhoneLabel')}
           </label>
           <input
             type="tel"
             id="phone"
+            aria-label={t('formPhoneLabel')}
             {...register('phone', {
               pattern: {
                 value: /^[\+]?[0-9\s\-\(\)]{8,}$/,
-                message: 'Numri i telefonit nuk është i vlefshëm'
+                message: t('phoneInvalid')
               }
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="+355 69 123 4567"
+            className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-gray-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-[var(--text-scale-base)] text-slate-900 dark:text-white transition-all shadow-xs"
+            placeholder="+..."
           />
           {errors.phone && (
-            <p className="text-red-600 text-sm mt-1">{errors.phone.message}</p>
+            <p className="text-red-500 text-[var(--text-scale-sm)] mt-1">{errors.phone.message}</p>
           )}
         </div>
 
         {/* Message */}
         <div>
-          <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-            Mesazhi *
+          <label htmlFor="message" className="block text-[var(--text-scale-sm)] font-medium text-slate-700 dark:text-slate-300 mb-1">
+            {t('formMessageLabel')}
           </label>
           <textarea
             id="message"
+            aria-label={t('formMessageLabel')}
             rows={4}
-            {...register('message', { 
-              required: 'Mesazhi është i detyrueshëm',
+            {...register('message', {
+              required: t('messageRequired'),
               minLength: {
                 value: 10,
-                message: 'Mesazhi duhet të ketë të paktën 10 karaktere'
+                message: t('messageMinLength')
               }
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
-            placeholder="Jam i interesuar për këtë pasuri. Ju lutem kontaktoni me më shumë informacion..."
+            className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-gray-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-vertical text-[var(--text-scale-base)] text-slate-900 dark:text-white transition-all shadow-xs"
+            placeholder="..."
           />
           {errors.message && (
-            <p className="text-red-600 text-sm mt-1">{errors.message.message}</p>
+            <p className="text-red-500 text-[var(--text-scale-sm)] mt-1">{errors.message.message}</p>
           )}
         </div>
 
         {/* Error Message */}
         {submitError && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-600 text-sm">{submitError}</p>
+          <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
+            <p className="text-red-600 dark:text-red-400 text-[var(--text-scale-sm)]">{submitError}</p>
           </div>
         )}
 
@@ -232,37 +236,37 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-linear-to-r from-blue-600 to-blue-700 text-white py-2 px-4 rounded-md hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+          className="w-full btn-primary"
         >
           {isSubmitting ? (
             <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-              Duke dërguar...
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 font-white mr-2"></div>
+              {t('formSending')}
             </>
           ) : (
             <>
               <Send className="h-4 w-4 mr-2" />
-              Dërgo Mesazhin
+              {t('formSubmitBtn')}
             </>
           )}
         </button>
       </form>
 
       {/* Agent Info */}
-      <div className="mt-6 pt-6 border-t border-gray-200">
-        <h4 className="font-semibold text-gray-900 mb-3">Informacione Kontakti</h4>
-        <div className="text-sm text-gray-600 space-y-2">
+      <div className="mt-[var(--spacing-xl)] pt-[var(--spacing-md)] border-t border-gray-200 dark:border-slate-800">
+        <h4 className="font-semibold text-slate-900 dark:text-white mb-3">{t('contactInfo')}</h4>
+        <div className="text-[var(--text-scale-sm)] text-slate-600 dark:text-slate-400 space-y-2">
           <div className="flex items-center">
-            <Mail className="h-4 w-4 mr-2 text-blue-600" />
-            <span>info@pasuritëtiranës.al</span>
+            <Mail className="h-4 w-4 mr-2 text-[var(--primary)]" />
+            <span>info@pasuritetiranes.al</span>
           </div>
           <div className="flex items-center">
-            <Phone className="h-4 w-4 mr-2 text-blue-600" />
+            <Phone className="h-4 w-4 mr-2 text-[var(--primary)]" />
             <span>+355 69 123 4567</span>
           </div>
           <div className="flex items-center">
-            <Clock className="h-4 w-4 mr-2 text-blue-600" />
-            <span>Hën-Pre: 9:00-18:00, Sht-Dje: 10:00-16:00</span>
+            <Clock className="h-4 w-4 mr-2 text-[var(--primary)]" />
+            <span>{t('agentHours')}</span>
           </div>
         </div>
       </div>

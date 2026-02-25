@@ -71,7 +71,7 @@ export default function NewProperty() {
   useEffect(() => {
     const hasChanges =
       formIsDirty || featuresList.length > 0 || propertyImages.length > 0;
-  setHasUnsavedChanges(hasChanges);
+    setHasUnsavedChanges(hasChanges);
   }, [formIsDirty, featuresList.length, propertyImages.length]);
 
   // Warn user about unsaved changes when leaving the page
@@ -94,7 +94,7 @@ export default function NewProperty() {
     reset();
     setFeaturesList([]);
     setPropertyImages([]);
-  setHasUnsavedChanges(false);
+    setHasUnsavedChanges(false);
   };
 
   // Handle navigation with unsaved changes warning
@@ -173,12 +173,12 @@ export default function NewProperty() {
         }
         throw new Error(result.error?.message || "Failed to save property");
       }
-  // Reset form state after successful submission
-  resetForm();
-  // Optional toast before redirect
-  showToast({ type: 'success', title: 'Sukses', message: 'Pasuria u krijua me sukses.' });
-  // Redirect to agent dashboard with success flag
-  router.push("/admin/dashboard?created=1");
+      // Reset form state after successful submission
+      resetForm();
+      // Optional toast before redirect
+      showToast({ type: 'success', title: 'Sukses', message: 'Pasuria u krijua me sukses.' });
+      // Redirect to agent dashboard with success flag
+      router.push("/admin/dashboard?created=1");
     } catch (error) {
       console.error("Error creating property:", error, data);
 
@@ -203,9 +203,9 @@ export default function NewProperty() {
   };
 
   return (
-  <div className="min-h-full bg-linear-to-br from-slate-50 to-blue-50">
+    <div className="min-h-full bg-[var(--background)]">
       {/* Header */}
-  <header className="bg-linear-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl">
+      <header className="bg-linear-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center">
             <button
@@ -223,7 +223,7 @@ export default function NewProperty() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* Basic Information */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
+          <div className="card p-8 border-none">
             <div className="flex items-center mb-6">
               <div className="w-10 h-10 bg-linear-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">1</span>
@@ -235,7 +235,7 @@ export default function NewProperty() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Titulli i Pasurisë *
                 </label>
                 <input
@@ -247,7 +247,7 @@ export default function NewProperty() {
                       message: "Titulli duhet të jetë të paktën 5 karaktere",
                     },
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   placeholder="p.sh. Apartament Modern në Qendër të Tiranës"
                 />
                 {errors.title && (
@@ -258,7 +258,7 @@ export default function NewProperty() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Përshkrimi *
                 </label>
                 <textarea
@@ -270,7 +270,7 @@ export default function NewProperty() {
                       message: "Përshkrimi duhet të jetë të paktën 20 karaktere",
                     },
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   placeholder="Përshkruani pasurinë në detaje..."
                 />
                 {errors.description && (
@@ -281,7 +281,7 @@ export default function NewProperty() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Çmimi (€) *
                 </label>
                 <input
@@ -290,7 +290,7 @@ export default function NewProperty() {
                     required: "Çmimi është i detyrueshëm",
                     min: { value: 1, message: "Çmimi duhet të jetë më i madh se 0" },
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   placeholder="120000"
                 />
                 {errors.price && (
@@ -301,12 +301,12 @@ export default function NewProperty() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Lloji i Shitjes *
                 </label>
                 <select
                   {...register("listingType")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                 >
                   <option value="sale">Për Shitje</option>
                   <option value="rent">Me Qira</option>
@@ -316,7 +316,7 @@ export default function NewProperty() {
           </div>
 
           {/* Images */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
+          <div className="card p-8 border-none">
             <div className="flex items-center mb-6">
               <div className="w-10 h-10 bg-linear-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">2</span>
@@ -334,7 +334,7 @@ export default function NewProperty() {
           </div>
 
           {/* Address */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
+          <div className="card p-8 border-none">
             <div className="flex items-center mb-6">
               <div className="w-10 h-10 bg-linear-to-r from-blue-400 to-blue-500 rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">3</span>
@@ -346,7 +346,7 @@ export default function NewProperty() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Rruga *
                 </label>
                 <input
@@ -354,7 +354,7 @@ export default function NewProperty() {
                   {...register("street", {
                     required: "Rruga është e detyrueshme",
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   placeholder="p.sh. Rruga Dëshmorët e Kombit, Nr. 15"
                 />
                 {errors.street && (
@@ -365,7 +365,7 @@ export default function NewProperty() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Qyteti *
                 </label>
                 <input
@@ -373,7 +373,7 @@ export default function NewProperty() {
                   {...register("city", {
                     required: "Qyteti është i detyrueshëm",
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                 />
                 {errors.city && (
                   <p className="text-blue-600 text-sm mt-1">
@@ -383,7 +383,7 @@ export default function NewProperty() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Shteti / Prefektura *
                 </label>
                 <input
@@ -391,7 +391,7 @@ export default function NewProperty() {
                   {...register("state", {
                     required: "Shteti/Prefektura është i detyrueshëm",
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   placeholder="p.sh. Tiranë"
                 />
                 {errors.state && (
@@ -402,19 +402,19 @@ export default function NewProperty() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Kodi Postar
                 </label>
                 <input
                   type="text"
                   {...register("zipCode")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   placeholder="1001"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Latitude *
                 </label>
                 <input
@@ -423,7 +423,7 @@ export default function NewProperty() {
                   {...register("lat", {
                     required: "Latitude është e detyrueshme",
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   placeholder="41.3275"
                 />
                 {errors.lat && (
@@ -434,7 +434,7 @@ export default function NewProperty() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Longitude *
                 </label>
                 <input
@@ -443,7 +443,7 @@ export default function NewProperty() {
                   {...register("lng", {
                     required: "Longitude është e detyrueshme",
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   placeholder="19.8187"
                 />
                 {errors.lng && (
@@ -456,7 +456,7 @@ export default function NewProperty() {
 
             {/* Interactive Map for Location Selection */}
             <div className="mt-6">
-              <h3 className="text-md font-medium text-gray-900 mb-3">
+              <h3 className="text-md font-medium text-[var(--foreground)] mb-3">
                 Zgjidhni Lokacionin në Hartë
               </h3>
               <p className="text-sm text-gray-600 mb-4">
@@ -480,7 +480,7 @@ export default function NewProperty() {
           </div>
 
           {/* Property Details */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
+          <div className="card p-8 border-none">
             <div className="flex items-center mb-6">
               <div className="w-10 h-10 bg-linear-to-r from-blue-300 to-blue-400 rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">4</span>
@@ -492,20 +492,20 @@ export default function NewProperty() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Dhoma Gjumi
                 </label>
                 <input
                   type="number"
                   min="0"
                   {...register("bedrooms", { min: 0 })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   placeholder="2"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Banjo *
                 </label>
                 <input
@@ -516,7 +516,7 @@ export default function NewProperty() {
                     required: "Numri i banjove është i detyrueshëm",
                     min: 1,
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   placeholder="1"
                 />
                 {errors.bathrooms && (
@@ -527,7 +527,7 @@ export default function NewProperty() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Sipërfaqja (m²) *
                 </label>
                 <input
@@ -537,7 +537,7 @@ export default function NewProperty() {
                     required: "Sipërfaqja është e detyrueshme",
                     min: 1,
                   })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   placeholder="85"
                 />
                 {errors.squareFootage && (
@@ -548,12 +548,12 @@ export default function NewProperty() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Lloji i Pasurisë *
                 </label>
                 <select
                   {...register("propertyType")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                 >
                   <option value="apartment">Apartament</option>
                   <option value="house">Shtëpi</option>
@@ -563,7 +563,7 @@ export default function NewProperty() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Viti i Ndërtimit
                 </label>
                 <input
@@ -571,18 +571,18 @@ export default function NewProperty() {
                   min="1900"
                   max={new Date().getFullYear()}
                   {...register("yearBuilt")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   placeholder="2018"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                   Statusi *
                 </label>
                 <select
                   {...register("status")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                 >
                   <option value="active">Aktive</option>
                   <option value="inactive">Jo-aktive</option>
@@ -594,12 +594,12 @@ export default function NewProperty() {
           </div>
 
           {/* Features */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          <div className="card p-8 border-none">
             <div className="flex items-center mb-6">
               <div className="w-10 h-10 bg-linear-to-r from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">5</span>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-[var(--foreground)]">
                 Karakteristikat
               </h2>
             </div>
@@ -616,7 +616,7 @@ export default function NewProperty() {
                   }
                   e.stopPropagation();
                 }}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 input-field"
                 placeholder="Shto karakteristikë (p.sh. Dysheme parket)"
               />
               <button
@@ -648,8 +648,8 @@ export default function NewProperty() {
           </div>
 
           {/* Settings */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="card p-6 border-none">
+            <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">
               Cilësimet
             </h2>
 
@@ -659,7 +659,7 @@ export default function NewProperty() {
                 {...register("isPinned")}
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label className="ml-2 text-sm text-gray-700">
+              <label className="ml-2 text-sm text-slate-700 dark:text-slate-300">
                 Pin në faqen kryesore (do të shfaqet në krye të listës)
               </label>
             </div>

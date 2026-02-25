@@ -13,6 +13,7 @@ import {
   ArrowUpDown,
 } from "lucide-react";
 import { Property } from "@/types";
+import { getTranslation } from "@/lib/i18n";
 
 interface SearchFiltersProps {
   properties: Property[];
@@ -53,6 +54,13 @@ export default function SearchFilters({
     sortBy: "",
     sortOrder: "desc",
   });
+
+  const locale: "sq" | "en" =
+    typeof navigator !== "undefined" &&
+      navigator.language?.toLowerCase().startsWith("en")
+      ? "en"
+      : "sq";
+  const t = (key: string) => getTranslation(key, locale);
 
   // Use ref to store the callback to prevent infinite loops
   const onFilteredResultsRef = useRef(onFilteredResults);
@@ -318,20 +326,20 @@ export default function SearchFilters({
     filters.agent;
 
   return (
-    <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl hover:shadow-2xl border border-white/20 p-5 sm:p-6 md:p-8 mb-4 sm:mb-6 md:mb-8 transition-shadow duration-500">
+    <div className="card p-5 sm:p-6 md:p-8 mb-4 sm:mb-6 md:mb-8 bg-[var(--background)]/95 backdrop-blur-xl transition-shadow duration-500 hover:shadow-2xl">
       {/* Search Bar */}
       <div className="relative mb-4">
         <label htmlFor="property-search" className="sr-only">
           Search properties
         </label>
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
         <input
           id="property-search"
           type="text"
           placeholder="Kërkoni pasuri..."
           value={filters.searchTerm}
           onChange={(e) => handleFilterChange("searchTerm", e.target.value)}
-          className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="input-field pl-9 sm:pl-10"
           aria-label="Search properties by title, description, or location"
         />
       </div>
@@ -340,13 +348,13 @@ export default function SearchFilters({
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center text-gray-700 hover:text-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
+          className="flex items-center text-[var(--foreground)] hover:text-[var(--primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 rounded-md px-2 py-1"
           aria-expanded={isExpanded}
           aria-controls="advanced-filters"
-          aria-label={isExpanded ? "Hide advanced filters" : "Show advanced filters"}
+          aria-label={isExpanded ? t('advancedFilters') : t('advancedFilters')}
         >
           <Filter className="h-5 w-5 mr-2" aria-hidden="true" />
-          <span className="font-medium">Filtrat e Avancuara</span>
+          <span className="font-medium">{t('advancedFilters')}</span>
           <span className="ml-2 text-sm text-gray-500" aria-hidden="true">
             {isExpanded ? "▲" : "▼"}
           </span>
@@ -361,13 +369,13 @@ export default function SearchFilters({
               name="sortBy"
               value={filters.sortBy}
               onChange={(e) => handleFilterChange("sortBy", e.target.value)}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-slate-700 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-primary/50 bg-[var(--background)] text-[var(--foreground)]"
             >
-              <option value="">Renditja</option>
-              <option value="price">Çmimi</option>
-              <option value="date">Data e Shtimit</option>
-              <option value="size">Madhësia</option>
-              <option value="location">Lokacioni</option>
+              <option value="">{t('sortBy')}</option>
+              <option value="price">{t('price')}</option>
+              <option value="date">{t('dateAdded')}</option>
+              <option value="size">{t('size')}</option>
+              <option value="location">{t('locations')}</option>
             </select>
 
             {filters.sortBy && (
@@ -381,24 +389,24 @@ export default function SearchFilters({
                     e.target.value as "asc" | "desc"
                   )
                 }
-                className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-slate-700 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-primary/50 bg-[var(--background)] text-[var(--foreground)]"
               >
                 <option value="asc">
                   {filters.sortBy === "price"
-                    ? "Më i lirë"
+                    ? t('cheapest')
                     : filters.sortBy === "date"
-                      ? "Më i vjetër"
+                      ? t('oldest')
                       : filters.sortBy === "size"
-                        ? "Më i vogël"
+                        ? t('smallest')
                         : "A-Z"}
                 </option>
                 <option value="desc">
                   {filters.sortBy === "price"
-                    ? "Më i shtrenjtë"
+                    ? t('mostExpensive')
                     : filters.sortBy === "date"
-                      ? "Më i ri"
+                      ? t('newest')
                       : filters.sortBy === "size"
-                        ? "Më i madh"
+                        ? t('largest')
                         : "Z-A"}
                 </option>
               </select>
@@ -411,7 +419,7 @@ export default function SearchFilters({
               className="flex items-center text-blue-600 hover:text-blue-700 text-sm"
             >
               <X className="h-4 w-4 mr-1" />
-              Pastro Filtrat
+              {t('clearFilters')}
             </button>
           )}
         </div>
@@ -421,15 +429,15 @@ export default function SearchFilters({
       {isExpanded && (
         <div
           id="advanced-filters"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pt-4 border-t border-gray-200"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pt-4 border-t border-gray-200 dark:border-slate-800"
           role="region"
           aria-label="Advanced search filters"
         >
           {/* Price Range */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              <Euro className="inline h-4 w-4 mr-1 text-blue-600" />
-              Çmimi (€)
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <Euro className="inline h-4 w-4 mr-1 text-[var(--primary)]" />
+              {t('price')} (€)
             </label>
             <div className="space-y-2">
               <div className="flex space-x-2">
@@ -440,7 +448,7 @@ export default function SearchFilters({
                   onChange={(e) =>
                     handlePriceRangeChange("min", parseInt(e.target.value) || 0)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field py-2 px-3"
                 />
                 <input
                   type="number"
@@ -456,7 +464,7 @@ export default function SearchFilters({
                       parseInt(e.target.value) || maxPrice
                     )
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field py-2 px-3"
                 />
               </div>
               <div className="text-xs text-gray-500">
@@ -468,16 +476,16 @@ export default function SearchFilters({
 
           {/* Location */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              <MapPin className="inline h-4 w-4 mr-1 text-blue-600" />
-              Lokacioni
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <MapPin className="inline h-4 w-4 mr-1 text-[var(--primary)]" />
+              {t('locations')}
             </label>
             <select
               value={filters.location}
               onChange={(e) => handleFilterChange("location", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-field py-2 text-sm"
             >
-              <option value="">Të gjitha qytetet</option>
+              <option value="">{t('allCities')}</option>
               {uniqueCities.map((city) => (
                 <option key={city} value={city}>
                   {city}
@@ -488,125 +496,99 @@ export default function SearchFilters({
 
           {/* Property Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              <Home className="inline h-4 w-4 mr-1 text-blue-600" />
-              Lloji i Pasurisë
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-1.5">
+              <Home className="inline h-4 w-4 mr-1 text-[var(--primary)]" />
+              {t('allTypes')}
             </label>
-            <div className="space-y-2">
-              {[
-                { value: "house", label: "Shtëpi" },
-                { value: "apartment", label: "Apartament" },
-                { value: "condo", label: "Kondo" },
-                { value: "townhouse", label: "Shtëpi në Qytet" },
-              ].map((type) => (
-                <label key={type.value} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={filters.propertyType.includes(type.value)}
-                    onChange={() =>
-                      handleMultiSelectChange("propertyType", type.value)
-                    }
-                    className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span className="text-sm text-gray-700">{type.label}</span>
-                </label>
-              ))}
-            </div>
+            <select
+              value={filters.propertyType[0] || ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                handleFilterChange("propertyType", val ? [val] : []);
+              }}
+              className="input-field py-2 text-sm"
+            >
+              <option value="">{t('allTypes')}</option>
+              <option value="house">{t('house')}</option>
+              <option value="apartment">{t('apartment')}</option>
+              <option value="condo">{t('condo')}</option>
+              <option value="townhouse">{t('townhouse')}</option>
+            </select>
           </div>
 
           {/* Bedrooms */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              <Bed className="inline h-4 w-4 mr-1 text-blue-600" />
-              Dhomat e Gjumit
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-1.5">
+              <Bed className="inline h-4 w-4 mr-1 text-[var(--primary)]" />
+              {t('bedrooms')}
             </label>
-            <div className="space-y-2">
-              {[
-                { value: "1", label: "1 dhomë" },
-                { value: "2", label: "2 dhoma" },
-                { value: "3", label: "3 dhoma" },
-                { value: "4", label: "4+ dhoma" },
-              ].map((bedroom) => (
-                <label key={bedroom.value} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={filters.bedrooms.includes(bedroom.value)}
-                    onChange={() =>
-                      handleMultiSelectChange("bedrooms", bedroom.value)
-                    }
-                    className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span className="text-sm text-gray-700">{bedroom.label}</span>
-                </label>
-              ))}
-            </div>
+            <select
+              value={filters.bedrooms[0] || ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                handleFilterChange("bedrooms", val ? [val] : []);
+              }}
+              className="input-field py-2 text-sm"
+            >
+              <option value="">{t('anyNumber')}</option>
+              <option value="1">{t('rooms1')}</option>
+              <option value="2">{t('rooms2')}</option>
+              <option value="3">{t('rooms3')}</option>
+              <option value="4">{t('rooms4Plus')}</option>
+            </select>
           </div>
 
           {/* Bathrooms */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              <Bath className="inline h-4 w-4 mr-1 text-blue-600" />
-              Banjot
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-1.5">
+              <Bath className="inline h-4 w-4 mr-1 text-[var(--primary)]" />
+              {t('bathrooms')}
             </label>
-            <div className="space-y-2">
-              {[
-                { value: "1", label: "1 banjo" },
-                { value: "2", label: "2 banjo" },
-                { value: "3", label: "3+ banjo" },
-              ].map((bathroom) => (
-                <label key={bathroom.value} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={filters.bathrooms.includes(bathroom.value)}
-                    onChange={() =>
-                      handleMultiSelectChange("bathrooms", bathroom.value)
-                    }
-                    className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span className="text-sm text-gray-700">
-                    {bathroom.label}
-                  </span>
-                </label>
-              ))}
-            </div>
+            <select
+              value={filters.bathrooms[0] || ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                handleFilterChange("bathrooms", val ? [val] : []);
+              }}
+              className="input-field py-2 text-sm"
+            >
+              <option value="">{t('anyNumber')}</option>
+              <option value="1">{t('baths1')}</option>
+              <option value="2">{t('baths2')}</option>
+              <option value="3">{t('baths3Plus')}</option>
+            </select>
           </div>
 
           {/* Listing Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              💰 Lloji i Shitjes
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-1.5">
+              💰 {t('allListings')}
             </label>
-            <div className="space-y-2">
-              {[
-                { value: "sale", label: "Për Shitje" },
-                { value: "rent", label: "Me Qira" },
-              ].map((type) => (
-                <label key={type.value} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={filters.listingType.includes(type.value)}
-                    onChange={() =>
-                      handleMultiSelectChange("listingType", type.value)
-                    }
-                    className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span className="text-sm text-gray-700">{type.label}</span>
-                </label>
-              ))}
-            </div>
+            <select
+              value={filters.listingType[0] || ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                handleFilterChange("listingType", val ? [val] : []);
+              }}
+              className="input-field py-2 text-sm"
+            >
+              <option value="">{t('allListings')}</option>
+              <option value="sale">{t('forSale')}</option>
+              <option value="rent">{t('forRent')}</option>
+            </select>
           </div>
 
           {/* Agent Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              👤 Agjenti
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-1.5">
+              👤 Agent
             </label>
             <select
               value={filters.agent}
               onChange={(e) => handleFilterChange("agent", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-field py-2 text-sm"
             >
-              <option value="">Të gjithë agjentët</option>
+              <option value="">{t('allAgents')}</option>
               {uniqueAgents.map((agent) => (
                 <option key={agent.id} value={agent.id}>
                   {agent.name}

@@ -52,7 +52,7 @@ export default function InteractiveMapView({
       if (mode === 'edit') {
         map.on('click', (e: any) => {
           const { lat, lng } = e.latlng;
-          
+
           // Remove existing selected marker
           if (selectedMarkerRef.current) {
             map.removeLayer(selectedMarkerRef.current);
@@ -122,7 +122,7 @@ export default function InteractiveMapView({
         try {
           mapInstanceRef.current.off();
           mapInstanceRef.current.remove();
-        } catch {}
+        } catch { }
         mapInstanceRef.current = null;
         setIsMapReady(false);
       }
@@ -242,14 +242,15 @@ export default function InteractiveMapView({
           <button
             onClick={() => {
               if (mapInstanceRef.current) {
-                try { mapInstanceRef.current.invalidateSize(); } catch {}
+                try { mapInstanceRef.current.invalidateSize(); } catch { }
                 mapInstanceRef.current.setView(center, zoom, { animate: false });
               }
             }}
             className="bg-white hover:bg-blue-50 p-2 rounded-md shadow-sm border border-gray-200 transition-colors duration-200"
             title="Kthehu në Tiranë"
+            aria-label="Centero hartën në Tiranë"
           >
-            <Home className="h-4 w-4 text-blue-600" />
+            <Home className="h-4 w-4 text-blue-600" aria-hidden="true" />
           </button>
 
           {selectedLocation && (
@@ -259,8 +260,9 @@ export default function InteractiveMapView({
               rel="noopener noreferrer"
               className="bg-white hover:bg-blue-50 p-2 rounded-md shadow-sm border border-gray-200 transition-colors duration-200"
               title="Hap në Google Maps"
+              aria-label="Hap në Google Maps"
             >
-              <ExternalLink className="h-4 w-4 text-blue-600" />
+              <ExternalLink className="h-4 w-4 text-blue-600" aria-hidden="true" />
             </a>
           )}
         </div>

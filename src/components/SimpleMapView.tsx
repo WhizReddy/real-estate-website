@@ -139,31 +139,14 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
         // correctly on the map.
         const customIcon = L.divIcon({
           html: `
-            <div style="
-              background-color: #2563eb;
-              width: 24px;
-              height: 24px;
-              border-radius: 50% 50% 50% 0;
-              border: 3px solid #ffffff;
-              transform: rotate(-45deg);
-              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            ">
-              <div style="
-                width: 8px;
-                height: 8px;
-                background-color: #ffffff;
-                border-radius: 50%;
-                transform: rotate(45deg);
-              "></div>
+            <div class="bg-[var(--primary)] min-w-[40px] px-2 py-1 flex items-center justify-center rounded-full border-[3px] border-white dark:border-slate-800 shadow-md transition-transform duration-200 hover:scale-110">
+              <div class="w-2 h-2 bg-white rounded-full mr-1"></div>
             </div>
           `,
           className: 'custom-marker',
-          iconSize: [24, 24],
-          iconAnchor: [12, 24],
-          popupAnchor: [0, -24],
+          iconSize: [30, 30],
+          iconAnchor: [15, 30],
+          popupAnchor: [0, -30],
         });
 
         // Override default Leaflet icons so that fallbacks load correctly.
@@ -279,23 +262,15 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
         const ToggleControl = L.Control.extend({
           options: { position: 'topright' },
           onAdd: function () {
-            const button = L.DomUtil.create('button', 'leaflet-bar');
+            const button = L.DomUtil.create('button', 'leaflet-bar flex items-center justify-center bg-[var(--primary)] text-white border-none rounded-full shadow-md cursor-pointer hover:bg-primary-dark transition-colors duration-200');
             // Use a map emoji to hint at switching layers; localize the title.
             button.innerHTML = '🗺️';
             button.title = t('switchMap');
             // Apply custom styling for cohesion with the site's design.
-            button.style.backgroundColor = '#2563eb';
-            button.style.color = '#fff';
-            button.style.padding = '6px';
-            button.style.border = 'none';
-            button.style.borderRadius = '6px';
-            button.style.width = '32px';
-            button.style.height = '32px';
+            button.style.width = '36px';
+            button.style.height = '36px';
             button.style.lineHeight = '20px';
-            button.style.display = 'flex';
-            button.style.alignItems = 'center';
-            button.style.justifyContent = 'center';
-            button.style.cursor = 'pointer';
+            button.style.fontSize = '1.1rem';
             // On click, cycle to the next provider in the list
             L.DomEvent.on(button, 'click', (e: any) => {
               L.DomEvent.stopPropagation(e);
@@ -312,23 +287,14 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
         const HomeControl = L.Control.extend({
           options: { position: 'topright' },
           onAdd: function () {
-            const button = L.DomUtil.create('button', 'leaflet-bar');
+            const button = L.DomUtil.create('button', 'leaflet-bar flex items-center justify-center bg-[var(--primary)] text-white border-none rounded-full shadow-md cursor-pointer hover:bg-primary-dark transition-colors duration-200 mt-2');
             // Use a house emoji; localize the title.
             button.innerHTML = '🏠';
             button.title = t('home');
-            button.style.backgroundColor = '#2563eb';
-            button.style.color = '#fff';
-            button.style.padding = '6px';
-            button.style.border = 'none';
-            button.style.borderRadius = '6px';
-            button.style.width = '32px';
-            button.style.height = '32px';
+            button.style.width = '36px';
+            button.style.height = '36px';
             button.style.lineHeight = '20px';
-            button.style.display = 'flex';
-            button.style.alignItems = 'center';
-            button.style.justifyContent = 'center';
-            button.style.marginLeft = '4px';
-            button.style.cursor = 'pointer';
+            button.style.fontSize = '1.1rem';
             L.DomEvent.on(button, 'click', (e: any) => {
               L.DomEvent.stopPropagation(e);
               L.DomEvent.preventDefault(e);
@@ -392,40 +358,28 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
               const coords = property.address.coordinates;
               marker.bindPopup(
                 `
-                <div style="min-width: 240px; max-width: 280px; padding: 12px;">
-                  <div style="margin-bottom: 8px;">
-                    <h3 style="font-weight: 700; font-size: 15px; line-height: 1.3; margin: 0 0 8px 0; color: #1f2937;">${property.title}</h3>
-                    <p style="font-weight: 600; font-size: 16px; color: #2563eb; margin: 0 0 8px 0;">${formatPrice(
-                  property.price
-                )}</p>
+                <div class="p-[var(--spacing-md)] min-w-[240px] max-w-[280px]">
+                  <div class="mb-[var(--spacing-sm)]">
+                    <h3 class="font-bold text-[var(--text-scale-base)] text-slate-900 leading-tight m-0 mb-1">${property.title}</h3>
+                    <p class="font-bold text-[var(--text-scale-lg)] text-[var(--primary)] m-0">${formatPrice(property.price)}</p>
                   </div>
-                  <div style="display: flex; gap: 8px; font-size: 12px; color: #6b7280; margin-bottom: 10px; flex-wrap: wrap;">
-                    <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${property.details.bedrooms} ${t(
-                  'bedrooms'
-                )}</span>
-                    <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${property.details.bathrooms} ${t(
-                  'bathrooms'
-                )}</span>
-                    <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${property.details.squareFootage}${t(
-                  'squareMeters'
-                )}</span>
+                  <div class="flex flex-wrap gap-2 text-[var(--text-scale-sm)] text-slate-700 mb-[var(--spacing-sm)]">
+                    <span class="bg-slate-100 px-2 py-1 rounded-md border border-slate-200">${property.details.bedrooms} ${t('bedrooms')}</span>
+                    <span class="bg-slate-100 px-2 py-1 rounded-md border border-slate-200">${property.details.bathrooms} ${t('bathrooms')}</span>
+                    <span class="bg-slate-100 px-2 py-1 rounded-md border border-slate-200">${property.details.squareFootage} ${t('squareMeters')}</span>
                   </div>
-                  <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
-                    <a href="/properties/${property.id}" style="display: inline-block; background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 500; transition: background 0.2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">${t(
-                  'viewDetails'
-                )}</a>
-                    <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coords.lat},${coords.lng}" target="_blank" rel="noopener" style="display: inline-block; background: #f3f4f6; color: #2563eb; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 500;">${t(
-                  'streetView'
-                )}</a>
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}" target="_blank" rel="noopener" style="display: inline-block; background: #f3f4f6; color: #2563eb; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 500;">${t(
-                  'directions'
-                )}</a>
+                  <div class="mt-[var(--spacing-md)] flex flex-col gap-2">
+                    <a href="/properties/${property.id}" class="inline-block bg-[var(--primary)] text-white px-4 py-2 rounded-lg text-center font-medium no-underline transition-colors hover:bg-primary-dark focus-visible:ring-2 focus-visible:ring-primary">${t('viewDetails')}</a>
+                    <div class="grid grid-cols-2 gap-2">
+                      <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coords.lat},${coords.lng}" target="_blank" rel="noopener" class="inline-block bg-slate-100 text-[var(--primary)] px-3 py-2 rounded-lg text-center text-[var(--text-scale-sm)] font-medium no-underline transition-colors hover:bg-slate-200">${t('streetView')}</a>
+                      <a href="https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}" target="_blank" rel="noopener" class="inline-block bg-slate-100 text-[var(--primary)] px-3 py-2 rounded-lg text-center text-[var(--text-scale-sm)] font-medium no-underline transition-colors hover:bg-slate-200">${t('directions')}</a>
+                    </div>
                   </div>
                 </div>
               `,
                 {
                   maxWidth: 300,
-                  className: 'custom-popup',
+                  className: 'custom-popup leaflet-popup-card',
                 }
               );
               marker.on('click', () => {
@@ -440,20 +394,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
               const count = cluster.properties.length;
               const clusterIcon = L.divIcon({
                 html: `
-                  <div style="
-                    position: relative;
-                    width: 32px;
-                    height: 32px;
-                    line-height: 32px;
-                    border-radius: 50%;
-                    background: #2563eb;
-                    color: #fff;
-                    text-align: center;
-                    font-weight: bold;
-                    font-size: 13px;
-                    border: 3px solid #fff;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-                  ">
+                  <div class="relative min-w-[36px] h-[36px] flex items-center justify-center rounded-full bg-[var(--primary)] text-white font-bold text-[var(--text-scale-sm)] border-[3px] border-white dark:border-slate-800 shadow-md transition-transform duration-200 hover:scale-110">
                     ${count}
                   </div>
                 `,
@@ -466,18 +407,18 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
                 icon: clusterIcon,
               }).addTo(map);
               // Build popup listing up to five property links and showing if more
-              let content = `<div style="min-width: 200px; max-width: 280px; padding: 8px;">`;
-              content += `<div style="font-weight: 600; margin-bottom: 6px;">${count} ${t('properties')}</div><ul style="padding-left: 16px; margin: 0;">`;
+              let content = `<div class="p-[var(--spacing-md)] min-w-[200px] max-w-[280px]">`;
+              content += `<div class="font-bold text-[var(--text-scale-base)] text-slate-900 mb-2 border-b border-slate-200 pb-2">${count} ${t('properties')}</div><ul class="pl-4 m-0 space-y-1">`;
               const list = cluster.properties.slice(0, 5);
               list.forEach((p) => {
-                content += `<li style="margin-bottom: 4px;"><a href="/properties/${p.id}" style="color: #2563eb; text-decoration: none;">${p.title}</a></li>`;
+                content += `<li><a href="/properties/${p.id}" class="text-[var(--primary)] text-[var(--text-scale-sm)] font-medium no-underline hover:underline transition-all">${p.title}</a></li>`;
               });
               if (cluster.properties.length > list.length) {
                 const more = cluster.properties.length - list.length;
-                content += `<li style="color: #6b7280;">… ${more} ${t('clusterMore')}</li>`;
+                content += `<li class="text-slate-500 text-[var(--text-scale-sm)] italic pt-1">… ${more} ${t('clusterMore')}</li>`;
               }
               content += `</ul></div>`;
-              marker.bindPopup(content);
+              marker.bindPopup(content, { className: 'leaflet-popup-card' });
               marker.on('click', () => {
                 try {
                   map.setView([cluster.lat, cluster.lng], Math.min(map.getZoom() + 2, 18));
@@ -496,40 +437,28 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
               const marker = L.marker([coords.lat, coords.lng], { icon: customIcon }).addTo(map);
               marker.bindPopup(
                 `
-                <div style="min-width: 240px; max-width: 280px; padding: 12px;">
-                  <div style="margin-bottom: 8px;">
-                    <h3 style="font-weight: 700; font-size: 15px; line-height: 1.3; margin: 0 0 8px 0; color: #1f2937;">${property.title}</h3>
-                    <p style="font-weight: 600; font-size: 16px; color: #2563eb; margin: 0 0 8px 0;">${formatPrice(
-                  property.price
-                )}</p>
+                <div class="p-[var(--spacing-md)] min-w-[240px] max-w-[280px]">
+                  <div class="mb-[var(--spacing-sm)]">
+                    <h3 class="font-bold text-[var(--text-scale-base)] text-slate-900 leading-tight m-0 mb-1">${property.title}</h3>
+                    <p class="font-bold text-[var(--text-scale-lg)] text-[var(--primary)] m-0">${formatPrice(property.price)}</p>
                   </div>
-                  <div style="display: flex; gap: 8px; font-size: 12px; color: #6b7280; margin-bottom: 10px; flex-wrap: wrap;">
-                    <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${property.details.bedrooms} ${t(
-                  'bedrooms'
-                )}</span>
-                    <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${property.details.bathrooms} ${t(
-                  'bathrooms'
-                )}</span>
-                    <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${property.details.squareFootage}${t(
-                  'squareMeters'
-                )}</span>
+                  <div class="flex flex-wrap gap-2 text-[var(--text-scale-sm)] text-slate-700 mb-[var(--spacing-sm)]">
+                    <span class="bg-slate-100 px-2 py-1 rounded-md border border-slate-200">${property.details.bedrooms} ${t('bedrooms')}</span>
+                    <span class="bg-slate-100 px-2 py-1 rounded-md border border-slate-200">${property.details.bathrooms} ${t('bathrooms')}</span>
+                    <span class="bg-slate-100 px-2 py-1 rounded-md border border-slate-200">${property.details.squareFootage} ${t('squareMeters')}</span>
                   </div>
-                  <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
-                    <a href="/properties/${property.id}" style="display: inline-block; background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 500; transition: background 0.2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">${t(
-                  'viewDetails'
-                )}</a>
-                    <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coords.lat},${coords.lng}" target="_blank" rel="noopener" style="display: inline-block; background: #f3f4f6; color: #2563eb; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 500;">${t(
-                  'streetView'
-                )}</a>
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}" target="_blank" rel="noopener" style="display: inline-block; background: #f3f4f6; color: #2563eb; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 500;">${t(
-                  'directions'
-                )}</a>
+                  <div class="mt-[var(--spacing-md)] flex flex-col gap-2">
+                    <a href="/properties/${property.id}" class="inline-block bg-[var(--primary)] text-white px-4 py-2 rounded-lg text-center font-medium no-underline transition-colors hover:bg-primary-dark focus-visible:ring-2 focus-visible:ring-primary">${t('viewDetails')}</a>
+                    <div class="grid grid-cols-2 gap-2">
+                      <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coords.lat},${coords.lng}" target="_blank" rel="noopener" class="inline-block bg-slate-100 text-[var(--primary)] px-3 py-2 rounded-lg text-center text-[var(--text-scale-sm)] font-medium no-underline transition-colors hover:bg-slate-200">${t('streetView')}</a>
+                      <a href="https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}" target="_blank" rel="noopener" class="inline-block bg-slate-100 text-[var(--primary)] px-3 py-2 rounded-lg text-center text-[var(--text-scale-sm)] font-medium no-underline transition-colors hover:bg-slate-200">${t('directions')}</a>
+                    </div>
                   </div>
                 </div>
               `,
                 {
                   maxWidth: 300,
-                  className: 'custom-popup',
+                  className: 'custom-popup leaflet-popup-card',
                 }
               );
               marker.on('click', () => {

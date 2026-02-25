@@ -80,13 +80,13 @@ export default function IntegrationTest() {
   };
 
   return (
-    <div className="min-h-full bg-gray-50 p-8">
+    <div className="min-h-full bg-[var(--background)] p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+        <div className="card p-6 border-none mb-6">
+          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-4">
             Property Creation Integration Test
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-slate-600 dark:text-slate-400 mb-6">
             This page tests the complete property creation workflow including database connectivity,
             API endpoints, form validation, image uploads, fallback systems, and error handling.
           </p>
@@ -123,45 +123,45 @@ export default function IntegrationTest() {
 
           {/* Fallback Statistics */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Fallback Storage</h2>
+            <div className="card p-6 border-none">
+              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Fallback Storage</h2>
               {fallbackStats ? (
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Total Properties:</span>
+                    <span className="text-slate-600 dark:text-slate-400">Total Properties:</span>
                     <span className="font-medium">{fallbackStats.total}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Pending Sync:</span>
+                    <span className="text-slate-600 dark:text-slate-400">Pending Sync:</span>
                     <span className="font-medium text-orange-600">{fallbackStats.pending}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Synced:</span>
+                    <span className="text-slate-600 dark:text-slate-400">Synced:</span>
                     <span className="font-medium text-green-600">{fallbackStats.synced}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Failed:</span>
+                    <span className="text-slate-600 dark:text-slate-400">Failed:</span>
                     <span className="font-medium text-red-600">{fallbackStats.failed}</span>
                   </div>
                   {fallbackStats.oldestPending && (
-                    <div className="pt-2 border-t">
-                      <span className="text-sm text-gray-500">
+                    <div className="pt-2 border-t border-gray-200 dark:border-slate-800">
+                      <span className="text-sm text-slate-500 dark:text-slate-400">
                         Oldest pending: {new Date(fallbackStats.oldestPending).toLocaleString()}
                       </span>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="text-gray-500">Loading stats...</div>
+                <div className="text-slate-500 dark:text-slate-400">Loading stats...</div>
               )}
 
               {syncResults && (
-                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                  <h3 className="font-medium text-blue-900 mb-2">Last Sync Results</h3>
+                <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800/50 rounded-md">
+                  <h3 className="font-medium text-blue-900 dark:text-blue-200 mb-2">Last Sync Results</h3>
                   {syncResults.error ? (
                     <p className="text-red-600 text-sm">{syncResults.error}</p>
                   ) : (
-                    <div className="text-sm text-blue-800">
+                    <div className="text-sm text-blue-800 dark:text-blue-300">
                       <div>Synced: {syncResults.synced}/{syncResults.total}</div>
                       <div>Failed: {syncResults.failed}</div>
                       <div>Skipped: {syncResults.skipped}</div>
@@ -174,11 +174,11 @@ export default function IntegrationTest() {
 
           {/* System Health */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">System Health</h2>
+            <div className="card p-6 border-none">
+              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">System Health</h2>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Database:</span>
+                  <span className="text-slate-600 dark:text-slate-400">Database:</span>
                   <div className="flex items-center space-x-2">
                     {dbStatus.isConnected ? (
                       <CheckCircle className="h-4 w-4 text-green-600" />
@@ -190,9 +190,9 @@ export default function IntegrationTest() {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Fallback System:</span>
+                  <span className="text-slate-600 dark:text-slate-400">Fallback System:</span>
                   <div className="flex items-center space-x-2">
                     {dbStatus.fallbackActive ? (
                       <AlertTriangle className="h-4 w-4 text-orange-600" />
@@ -207,11 +207,10 @@ export default function IntegrationTest() {
 
                 {dbStatus.responseTime && (
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Response Time:</span>
-                    <span className={`text-sm font-mono ${
-                      dbStatus.responseTime < 100 ? 'text-green-600' :
-                      dbStatus.responseTime < 500 ? 'text-yellow-600' : 'text-red-600'
-                    }`}>
+                    <span className="text-slate-600 dark:text-slate-400">Response Time:</span>
+                    <span className={`text-sm font-mono ${dbStatus.responseTime < 100 ? 'text-green-600' :
+                        dbStatus.responseTime < 500 ? 'text-yellow-600' : 'text-red-600'
+                      }`}>
                       {dbStatus.responseTime}ms
                     </span>
                   </div>
@@ -222,26 +221,26 @@ export default function IntegrationTest() {
         </div>
 
         {/* Test Results */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mt-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Test Results</h2>
-          
+        <div className="card p-6 border-none mt-6">
+          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Test Results</h2>
+
           {testResults.length === 0 ? (
-            <div className="text-gray-500 text-center py-8">
+            <div className="text-slate-500 dark:text-slate-400 text-center py-8">
               No test results yet. Click "Run Complete Test Suite" to start testing.
             </div>
           ) : (
             <div className="space-y-4">
               {testResults.map((result, index) => (
-                <div key={index} className="border rounded-lg p-4">
+                <div key={index} className="border border-gray-200 dark:border-slate-800 rounded-lg p-4">
                   <div className="flex items-start space-x-3">
                     {getResultIcon(result.success)}
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-gray-900">
+                        <h3 className="font-medium text-[var(--foreground)]">
                           Test {index + 1}
                         </h3>
                         {result.duration && (
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm text-slate-500 dark:text-slate-400">
                             {result.duration}ms
                           </span>
                         )}
@@ -256,10 +255,10 @@ export default function IntegrationTest() {
                       )}
                       {result.data && (
                         <details className="mt-2">
-                          <summary className="text-sm text-gray-600 cursor-pointer">
+                          <summary className="text-sm text-slate-600 dark:text-slate-400 cursor-pointer">
                             View Details
                           </summary>
-                          <pre className="text-xs text-gray-600 mt-2 bg-gray-50 p-2 rounded overflow-x-auto">
+                          <pre className="text-xs text-slate-600 dark:text-slate-400 mt-2 bg-slate-50 dark:bg-slate-800/50 p-2 rounded overflow-x-auto">
                             {JSON.stringify(result.data, null, 2)}
                           </pre>
                         </details>
@@ -273,11 +272,11 @@ export default function IntegrationTest() {
         </div>
 
         {/* Integration Checklist */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mt-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Integration Checklist</h2>
+        <div className="card p-6 border-none mt-6">
+          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Integration Checklist</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-medium text-gray-900 mb-3">Core Functionality</h3>
+              <h3 className="font-medium text-[var(--foreground)] mb-3">Core Functionality</h3>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center space-x-2">
                   <CheckCircle className="h-4 w-4 text-green-600" />
@@ -302,7 +301,7 @@ export default function IntegrationTest() {
               </ul>
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 mb-3">Error Handling & Fallbacks</h3>
+              <h3 className="font-medium text-[var(--foreground)] mb-3">Error Handling & Fallbacks</h3>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center space-x-2">
                   <CheckCircle className="h-4 w-4 text-green-600" />

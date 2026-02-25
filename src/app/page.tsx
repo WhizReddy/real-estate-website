@@ -149,9 +149,9 @@ export default function Home() {
       <StructuredData type="website" />
       <StructuredData type="organization" />
 
-      {/* Hero - white apartments + blue sky */}
-      <div className="w-full relative">
-        <section
+      <main className="w-full relative">
+        {/* Hero - white apartments + blue sky */}
+        <header
           className="relative overflow-hidden min-h-[640px] flex items-center"
           style={{
             backgroundImage: `
@@ -163,7 +163,7 @@ export default function Home() {
             backgroundRepeat: 'no-repeat',
           }}
         >
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
+          <div className="relative z-10 container-custom py-16 sm:py-32">
             <div className="max-w-2xl">
               <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-blue-200 text-sm font-semibold mb-6">
                 <HomeIcon className="h-4 w-4 mr-2" />
@@ -197,7 +197,7 @@ export default function Home() {
               </div>
 
               {/* Trust badges — glassmorphism cards */}
-              <div className="mt-14 flex gap-4">
+              <div className="mt-14 flex flex-wrap gap-4">
                 {[
                   { value: `${allProperties.length}+`, label: t('activeProperties') },
                   { value: '5★', label: t('reliability') },
@@ -211,18 +211,18 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
+        </header>
 
         {/* Properties Section */}
-        <div className="bg-gray-50 relative pb-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20">
+        <section className="bg-gray-50 relative pb-20">
+          <div className="container-custom -mt-12 relative z-20">
             <DynamicSearchFilters
               properties={allProperties}
               onFilteredResults={handleFilteredResults}
             />
           </div>
 
-          <section id="properties" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 sm:mt-20">
+          <div id="properties" className="container-custom mt-16 sm:mt-20">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
                 <DynamicSearchResults
@@ -258,12 +258,12 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
 
         {/* Contact Section */}
         <section id="contact" className="bg-slate-900 py-20 overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container-custom">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
                 <div className="inline-flex items-center px-3 py-1 bg-blue-500/20 border border-blue-400/30 rounded-full text-blue-300 text-xs font-semibold mb-4">
@@ -316,7 +316,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-      </div>
+      </main>
 
       <MobileFloatingActions
         onFilterToggle={() => setShowMobileSearch(true)}
@@ -334,7 +334,7 @@ export default function Home() {
       {/* Mobile map preview toggle */}
       {showMobileMap && (
         <div className="md:hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+          <div className="container-custom mt-4">
             <MobileStaticMap
               properties={filteredProperties.slice(0, 10)}
               height={300}

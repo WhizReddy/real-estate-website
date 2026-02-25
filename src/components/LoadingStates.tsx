@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { Loader2, MapPin, Home, Search } from 'lucide-react';
+import { Loader2, MapPin, Home, Search, Image as ImageIcon } from 'lucide-react';
 
 // Generic loading spinner
 interface LoadingSpinnerProps {
@@ -39,12 +39,12 @@ export function PageLoading({ message = 'Po ngarkohet...', showLogo = true }: Pa
             <h1 className="text-2xl font-bold text-gray-900">Real Estate Tiranë</h1>
           </div>
         )}
-        
+
         <div className="flex items-center justify-center gap-3 mb-4">
           <LoadingSpinner size="lg" className="text-blue-600" />
           <span className="text-lg text-gray-700 font-medium">{message}</span>
         </div>
-        
+
         <div className="w-64 h-1 bg-gray-200 rounded-full mx-auto overflow-hidden">
           <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full animate-pulse"></div>
         </div>
@@ -59,24 +59,24 @@ export function PropertyCardSkeleton() {
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse">
       {/* Image skeleton */}
       <div className="h-48 sm:h-56 bg-gray-200"></div>
-      
+
       {/* Content skeleton */}
       <div className="p-4 sm:p-6">
         {/* Title */}
         <div className="h-6 bg-gray-200 rounded mb-3"></div>
-        
+
         {/* Address */}
         <div className="flex items-center mb-4">
           <div className="h-4 w-4 bg-gray-200 rounded mr-2"></div>
           <div className="h-4 bg-gray-200 rounded flex-1"></div>
         </div>
-        
+
         {/* Description */}
         <div className="space-y-2 mb-6">
           <div className="h-4 bg-gray-200 rounded"></div>
           <div className="h-4 bg-gray-200 rounded w-3/4"></div>
         </div>
-        
+
         {/* Stats */}
         <div className="flex gap-3">
           <div className="h-8 w-16 bg-gray-200 rounded-lg"></div>
@@ -134,7 +134,7 @@ export function SearchLoadingSkeleton() {
         </div>
         <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
       </div>
-      
+
       {/* Results skeleton */}
       <PropertyGridSkeleton count={9} />
     </div>
@@ -150,20 +150,19 @@ interface LoadingButtonProps {
   onClick?: () => void;
 }
 
-export function LoadingButton({ 
-  children, 
-  isLoading, 
-  disabled = false, 
-  className = '', 
-  onClick 
+export function LoadingButton({
+  children,
+  isLoading,
+  disabled = false,
+  className = '',
+  onClick
 }: LoadingButtonProps) {
   return (
     <button
       onClick={onClick}
       disabled={disabled || isLoading}
-      className={`inline-flex items-center justify-center gap-2 ${className} ${
-        (disabled || isLoading) ? 'opacity-50 cursor-not-allowed' : ''
-      }`}
+      className={`inline-flex items-center justify-center gap-2 ${className} ${(disabled || isLoading) ? 'opacity-50 cursor-not-allowed' : ''
+        }`}
     >
       {isLoading && <LoadingSpinner size="sm" />}
       {children}
@@ -209,20 +208,18 @@ interface ImageLoadingPlaceholderProps {
   className?: string;
 }
 
-export function ImageLoadingPlaceholder({ 
-  width, 
-  height, 
-  className = '' 
+export function ImageLoadingPlaceholder({
+  width,
+  height,
+  className = ''
 }: ImageLoadingPlaceholderProps) {
   return (
-    <div 
+    <div
       className={`bg-gray-200 animate-pulse flex items-center justify-center ${className}`}
       style={{ width, height }}
     >
       <div className="text-gray-400">
-        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-        </svg>
+        <ImageIcon className="w-8 h-8" />
       </div>
     </div>
   );
@@ -248,11 +245,11 @@ interface LoadingWrapperProps {
   className?: string;
 }
 
-export function LoadingWrapper({ 
-  isLoading, 
-  children, 
-  fallback, 
-  className = '' 
+export function LoadingWrapper({
+  isLoading,
+  children,
+  fallback,
+  className = ''
 }: LoadingWrapperProps) {
   if (isLoading) {
     return (

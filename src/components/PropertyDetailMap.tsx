@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Property } from '@/types';
 import { formatPrice } from '@/lib/utils';
 import { fetchNearbyPlacesCached, OSMPlace } from '@/lib/openstreetmap';
-import { 
-  MapPin, 
-  Navigation, 
+import {
+  MapPin,
+  Navigation,
   Maximize2,
   Minimize2,
   Layers
@@ -49,7 +49,7 @@ export default function PropertyDetailMap({
   useEffect(() => {
     const loadNearbyPlaces = async () => {
       if (!showNeighborhood) return;
-      
+
       setLoadingPlaces(true);
       try {
         const places = await fetchNearbyPlacesCached(
@@ -99,25 +99,25 @@ export default function PropertyDetailMap({
       if (mapRef.current) {
         // Remove all Leaflet-specific attributes and properties
         const el = mapRef.current as HTMLDivElement & { _leaflet_id?: string };
-        
+
         // Delete Leaflet's internal ID
         if (el._leaflet_id) {
           delete el._leaflet_id;
         }
-        
+
         // Remove all child elements and listeners
         mapRef.current.innerHTML = '';
         while (mapRef.current.firstChild) {
           mapRef.current.removeChild(mapRef.current.firstChild);
         }
-        
+
         // Clear all data attributes and event listeners
         Array.from(mapRef.current.attributes).forEach(attr => {
           if (attr.name.startsWith('data-leaflet')) {
             mapRef.current.removeAttribute(attr.name);
           }
         });
-        
+
         // Remove any inline styles that might interfere
         const classes = mapRef.current.className || '';
         mapRef.current.className = classes.replace(/leaflet-\S+/g, '');
@@ -140,14 +140,14 @@ export default function PropertyDetailMap({
           const ro = new ResizeObserver(() => {
             if (isVisible() && !resolved) {
               resolved = true;
-              try { ro.disconnect(); } catch {}
+              try { ro.disconnect(); } catch { }
               resolve();
             }
           });
           ro.observe(el);
           window.setTimeout(() => {
             if (!resolved) {
-              try { ro.disconnect(); } catch {}
+              try { ro.disconnect(); } catch { }
               resolved = true;
               resolve();
             }
@@ -166,7 +166,7 @@ export default function PropertyDetailMap({
         if (available > 0 && rect.height < Math.max(200, Math.min(available, desired || 400))) {
           mapRef.current.style.minHeight = Math.max(280, Math.min(available, desired || 400)) + 'px';
         }
-      } catch {}
+      } catch { }
 
       await waitForVisibleContainer(mapRef.current, 1200);
 
@@ -181,7 +181,7 @@ export default function PropertyDetailMap({
       // that may still have _leaflet_id set by another instance.
       // Clean any previously created inner container
       if (innerContainerRef.current && innerContainerRef.current.parentElement === mapRef.current) {
-        try { innerContainerRef.current.remove(); } catch {}
+        try { innerContainerRef.current.remove(); } catch { }
         innerContainerRef.current = null;
       }
 
@@ -195,9 +195,9 @@ export default function PropertyDetailMap({
         // remove any stray leaflet id if present
         const maybe = inner as unknown as { _leaflet_id?: unknown };
         if (maybe && maybe._leaflet_id) {
-          try { delete maybe._leaflet_id; } catch {}
+          try { delete maybe._leaflet_id; } catch { }
         }
-      } catch {}
+      } catch { }
       mapRef.current.appendChild(inner);
       innerContainerRef.current = inner;
 
@@ -219,7 +219,7 @@ export default function PropertyDetailMap({
         markerZoomAnimation: false,
         preferCanvas: true,
       });
-      try { map.zoomControl?.setPosition('bottomleft'); } catch {}
+      try { map.zoomControl?.setPosition('bottomleft'); } catch { }
 
       // Add tile layer
       type ProviderSpec = { url: string; attribution: string; options?: Parameters<typeof L.tileLayer>[1] };
@@ -232,13 +232,13 @@ export default function PropertyDetailMap({
       ];
 
       const providers = mapLayer === 'satellite' ? satelliteProviders : streetProviders;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let tileLayer: any = null;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let tileLayer: any = null;
       const attachTiles = (index: number) => {
         const spec = providers[index];
         if (!spec) return;
         if (tileLayer) {
-          try { map.removeLayer(tileLayer); } catch {}
+          try { map.removeLayer(tileLayer); } catch { }
           tileLayer = null;
         }
         tileLayer = L.tileLayer(spec.url, {
@@ -255,7 +255,7 @@ export default function PropertyDetailMap({
         let errCount = 0;
         tileLayer.on('tileerror', () => {
           errCount += 1;
-          try { map.invalidateSize(); } catch {}
+          try { map.invalidateSize(); } catch { }
           if (errCount >= 3 && index + 1 < providers.length) {
             attachTiles(index + 1);
           }
@@ -265,8 +265,8 @@ export default function PropertyDetailMap({
 
       mapInstanceRef.current = map;
 
-  // Attach a reference to the inner container so we can clean it later
-  try { (map as unknown as Record<string, unknown>)._containerElement = innerContainerRef.current; } catch {}
+      // Attach a reference to the inner container so we can clean it later
+      try { (map as unknown as Record<string, unknown>)._containerElement = innerContainerRef.current; } catch { }
 
       // Force map to invalidate size after a short delay to ensure proper rendering
       setTimeout(() => {
@@ -277,12 +277,12 @@ export default function PropertyDetailMap({
 
       // Keep responsive on resize/orientation
       const onWinResize = () => {
-        try { map.invalidateSize(); } catch {}
+        try { map.invalidateSize(); } catch { }
       };
       window.addEventListener('resize', onWinResize);
       window.addEventListener('orientationchange', onWinResize);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (map as any).__onWinResize = onWinResize;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (map as any).__onWinResize = onWinResize;
 
       // Add main property marker
       addPropertyMarker(L, map, property);
@@ -310,7 +310,7 @@ export default function PropertyDetailMap({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addPropertyMarker = (L: any, map: any, prop: Property) => {
     const coords = prop.address.coordinates;
-    
+
     // Create custom marker for main property
     const mainMarkerIcon = L.divIcon({
       html: `
@@ -380,7 +380,7 @@ export default function PropertyDetailMap({
   const addNearbyPropertyMarkers = (L: any, map: any, properties: Property[]) => {
     properties.forEach((prop) => {
       const coords = prop.address.coordinates;
-      
+
       const nearbyMarkerIcon = L.divIcon({
         html: `
           <div class="nearby-property-marker bg-linear-to-r from-blue-500 to-blue-600 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-600 hover:to-blue-700 transition-all cursor-pointer">
@@ -422,7 +422,7 @@ export default function PropertyDetailMap({
   const addNeighborhoodMarkers = (L: any, map: any, places: NeighborhoodPlace[]) => {
     places.forEach((place) => {
       const icon = getPlaceIcon(place.type);
-      
+
       const placeMarkerIcon = L.divIcon({
         html: `
           <div class="neighborhood-marker bg-white border-2 border-gray-500 rounded-full p-2 shadow-lg hover:shadow-xl transition-all cursor-pointer">
@@ -434,8 +434,8 @@ export default function PropertyDetailMap({
         iconAnchor: [16, 16],
       });
 
-      const marker = L.marker([place.coordinates.lat, place.coordinates.lng], { 
-        icon: placeMarkerIcon 
+      const marker = L.marker([place.coordinates.lat, place.coordinates.lng], {
+        icon: placeMarkerIcon
       }).addTo(map);
 
       const popupContent = `
@@ -485,20 +485,20 @@ export default function PropertyDetailMap({
     let timeoutId: NodeJS.Timeout;
     let retryTimeoutId: NodeJS.Timeout;
     const hostRef = mapRef.current;
-    
+
     const init = async () => {
       if (canceled) return;
-      
+
       // Wait for DOM to be ready
       await new Promise(resolve => {
         timeoutId = setTimeout(resolve, 100);
       });
-      
+
       if (canceled) return;
-      
+
       // Try to initialize, if it fails, retry once after a delay
       const success = await initializeMap();
-      
+
       if (!success && !canceled) {
         // Retry once after 200ms if first attempt failed
         retryTimeoutId = setTimeout(async () => {
@@ -508,7 +508,7 @@ export default function PropertyDetailMap({
         }, 200);
       }
     };
-    
+
     init();
 
     return () => {
@@ -524,7 +524,7 @@ export default function PropertyDetailMap({
             window.removeEventListener('resize', handler);
             window.removeEventListener('orientationchange', handler);
           }
-        } catch {}
+        } catch { }
         try {
           mapInstanceRef.current.remove();
         } catch (error) {
@@ -536,7 +536,7 @@ export default function PropertyDetailMap({
           if (innerEl && host && innerEl.parentElement === host) {
             innerEl.remove();
           }
-        } catch {}
+        } catch { }
         innerContainerRef.current = null;
         mapInstanceRef.current = null;
         markersRef.current = [];
@@ -564,7 +564,7 @@ export default function PropertyDetailMap({
         <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
           <div className="text-center">
             <p className="text-gray-600 mb-2">Failed to load map</p>
-            <button 
+            <button
               onClick={initializeMap}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
@@ -577,7 +577,7 @@ export default function PropertyDetailMap({
   }
 
   return (
-  <div className={`${isFullscreen ? 'fixed inset-0 z-200 bg-white' : 'relative'} ${className}`}>
+    <div className={`${isFullscreen ? 'fixed inset-0 z-200 bg-white' : 'relative'} ${className}`}>
       <div
         ref={mapRef}
         style={{ height: isFullscreen ? '100vh' : height }}
@@ -585,17 +585,19 @@ export default function PropertyDetailMap({
       />
 
       {/* Map Controls */}
-  <div className={`absolute top-3 right-3 flex flex-col gap-2 ${isFullscreen ? 'z-1000' : 'z-10'}`}>
+      <div className={`absolute top-3 right-3 flex flex-col gap-2 ${isFullscreen ? 'z-1000' : 'z-10'}`}>
         {/* Fullscreen Toggle */}
         <button
           onClick={toggleFullscreen}
           className="bg-white hover:bg-gray-50 p-2 rounded-lg shadow-md border border-gray-200 transition-colors"
           title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+          aria-label={isFullscreen ? "Mbyll ekranin e plotë të hartës" : "Hap hartën në ekran të plotë"}
+          aria-pressed={isFullscreen}
         >
           {isFullscreen ? (
-            <Minimize2 className="h-4 w-4 text-gray-600" />
+            <Minimize2 className="h-4 w-4 text-gray-600" aria-hidden="true" />
           ) : (
-            <Maximize2 className="h-4 w-4 text-gray-600" />
+            <Maximize2 className="h-4 w-4 text-gray-600" aria-hidden="true" />
           )}
         </button>
 
@@ -604,29 +606,32 @@ export default function PropertyDetailMap({
           onClick={toggleMapLayer}
           className="bg-white hover:bg-gray-50 p-2 rounded-lg shadow-md border border-gray-200 transition-colors"
           title={mapLayer === 'street' ? 'Satellite View' : 'Street View'}
+          aria-label={mapLayer === 'street' ? 'Ndrysho në pamje satelitore' : 'Ndrysho në pamje rruge'}
+          aria-pressed={mapLayer === 'satellite'}
         >
-          <Layers className="h-4 w-4 text-gray-600" />
+          <Layers className="h-4 w-4 text-gray-600" aria-hidden="true" />
         </button>
 
         {/* Neighborhood Toggle */}
         {showNeighborhood && (
           <button
             onClick={() => setShowNearbyPlaces(!showNearbyPlaces)}
-            className={`p-2 rounded-lg shadow-md border border-gray-200 transition-colors ${
-              showNearbyPlaces 
-                ? 'bg-blue-600 text-white hover:bg-blue-700' 
+            className={`p-2 rounded-lg shadow-md border border-gray-200 transition-colors ${showNearbyPlaces
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
                 : 'bg-white text-gray-600 hover:bg-gray-50'
-            }`}
+              }`}
             title="Toggle Neighborhood Places"
+            aria-label="Shfaq vendet e interesit në lagje"
+            aria-pressed={showNearbyPlaces}
           >
-            <MapPin className="h-4 w-4" />
+            <MapPin className="h-4 w-4" aria-hidden="true" />
           </button>
         )}
       </div>
 
       {/* Directions Button */}
       {showDirections && (
-  <div className={`absolute bottom-3 right-3 ${isFullscreen ? 'z-1000' : 'z-10'}`}>
+        <div className={`absolute bottom-3 right-3 ${isFullscreen ? 'z-1000' : 'z-10'}`}>
           <a
             href={`https://www.google.com/maps/dir/?api=1&destination=${property.address.coordinates.lat},${property.address.coordinates.lng}`}
             target="_blank"
@@ -651,7 +656,7 @@ export default function PropertyDetailMap({
 
       {/* Neighborhood Legend */}
       {showNeighborhood && showNearbyPlaces && !isLoading && !error && (
-  <div className={`absolute bottom-3 left-3 bg-white rounded-lg shadow-md border border-gray-200 p-3 max-w-xs ${isFullscreen ? 'z-1000' : 'z-10'}`}>
+        <div className={`absolute bottom-3 left-3 bg-white rounded-lg shadow-md border border-gray-200 p-3 max-w-xs ${isFullscreen ? 'z-1000' : 'z-10'}`}>
           <h4 className="font-semibold text-gray-900 mb-2 text-sm">Nearby Places</h4>
           <div className="space-y-1 text-xs">
             <div className="flex items-center gap-2">

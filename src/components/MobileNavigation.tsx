@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Home, Search, MapPin, Phone, User } from "lucide-react";
+import { Menu, X, Home, Search, MapPin, Phone, User, Mail } from "lucide-react";
 
 export default function MobileNavigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,11 +52,11 @@ export default function MobileNavigation() {
       {isOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           {/* Backdrop */}
-          <div 
+          <div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setIsOpen(false)}
           />
-          
+
           {/* Menu Panel */}
           <div className="absolute top-0 left-0 w-80 max-w-[85vw] h-full bg-white shadow-2xl">
             <div className="flex flex-col h-full">
@@ -79,16 +79,15 @@ export default function MobileNavigation() {
                   {navItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = pathname === item.href;
-                    
+
                     return (
                       <li key={item.href}>
                         <Link
                           href={item.href}
-                          className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 active:scale-95 ${
-                            isActive
+                          className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 active:scale-95 ${isActive
                               ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600'
                               : 'text-gray-700 hover:bg-gray-50'
-                          }`}
+                            }`}
                           style={{ touchAction: 'manipulation' }}
                         >
                           <Icon className={`h-5 w-5 ${isActive ? 'text-blue-600' : 'text-gray-500'}`} />
@@ -111,18 +110,16 @@ export default function MobileNavigation() {
                     <Phone className="h-4 w-4" />
                     <span className="text-sm font-medium">+355 69 123 4567</span>
                   </a>
-                  
+
                   <a
                     href="mailto:info@realestate-tirana.al"
                     className="flex items-center space-x-3 text-gray-700 hover:text-blue-600 transition-colors active:scale-95"
                     style={{ touchAction: 'manipulation' }}
                   >
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
+                    <Mail className="h-4 w-4" />
                     <span className="text-sm font-medium">info@realestate-tirana.al</span>
                   </a>
-                  
+
                   <div className="flex items-center space-x-3 text-gray-700">
                     <MapPin className="h-4 w-4" />
                     <span className="text-sm">Rruga "Dëshmorët e Kombit", Tiranë</span>

@@ -22,7 +22,7 @@ export default function InquiriesPage() {
 
   useEffect(() => {
     let isMounted = true;
-    
+
     // Check authentication
     const isAuthenticated = localStorage.getItem('adminSession');
     if (!isAuthenticated) {
@@ -34,7 +34,7 @@ export default function InquiriesPage() {
     const loadInquiries = async () => {
       try {
         const inquiriesData = await getInquiries();
-        
+
         // Enrich inquiries with property information
         const enrichedInquiries = await Promise.all(
           inquiriesData.map(async (inquiry) => {
@@ -46,7 +46,7 @@ export default function InquiriesPage() {
             };
           })
         );
-        
+
         if (isMounted) {
           // Sort by creation date (newest first)
           enrichedInquiries.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -62,7 +62,7 @@ export default function InquiriesPage() {
     };
 
     loadInquiries();
-    
+
     return () => {
       isMounted = false;
     };
@@ -73,10 +73,10 @@ export default function InquiriesPage() {
       // In a real app, this would delete from the database
       const updatedInquiries = inquiries.filter(inquiry => inquiry.id !== inquiryId);
       setInquiries(updatedInquiries);
-      
+
       // Update localStorage
       localStorage.setItem('inquiries', JSON.stringify(updatedInquiries));
-      
+
       if (selectedInquiry?.id === inquiryId) {
         setSelectedInquiry(null);
       }
@@ -90,20 +90,20 @@ export default function InquiriesPage() {
   const filteredInquiries = filter === 'all'
     ? inquiries
     : inquiries.filter(() => {
-        // For now, treat all inquiries as unread since we don't track read status
-        return filter === 'unread';
-      });
+      // For now, treat all inquiries as unread since we don't track read status
+      return filter === 'unread';
+    });
 
   if (isLoading) {
     return (
-      <div className="min-h-full bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-full bg-[var(--background)] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary)]"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-full bg-linear-to-br from-slate-50 to-blue-50 overflow-x-hidden">
+    <div className="min-h-full bg-[var(--background)] overflow-x-hidden">
       <header className="bg-linear-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-6">
           <div className="flex items-center justify-between">
@@ -123,20 +123,20 @@ export default function InquiriesPage() {
         </div>
       </header>
 
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Inquiries List */}
           <div className="lg:w-1/2">
-            <div className="bg-white rounded-lg shadow">
-              <div className="p-6 border-b border-gray-200">
+            <div className="card border-none">
+              <div className="p-6 border-b border-gray-200 dark:border-slate-800">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-gray-900">
+                  <h2 className="text-lg font-semibold text-[var(--foreground)]">
                     Pyetjet ({filteredInquiries.length})
                   </h2>
                   <select
                     value={filter}
                     onChange={(e) => setFilter(e.target.value as 'all' | 'unread' | 'read')}
-                    className="border border-gray-300 rounded-md px-3 py-1 text-sm"
+                    className="border border-gray-300 dark:border-slate-700 bg-[var(--background)] text-[var(--foreground)] rounded-md px-3 py-1 text-sm"
                   >
                     <option value="all">Të gjitha</option>
                     <option value="unread">Të palexuara</option>
@@ -145,45 +145,44 @@ export default function InquiriesPage() {
                 </div>
               </div>
 
-              <div className="divide-y divide-gray-200 max-h-96 overflow-y-auto">
+              <div className="divide-y divide-gray-200 dark:divide-slate-800 max-h-96 overflow-y-auto">
                 {filteredInquiries.length === 0 ? (
-                  <div className="p-8 text-center text-gray-500">
-                    <MessageCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <div className="p-8 text-center text-slate-500 dark:text-slate-400">
+                    <MessageCircle className="h-12 w-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
                     <p>Nuk ka pyetje të reja</p>
                   </div>
                 ) : (
                   filteredInquiries.map((inquiry) => (
                     <div
                       key={inquiry.id}
-                      className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
-                        selectedInquiry?.id === inquiry.id ? 'bg-blue-50 border-l-4 border-blue-600' : ''
-                      }`}
+                      className={`p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors ${selectedInquiry?.id === inquiry.id ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-[var(--primary)] text-blue-900 dark:text-blue-100' : ''
+                        }`}
                       onClick={() => handleViewInquiry(inquiry)}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center mb-2">
-                            <User className="h-4 w-4 text-gray-400 mr-2" />
-                            <span className="font-medium text-gray-900">{inquiry.name}</span>
-                            <span className="ml-2 text-sm text-gray-500">
+                            <User className="h-4 w-4 text-slate-400 dark:text-slate-500 mr-2" />
+                            <span className="font-medium text-[var(--foreground)]">{inquiry.name}</span>
+                            <span className="ml-2 text-sm text-slate-500 dark:text-slate-400">
                               {formatDate(inquiry.createdAt)}
                             </span>
                           </div>
-                          
+
                           {inquiry.propertyTitle && (
                             <div className="flex items-center mb-2">
-                              <Home className="h-4 w-4 text-gray-400 mr-2" />
-                              <span className="text-sm text-gray-600 truncate">
+                              <Home className="h-4 w-4 text-slate-400 dark:text-slate-500 mr-2" />
+                              <span className="text-sm text-slate-600 dark:text-slate-400 truncate">
                                 {inquiry.propertyTitle}
                               </span>
                             </div>
                           )}
-                          
-                          <p className="text-sm text-gray-600 line-clamp-2">
+
+                          <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
                             {inquiry.message}
                           </p>
                         </div>
-                        
+
                         <div className="flex items-center space-x-2 ml-4">
                           <button
                             onClick={(e) => {
@@ -217,22 +216,22 @@ export default function InquiriesPage() {
           {/* Inquiry Details */}
           <div className="lg:w-1/2">
             {selectedInquiry ? (
-              <div className="bg-white rounded-lg shadow">
-                <div className="p-6 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold text-gray-900">Detajet e Pyetjes</h2>
+              <div className="card border-none">
+                <div className="p-6 border-b border-gray-200 dark:border-slate-800">
+                  <h2 className="text-lg font-semibold text-[var(--foreground)]">Detajet e Pyetjes</h2>
                 </div>
-                
+
                 <div className="p-6 space-y-6">
                   {/* Contact Information */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-900 mb-3">Informacionet e Kontaktit</h3>
+                    <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">Informacionet e Kontaktit</h3>
                     <div className="space-y-2">
                       <div className="flex items-center">
-                        <User className="h-4 w-4 text-gray-400 mr-3" />
-                        <span className="text-gray-900">{selectedInquiry.name}</span>
+                        <User className="h-4 w-4 text-slate-400 dark:text-slate-500 mr-3" />
+                        <span className="text-[var(--foreground)]">{selectedInquiry.name}</span>
                       </div>
                       <div className="flex items-center">
-                        <Mail className="h-4 w-4 text-gray-400 mr-3" />
+                        <Mail className="h-4 w-4 text-slate-400 dark:text-slate-500 mr-3" />
                         <a
                           href={`mailto:${selectedInquiry.email}`}
                           className="text-blue-600 hover:text-blue-800"
@@ -242,7 +241,7 @@ export default function InquiriesPage() {
                       </div>
                       {selectedInquiry.phone && (
                         <div className="flex items-center">
-                          <Phone className="h-4 w-4 text-gray-400 mr-3" />
+                          <Phone className="h-4 w-4 text-slate-400 dark:text-slate-500 mr-3" />
                           <a
                             href={`tel:${selectedInquiry.phone}`}
                             className="text-blue-600 hover:text-blue-800"
@@ -252,8 +251,8 @@ export default function InquiriesPage() {
                         </div>
                       )}
                       <div className="flex items-center">
-                        <Calendar className="h-4 w-4 text-gray-400 mr-3" />
-                        <span className="text-gray-600">
+                        <Calendar className="h-4 w-4 text-slate-400 dark:text-slate-500 mr-3" />
+                        <span className="text-slate-600 dark:text-slate-400">
                           {formatDate(selectedInquiry.createdAt)}
                         </span>
                       </div>
@@ -263,11 +262,11 @@ export default function InquiriesPage() {
                   {/* Property Information */}
                   {selectedInquiry.propertyTitle && (
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-3">Pasuria e Interesuar</h3>
-                      <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">Pasuria e Interesuar</h3>
+                      <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-medium text-gray-900">{selectedInquiry.propertyTitle}</p>
+                            <p className="font-medium text-[var(--foreground)]">{selectedInquiry.propertyTitle}</p>
                             {selectedInquiry.propertyPrice && (
                               <p className="text-blue-600 font-semibold">
                                 €{selectedInquiry.propertyPrice.toLocaleString()}
@@ -287,14 +286,14 @@ export default function InquiriesPage() {
 
                   {/* Message */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-900 mb-3">Mesazhi</h3>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <p className="text-gray-700 whitespace-pre-wrap">{selectedInquiry.message}</p>
+                    <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">Mesazhi</h3>
+                    <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg">
+                      <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{selectedInquiry.message}</p>
                     </div>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex space-x-3 pt-4 border-t border-gray-200">
+                  <div className="flex space-x-3 pt-4 border-t border-gray-200 dark:border-slate-800">
                     <a
                       href={`mailto:${selectedInquiry.email}?subject=Përgjigje për pyetjen tuaj&body=Përshëndetje ${selectedInquiry.name},%0D%0A%0D%0AFaleminderit për pyetjen tuaj për pasurinë "${selectedInquiry.propertyTitle}".%0D%0A%0D%0A`}
                       className="flex-1 bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
@@ -315,9 +314,9 @@ export default function InquiriesPage() {
                 </div>
               </div>
             ) : (
-              <div className="bg-white rounded-lg shadow p-8 text-center">
-                <MessageCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p className="text-gray-500">Zgjidhni një pyetje për të parë detajet</p>
+              <div className="card border-none p-8 text-center">
+                <MessageCircle className="h-12 w-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
+                <p className="text-slate-500 dark:text-slate-400">Zgjidhni një pyetje për të parë detajet</p>
               </div>
             )}
           </div>

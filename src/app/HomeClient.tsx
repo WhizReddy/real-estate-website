@@ -96,8 +96,8 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
             <StructuredData type="website" />
             <StructuredData type="organization" />
 
-            {/* Refined Premium Light Hero */}
-            <div className="w-full relative bg-white">
+            {/* Refined Premium Light/Dark Hero */}
+            <div className="w-full relative bg-[var(--background)]">
                 <section className="relative overflow-hidden pt-16 pb-24 sm:pt-20 sm:pb-32">
                     {/* Subtle Background Pattern */}
                     <div className="absolute inset-0 opacity-[0.03]">
@@ -106,17 +106,17 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
 
                     <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center max-w-4xl mx-auto">
-                            <div className="inline-flex items-center px-4 py-2 bg-blue-50 rounded-full text-blue-700 text-sm font-semibold mb-6 animate-fadeIn">
+                            <div className="inline-flex items-center px-4 py-2 bg-blue-50 dark:bg-blue-500/10 rounded-full text-[var(--primary-dark)] dark:text-[var(--primary)] text-sm font-semibold mb-6 animate-fadeIn">
                                 <HomeIcon className="h-4 w-4 mr-2" />
                                 Agjencia Ekskluzive e Tiranës
                             </div>
-                            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 mb-6 leading-[1.15] tracking-tight">
+                            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-[var(--foreground)] mb-6 leading-[1.15] tracking-tight">
                                 Gjeni Shtëpinë Tuaj të{" "}
-                                <span className="text-blue-600 bg-blue-50 px-2 rounded-lg italic">
+                                <span className="text-[var(--primary)] bg-blue-50 dark:bg-blue-500/10 px-2 rounded-lg italic">
                                     Përsosur
                                 </span>
                             </h1>
-                            <p className="text-lg sm:text-xl text-slate-600 mb-10 leading-relaxed max-w-2xl mx-auto">
+                            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 mb-10 leading-relaxed max-w-2xl mx-auto">
                                 Zbulimi i pasurive premium në lokacionet më të kërkuara të Tiranës.
                                 Shërbim elitar për klientë që kërkojnë përsosmërinë.
                             </p>
@@ -124,32 +124,32 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                                 <a
                                     href="#properties"
-                                    className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 hover:scale-[1.02] active:scale-[0.98]"
+                                    className="btn-primary w-full sm:w-auto px-8 py-4 text-lg rounded-2xl shadow-xl shadow-primary/20"
                                 >
                                     Shiko Shpalljet
                                 </a>
                                 <Link
                                     href="/map"
-                                    className="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 font-bold rounded-2xl border-2 border-slate-100 hover:border-blue-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
+                                    className="btn-secondary w-full sm:w-auto px-8 py-4 text-lg border-2 rounded-2xl flex items-center justify-center gap-2"
                                 >
-                                    <Map className="h-5 w-5 text-blue-600" />
+                                    <Map className="h-5 w-5 text-[var(--primary)]" />
                                     Harta Interaktive
                                 </Link>
                             </div>
 
                             {/* Trust badges */}
-                            <div className="mt-16 pt-8 border-t border-slate-100 grid grid-cols-3 gap-8">
+                            <div className="mt-16 pt-8 border-t border-slate-100 dark:border-slate-800 grid grid-cols-3 gap-8">
                                 <div>
-                                    <div className="text-2xl font-bold text-slate-900">{allProperties.length}+</div>
-                                    <div className="text-sm text-slate-500">Pasuri Aktive</div>
+                                    <div className="text-2xl font-bold text-[var(--foreground)]">{allProperties.length}+</div>
+                                    <div className="text-sm text-slate-500 dark:text-slate-400">Pasuri Aktive</div>
                                 </div>
                                 <div>
-                                    <div className="text-2xl font-bold text-slate-900">5★</div>
-                                    <div className="text-sm text-slate-500">Besueshmëri</div>
+                                    <div className="text-2xl font-bold text-[var(--foreground)]">5★</div>
+                                    <div className="text-sm text-slate-500 dark:text-slate-400">Besueshmëri</div>
                                 </div>
                                 <div>
-                                    <div className="text-2xl font-bold text-slate-900">24/7</div>
-                                    <div className="text-sm text-slate-500">Mbështetje</div>
+                                    <div className="text-2xl font-bold text-[var(--foreground)]">24/7</div>
+                                    <div className="text-sm text-slate-500 dark:text-slate-400">Mbështetje</div>
                                 </div>
                             </div>
                         </div>
@@ -157,7 +157,7 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                 </section>
 
                 {/* Search Section Transition */}
-                <div className="bg-slate-50 relative pb-20">
+                <div className="bg-slate-50 dark:bg-slate-900/50 relative pb-20">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20">
                         <DynamicSearchFilters
                             properties={allProperties}
@@ -180,9 +180,9 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                             {/* Sticky Sidebar Map */}
                             <div className="hidden lg:block">
                                 <div className="sticky top-6 space-y-6">
-                                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                                        <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                                            <MapPin className="h-5 w-5 text-blue-600" />
+                                    <div className="card p-5">
+                                        <h3 className="text-lg font-bold text-[var(--foreground)] mb-4 flex items-center gap-2">
+                                            <MapPin className="h-5 w-5 text-[var(--primary)]" />
                                             Lokacionet
                                         </h3>
                                         <div className="rounded-xl overflow-hidden border border-slate-100 shadow-inner">

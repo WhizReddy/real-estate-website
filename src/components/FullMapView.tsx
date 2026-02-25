@@ -6,18 +6,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Property } from '@/types';
 import { formatPrice } from '@/lib/utils';
 import {
-  MapPin,
-  AlertCircle,
-  RefreshCw,
-  Home,
-  Navigation,
-  Phone,
-  Mail,
-  Bed,
-  Bath,
-  Square,
-  Calendar,
-  X
+  MapPin, Search as SearchIcon, Filter, Layers, Home, Navigation, Maximize2, Map as MapIcon, ChevronRight,
+  Square, Calendar, X, AlertCircle, RefreshCw, Phone, Mail, Bed, Bath
 } from 'lucide-react';
 import CreativeLoader from '@/components/CreativeLoader';
 import LocationSearch from '@/components/LocationSearch';
@@ -974,9 +964,7 @@ export default function FullMapView({
                 className="w-full inline-flex items-center justify-center gap-1 rounded bg-blue-600 px-2 py-1 text-[10px] font-semibold text-white hover:bg-blue-700"
               >
                 Shiko detajet
-                <svg className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
+                <ChevronRight className="h-3 w-3" />
               </button>
             </div>
           </div>

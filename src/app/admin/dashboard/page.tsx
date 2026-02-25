@@ -160,7 +160,7 @@ export default function AdminDashboard() {
     });
   };
 
-  const hasActiveFilters = 
+  const hasActiveFilters =
     filters.search ||
     filters.status !== 'all' ||
     filters.propertyType !== 'all' ||
@@ -188,14 +188,14 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] bg-linear-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-[60vh] bg-[var(--background)] flex items-center justify-center">
         <CreativeLoader type="properties" size="lg" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-full bg-linear-to-br from-slate-50 to-blue-50 overflow-x-hidden">
+    <div className="min-h-full bg-[var(--background)] overflow-x-hidden">
       {/* Header */}
       <header className="bg-linear-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-4 relative pt-[env(safe-area-inset-top)]">
@@ -266,7 +266,7 @@ export default function AdminDashboard() {
                 onClick={() => setMobileMenuOpen(false)}
                 aria-hidden="true"
               />
-              <div className="absolute right-4 top-12 z-50 w-56 rounded-lg border border-white/10 bg-white/95 text-gray-900 shadow-xl backdrop-blur">
+              <div className="absolute right-4 top-12 z-50 w-56 rounded-lg border border-gray-200 dark:border-slate-800 bg-[var(--background)]/95 text-[var(--foreground)] shadow-xl backdrop-blur">
                 <div className="py-1">
                   {userRole === 'ADMIN' && (
                     <Link
@@ -326,40 +326,40 @@ export default function AdminDashboard() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+          <div className="card border-none p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                 <div className="w-6 h-6 bg-blue-600 rounded"></div>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Totali i Pasurive</p>
-                <p className="text-2xl font-semibold text-gray-900">{allProperties.length}</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Totali i Pasurive</p>
+                <p className="text-2xl font-semibold text-[var(--foreground)]">{allProperties.length}</p>
               </div>
             </div>
           </div>
-          
-          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+
+          <div className="card border-none p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
+              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                 <div className="w-6 h-6 bg-green-600 rounded"></div>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Aktive</p>
-                <p className="text-2xl font-semibold text-gray-900">
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Aktive</p>
+                <p className="text-2xl font-semibold text-[var(--foreground)]">
                   {allProperties.filter(p => p.status === 'active').length}
                 </p>
               </div>
             </div>
           </div>
-          
-          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+
+          <div className="card border-none p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 rounded-lg">
+              <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
                 <div className="w-6 h-6 bg-yellow-600 rounded"></div>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Në Pritje</p>
-                <p className="text-2xl font-semibold text-gray-900">
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Në Pritje</p>
+                <p className="text-2xl font-semibold text-[var(--foreground)]">
                   {allProperties.filter(p => p.status === 'pending').length}
                 </p>
               </div>
@@ -368,7 +368,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Search and Filters */}
-  <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6">
+        <div className="card border-none p-4 sm:p-6 mb-6">
           {/* Search Bar */}
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" />
@@ -407,7 +407,7 @@ export default function AdminDashboard() {
                   Pastro Filtrat
                 </button>
               )}
-              
+
               <Link
                 href="/admin/properties/new"
                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center"
@@ -420,10 +420,10 @@ export default function AdminDashboard() {
 
           {/* Advanced Filters */}
           {showFilters && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-gray-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-gray-200 dark:border-slate-800">
               {/* Status Filter */}
               <div>
-                <label htmlFor="status-filter" className="block text-sm font-medium text-gray-900 mb-2">
+                <label htmlFor="status-filter" className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                   📊 Statusi
                 </label>
                 <select
@@ -431,7 +431,7 @@ export default function AdminDashboard() {
                   name="status"
                   value={filters.status}
                   onChange={(e) => handleFilterChange('status', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-700 bg-[var(--background)] text-[var(--foreground)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   autoComplete="off"
                 >
                   <option value="all">Të gjitha</option>
@@ -507,11 +507,11 @@ export default function AdminDashboard() {
         {/* Results Summary */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold text-[var(--foreground)]">
               Pasuritë ({properties.length} nga {allProperties.length})
             </h2>
             {hasActiveFilters && (
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
                 Filtrat janë aktive - po shfaqen rezultatet e filtruara
               </p>
             )}
@@ -519,31 +519,31 @@ export default function AdminDashboard() {
         </div>
 
         {/* Properties Table */}
-        <div className="bg-white shadow rounded-lg overflow-hidden">
+        <div className="card overflow-hidden border-none text-[var(--foreground)]">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-800">
+              <thead className="bg-slate-50 dark:bg-slate-800/50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                     Pasuria
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                     Lokacioni
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                     Çmimi
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                     Statusi
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                     Veprime
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-[var(--background)] divide-y divide-gray-200 dark:divide-slate-800">
                 {properties.map((property) => (
-                  <tr key={property.id} className="hover:bg-gray-50">
+                  <tr key={property.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="shrink-0 h-12 w-12">
@@ -552,10 +552,10 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-[var(--text-scale-base)] font-medium text-[var(--foreground)]">
                             {property.title}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-[var(--text-scale-sm)] text-slate-500 dark:text-slate-400">
                             {property.details.bedrooms > 0 ? `${property.details.bedrooms}+` : ''}
                             {property.details.bathrooms} • {property.details.squareFootage}m²
                           </div>
@@ -563,24 +563,23 @@ export default function AdminDashboard() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{property.address.city}</div>
-                      <div className="text-sm text-gray-500">{property.address.street}</div>
+                      <div className="text-[var(--text-scale-base)] text-[var(--foreground)]">{property.address.city}</div>
+                      <div className="text-[var(--text-scale-sm)] text-slate-500 dark:text-slate-400">{property.address.street}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-[var(--text-scale-base)] font-medium text-[var(--foreground)]">
                         {formatPrice(property.price)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        property.status === 'active' 
-                          ? 'bg-green-100 text-green-800'
-                          : property.status === 'pending'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}>
-                        {property.status === 'active' ? 'Aktive' : 
-                         property.status === 'pending' ? 'Në Pritje' : 'E Shitur'}
+                      <span className={`inline-flex px-2 py-1 text-[var(--text-scale-sm)] font-semibold rounded-full ${property.status === 'active'
+                        ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300'
+                        : property.status === 'pending'
+                          ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300'
+                        }`}>
+                        {property.status === 'active' ? 'Aktive' :
+                          property.status === 'pending' ? 'Në Pritje' : 'E Shitur'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -632,8 +631,8 @@ export default function AdminDashboard() {
       {/* Mobile sticky action bar */}
       <div className="fixed bottom-0 left-0 right-0 z-40 sm:hidden px-4 pb-[env(safe-area-inset-bottom)]">
         <div className="mx-auto max-w-7xl">
-          <div className="bg-white/90 backdrop-blur border border-blue-100 shadow-md rounded-lg p-3 flex items-center justify-between">
-            <span className="text-sm text-gray-700">Veprime të shpejta</span>
+          <div className="bg-[var(--background)]/90 backdrop-blur border border-primary/20 shadow-md rounded-lg p-3 flex items-center justify-between">
+            <span className="text-sm text-[var(--foreground)]">Veprime të shpejta</span>
             <Link
               href="/admin/properties/new"
               className="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
