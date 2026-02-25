@@ -164,7 +164,7 @@ export default function Home() {
           }}
         >
           <div className="relative z-10 container-custom py-16 sm:py-32">
-            <div className="w-full px-4 sm:px-0 sm:max-w-2xl">
+            <div className="w-full sm:max-w-4xl mx-auto text-center sm:text-left">
               <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-blue-200 text-sm font-semibold mb-6">
                 <HomeIcon className="h-4 w-4 mr-2" />
                 {t('exclusiveAgency')}
@@ -176,7 +176,7 @@ export default function Home() {
                   {t('findYourPerfectHome').split(' ').slice(1).join(' ')}
                 </span>
               </h1>
-              <p className="text-lg sm:text-xl text-blue-100/80 mb-10 leading-relaxed w-full sm:max-w-lg">
+              <p className="text-lg sm:text-xl text-blue-100/80 mb-10 leading-relaxed w-full sm:max-w-2xl mx-auto sm:mx-0">
                 {t('heroDescription')}
               </p>
 

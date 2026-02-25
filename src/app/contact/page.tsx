@@ -12,17 +12,17 @@ export default function ContactPage() {
     return (
         <Layout variant="homepage">
             {/* Header */}
-            <section className="bg-white shadow-xl">
+            <section className="bg-[var(--background)] border-b border-gray-100 shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <Link
                         href="/"
-                        className="inline-flex items-center text-blue-200 hover:text-white mb-4 transition-colors duration-200 text-sm font-medium"
+                        className="inline-flex items-center text-[var(--primary)] hover:text-[var(--primary-dark)] mb-4 transition-colors duration-200 text-sm font-medium"
                     >
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Kthehu në Kryesore
                     </Link>
-                    <h1 className="text-4xl font-bold text-white mb-2">Na Kontaktoni</h1>
-                    <p className="text-blue-200 text-lg">
+                    <h1 className="text-4xl font-bold text-[var(--foreground)] mb-2">Na Kontaktoni</h1>
+                    <p className="text-[var(--foreground)] opacity-80 text-lg">
                         Jemi këtu për t&apos;ju ndihmuar të gjeni pasurinë e ëndrrave tuaja.
                     </p>
                 </div>
@@ -33,9 +33,9 @@ export default function ContactPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
 
                         {/* Contact Form */}
-                        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
-                            <h2 className="text-2xl font-bold text-slate-900 mb-2">Dërgo një Mesazh</h2>
-                            <p className="text-slate-500 mb-8">
+                        <div className="card p-8">
+                            <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">Dërgo një Mesazh</h2>
+                            <p className="text-[var(--foreground)] opacity-80 mb-8">
                                 Plotësoni formularin dhe do t&apos;ju kontaktojmë brenda 24 orësh.
                             </p>
 
@@ -125,8 +125,8 @@ export default function ContactPage() {
 
                         {/* Contact Info */}
                         <div className="space-y-6">
-                            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
-                                <h2 className="text-2xl font-bold text-slate-900 mb-6">Informacione Kontakti</h2>
+                            <div className="card p-8">
+                                <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">Informacione Kontakti</h2>
                                 <div className="space-y-5">
                                     <div className="flex items-start gap-4 p-4 rounded-xl bg-slate-50">
                                         <div className="p-3 bg-blue-600 rounded-xl flex-shrink-0">

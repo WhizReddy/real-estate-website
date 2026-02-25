@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { Property } from '@/types';
+import { getTranslation } from '@/lib/i18n';
 import Layout from '@/components/Layout';
 import StructuredData from '@/components/StructuredData';
 import SimpleMapView from '@/components/SimpleMapView';
@@ -44,6 +45,16 @@ interface HomeClientProps {
 }
 
 export default function HomeClient({ initialProperties, initialTotal, maxInitialLoad }: HomeClientProps) {
+    const [locale, setLocale] = useState('sq');
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && window.location.pathname.startsWith("/en")) {
+            setLocale('en');
+        }
+    }, []);
+
+    const t = (key: string) => getTranslation(key, locale as any);
+
     const [allProperties, setAllProperties] = useState<Property[]>(initialProperties);
     const [filteredProperties, setFilteredProperties] = useState<Property[]>(initialProperties);
     const [displayedProperties, setDisplayedProperties] = useState<Property[]>(initialProperties.slice(0, PROPERTIES_PER_PAGE));
@@ -104,21 +115,20 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                         <div className="w-full h-full" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231E378D' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
                     </div>
 
-                    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center w-full px-4 sm:max-w-4xl mx-auto">
+                    <div className="relative w-full mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center w-full sm:max-w-4xl mx-auto">
                             <div className="inline-flex items-center px-4 py-2 bg-blue-50 rounded-full text-[var(--primary-dark)] text-sm font-semibold mb-6 animate-fadeIn">
                                 <HomeIcon className="h-4 w-4 mr-2" />
-                                Agjencia Ekskluzive e Tiranës
+                                {t('exclusiveAgency')}
                             </div>
-                            <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-[var(--foreground)] mb-6 leading-tight tracking-tight">
-                                Gjeni Shtëpinë Tuaj të{" "}
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-[var(--foreground)] mb-6 leading-tight tracking-tight">
+                                {t('findYourPerfectHome').split(' ')[0]}{" "}
                                 <span className="text-[var(--primary)] bg-blue-50 px-2 rounded-lg italic">
-                                    Përsosur
+                                    {t('findYourPerfectHome').split(' ').slice(1).join(' ')}
                                 </span>
                             </h1>
-                            <p className="text-lg sm:text-xl text-[var(--foreground)] opacity-80 mb-10 leading-relaxed w-full px-4 sm:px-0 sm:max-w-2xl mx-auto">
-                                Zbulimi i pasurive premium në lokacionet më të kërkuara të Tiranës.
-                                Shërbim elitar për klientë që kërkojnë përsosmërinë.
+                            <p className="text-lg sm:text-xl text-[var(--foreground)] opacity-80 mb-10 leading-relaxed w-full sm:max-w-2xl mx-auto">
+                                {t('heroDescription')}
                             </p>
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -126,14 +136,14 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                                     href="#properties"
                                     className="btn-primary w-full sm:w-auto px-8 py-4 text-lg rounded-2xl shadow-xl shadow-primary/20"
                                 >
-                                    Shiko Shpalljet
+                                    {t('viewListings')}
                                 </a>
                                 <Link
                                     href="/map"
                                     className="btn-secondary w-full sm:w-auto px-8 py-4 text-lg border-2 rounded-2xl flex items-center justify-center gap-2"
                                 >
                                     <Map className="h-5 w-5 text-[var(--primary)]" />
-                                    Harta Interaktive
+                                    {t('interactiveMap')}
                                 </Link>
                             </div>
 
@@ -141,15 +151,15 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                             <div className="mt-16 pt-8 border-t border-gray-100 grid grid-cols-3 gap-8">
                                 <div>
                                     <div className="text-2xl font-bold text-[var(--foreground)]">{allProperties.length}+</div>
-                                    <div className="text-sm text-slate-500">Pasuri Aktive</div>
+                                    <div className="text-sm text-slate-500">{t('activeProperties')}</div>
                                 </div>
                                 <div>
                                     <div className="text-2xl font-bold text-[var(--foreground)]">5★</div>
-                                    <div className="text-sm text-slate-500">Besueshmëri</div>
+                                    <div className="text-sm text-slate-500">{t('reliability')}</div>
                                 </div>
                                 <div>
                                     <div className="text-2xl font-bold text-[var(--foreground)]">24/7</div>
-                                    <div className="text-sm text-slate-500">Mbështetje</div>
+                                    <div className="text-sm text-slate-500">{t('support')}</div>
                                 </div>
                             </div>
                         </div>
@@ -203,19 +213,19 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                                     </div>
 
                                     {/* Quick Highlight Box */}
-                                    <div className="bg-white p-6 rounded-2xl text-white shadow-lg overflow-hidden relative">
+                                    <div className="bg-blue-50 p-6 rounded-2xl text-[var(--foreground)] shadow-lg overflow-hidden relative">
                                         <div className="absolute top-0 right-0 -mr-6 -mt-6 opacity-10">
-                                            <Sparkles className="h-32 w-32" />
+                                            <Sparkles className="h-32 w-32 text-[var(--primary)]" />
                                         </div>
-                                        <h3 className="text-xl font-bold mb-2 relative z-10">Keni nevojë për ndihmë?</h3>
-                                        <p className="text-blue-100 mb-4 text-sm relative z-10">
-                                            Agjentët tanë janë të gatshëm t'ju ndihmojnë në zgjedhjen e pronës ideale.
+                                        <h3 className="text-xl font-bold mb-2 relative z-10">{t('readyToMove') || 'Keni nevojë për ndihmë?'}</h3>
+                                        <p className="text-slate-600 mb-4 text-sm relative z-10">
+                                            {t('teamHelpDescription') || 'Agjentët tanë janë të gatshëm t\'ju ndihmojnë në zgjedhjen e pronës ideale.'}
                                         </p>
                                         <Link
                                             href="/contact"
-                                            className="inline-flex items-center px-4 py-2 bg-white text-slate-900 text-sm font-bold rounded-lg hover:bg-blue-50 transition-colors relative z-10"
+                                            className="inline-flex items-center px-4 py-2 bg-white text-[var(--primary)] border border-blue-100 text-sm font-bold rounded-lg hover:bg-white/80 transition-colors relative z-10"
                                         >
-                                            Na Kontaktoni
+                                            {t('contactUs') || 'Na Kontaktoni'}
                                         </Link>
                                     </div>
                                 </div>
