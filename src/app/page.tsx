@@ -262,53 +262,53 @@ export default function Home() {
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className="bg-slate-900 py-20 overflow-hidden">
+        <section id="contact" className="bg-slate-50 py-20 border-t border-gray-100 overflow-hidden">
           <div className="container-custom">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
-                <div className="inline-flex items-center px-3 py-1 bg-blue-500/20 border border-blue-400/30 rounded-full text-blue-300 text-xs font-semibold mb-4">
+                <div className="inline-flex items-center px-3 py-1 bg-blue-100 border border-blue-200 rounded-full text-[var(--primary-dark)] text-xs font-semibold mb-4">
                   {t('contact')}
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">{t('readyToMove')}</h2>
-                <p className="text-slate-300 text-lg mb-8 max-w-md">
+                <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] mb-6">{t('readyToMove')}</h2>
+                <p className="text-slate-600 text-lg mb-8 max-w-md w-full px-4 sm:px-0 sm:max-w-2xl">
                   {t('teamHelpDescription')}
                 </p>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl border border-white/10 backdrop-blur-sm">
+                  <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
                     <div className="p-3 bg-blue-600 rounded-xl text-white">
                       <Phone className="h-6 w-6" />
                     </div>
                     <div>
-                      <div className="text-sm text-slate-400">{t('callUs')}</div>
-                      <div className="font-bold text-white">+355 69 123 4567</div>
+                      <div className="text-sm text-slate-500">{t('callUs')}</div>
+                      <div className="font-bold text-[var(--foreground)]">+355 69 123 4567</div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 shadow-2xl relative">
-                <h3 className="text-xl font-bold text-white mb-2">{t('contactUs')}</h3>
-                <p className="text-slate-300 mb-6 text-sm">
+              <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-xl relative">
+                <h3 className="text-xl font-bold text-[var(--foreground)] mb-2">{t('contactUs')}</h3>
+                <p className="text-slate-600 mb-6 text-sm">
                   {t('contactDescription')}
                 </p>
                 <div className="space-y-4 mb-6">
                   <input
                     type="text"
                     placeholder={t('namePlaceholder')}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all"
+                    className="w-full px-4 py-3 bg-[var(--background)] border border-gray-200 rounded-xl text-[var(--foreground)] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all"
                   />
                   <input
                     type="email"
                     placeholder={t('emailPlaceholder')}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all"
+                    className="w-full px-4 py-3 bg-[var(--background)] border border-gray-200 rounded-xl text-[var(--foreground)] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all"
                   />
                   <textarea
                     placeholder={t('messagePlaceholder')}
                     rows={3}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all resize-none"
+                    className="w-full px-4 py-3 bg-[var(--background)] border border-gray-200 rounded-xl text-[var(--foreground)] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all resize-none"
                   />
                 </div>
                 <button
-                  className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-center transition-all hover:bg-blue-500 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-600/30"
+                  className="w-full py-4 bg-[var(--primary)] text-white rounded-xl font-bold text-center transition-all hover:bg-[var(--primary-dark)] hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/30"
                 >
                   {t('sendMessage')}
                 </button>

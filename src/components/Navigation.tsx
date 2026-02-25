@@ -100,7 +100,7 @@ export default function Navigation() {
 
       {/* Mobile menu */}
       <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'}`}>
-        <div className="px-4 pt-4 pb-6 space-y-2 bg-slate-900/95 backdrop-blur-md border-t border-white/10">
+        <div className="px-4 pt-4 pb-6 space-y-2 bg-[var(--background)] border-t border-gray-100 shadow-xl">
           {navigation.map((item) => {
             const Icon = item.icon;
             return (
@@ -109,8 +109,8 @@ export default function Navigation() {
                 href={item.href}
                 onClick={() => setIsMenuOpen(false)}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 ${isActive(item.href)
-                  ? 'text-white bg-white/15'
-                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  ? 'text-[var(--primary-dark)] bg-blue-50'
+                  : 'text-slate-600 hover:text-[var(--foreground)] hover:bg-slate-50'
                   }`}
               >
                 <Icon className="h-5 w-5" />

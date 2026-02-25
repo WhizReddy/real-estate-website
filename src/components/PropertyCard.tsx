@@ -50,7 +50,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           )}
 
           {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
 
           {/* Status Badges - Top Left */}
           <div className="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[calc(100%-2rem)] z-10">
@@ -62,7 +62,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
                 I Zgjedhur
               </Badge>
             )}
-            <Badge variant="glass-dark">
+            <Badge variant="default">
               {getPropertyTypeLabel(property.details.propertyType)}
             </Badge>
           </div>

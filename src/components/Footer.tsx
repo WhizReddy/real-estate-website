@@ -5,20 +5,20 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer aria-label="Futeri i faqes" className="text-white bg-slate-900">
+    <footer aria-label="Futeri i faqes" className="text-[var(--foreground)] bg-[var(--background)] border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-white rounded-xl">
+              <div className="p-2 bg-blue-600 rounded-xl">
                 <Building2 className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-xl font-bold bg-white bg-clip-text text-transparent">
+              <h3 className="text-xl font-bold text-[var(--foreground)]">
                 Real Estate Tiranë
               </h3>
             </div>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <p className="text-slate-600 text-sm leading-relaxed">
               Partneri juaj i besuar për të gjetur shtëpinë perfekte në Tiranë.
               Ofrojmë shërbime profesionale për blerje, shitje dhe qira pasurie me teknologji moderne.
             </p>
@@ -26,23 +26,23 @@ export default function Footer() {
             {/* Trust Indicators */}
             <div className="grid grid-cols-3 gap-4 py-4">
               <div className="text-center">
-                <Award className="h-5 w-5 text-blue-400 mx-auto mb-1" />
-                <div className="text-xs text-gray-400">Certifikuar</div>
+                <Award className="h-5 w-5 text-blue-600 mx-auto mb-1" />
+                <div className="text-xs text-slate-500">Certifikuar</div>
               </div>
               <div className="text-center">
-                <Shield className="h-5 w-5 text-blue-400 mx-auto mb-1" />
-                <div className="text-xs text-gray-400">I Sigurt</div>
+                <Shield className="h-5 w-5 text-blue-600 mx-auto mb-1" />
+                <div className="text-xs text-slate-500">I Sigurt</div>
               </div>
               <div className="text-center">
-                <Users className="h-5 w-5 text-blue-400 mx-auto mb-1" />
-                <div className="text-xs text-gray-400">500+ Klientë</div>
+                <Users className="h-5 w-5 text-blue-600 mx-auto mb-1" />
+                <div className="text-xs text-slate-500">500+ Klientë</div>
               </div>
             </div>
 
             <div className="flex space-x-4">
               <a
                 href="https://facebook.com"
-                className="text-gray-400 hover:text-blue-400 transition-colors p-2 bg-gray-800 rounded-lg hover:bg-blue-600/20"
+                className="text-slate-400 hover:text-blue-600 transition-colors p-2 bg-slate-100 rounded-lg hover:bg-blue-50"
                 aria-label="Facebook"
               >
                 <Facebook className="h-4 w-4" />
