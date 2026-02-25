@@ -201,14 +201,14 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-4 relative pt-[env(safe-area-inset-top)]">
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white">
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
                 {userRole === 'ADMIN' ? 'Paneli i Administrimit' : 'Paneli i Agjentit'}
               </h1>
-              <p className="text-blue-200">
+              <p className="text-blue-600">
                 {userRole === 'ADMIN' ? 'Menaxhoni pasuritë tuaja' : `Mirë se erdhe, ${currentUser?.name || 'Agjent'}`}
               </p>
               {currentUser && (
-                <p className="text-blue-300 text-sm">
+                <p className="text-blue-800 text-sm">
                   {currentUser?.email} • {userRole === 'ADMIN' ? 'Administrator' : 'Agjent'}
                 </p>
               )}
@@ -219,7 +219,7 @@ export default function AdminDashboard() {
               {userRole === 'ADMIN' && (
                 <Link
                   href="/admin/agents"
-                  className="flex items-center text-white/90 hover:text-white transition-colors duration-200"
+                  className="flex items-center text-slate-600 hover:text-blue-600 transition-colors duration-200"
                 >
                   <User className="h-5 w-5 mr-2" />
                   <span className="font-medium">Agjentët</span>
@@ -227,21 +227,21 @@ export default function AdminDashboard() {
               )}
               <Link
                 href="/admin/inquiries"
-                className="flex items-center text-white/90 hover:text-white transition-colors duration-200"
+                className="flex items-center text-slate-600 hover:text-blue-600 transition-colors duration-200"
               >
                 <MessageCircle className="h-5 w-5 mr-2" />
                 <span className="font-medium">Pyetjet</span>
               </Link>
               <Link
                 href="/"
-                className="flex items-center text-white/90 hover:text-white transition-colors duration-200"
+                className="flex items-center text-slate-600 hover:text-blue-600 transition-colors duration-200"
               >
                 <Eye className="h-5 w-5 mr-2" />
                 <span className="font-medium">Shiko Faqen</span>
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center px-4 py-2 bg-white text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <LogOut className="h-5 w-5 mr-2" />
                 <span className="font-medium">Dil</span>
@@ -253,7 +253,7 @@ export default function AdminDashboard() {
             <button
               aria-label="Hap menunë"
               onClick={() => setMobileMenuOpen(v => !v)}
-              className="inline-flex items-center justify-center p-2 rounded-md bg-white/10 text-white hover:bg-white/15"
+              className="inline-flex items-center justify-center p-2 rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100"
             >
               <MoreVertical className="h-5 w-5" />
             </button>
@@ -328,7 +328,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <div className="card border-none p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-blue-100 30 rounded-lg">
+              <div className="p-2 bg-blue-100 rounded-lg">
                 <div className="w-6 h-6 bg-blue-600 rounded"></div>
               </div>
               <div className="ml-4">
@@ -340,7 +340,7 @@ export default function AdminDashboard() {
 
           <div className="card border-none p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-green-100 30 rounded-lg">
+              <div className="p-2 bg-green-100 rounded-lg">
                 <div className="w-6 h-6 bg-green-600 rounded"></div>
               </div>
               <div className="ml-4">
@@ -354,7 +354,7 @@ export default function AdminDashboard() {
 
           <div className="card border-none p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 30 rounded-lg">
+              <div className="p-2 bg-yellow-100 rounded-lg">
                 <div className="w-6 h-6 bg-yellow-600 rounded"></div>
               </div>
               <div className="ml-4">
@@ -522,7 +522,7 @@ export default function AdminDashboard() {
         <div className="card overflow-hidden border-none text-[var(--foreground)]">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 ">
-              <thead className="bg-slate-50 50">
+              <thead className="bg-slate-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-slate-500  uppercase tracking-wider">
                     Pasuria
@@ -573,9 +573,9 @@ export default function AdminDashboard() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-[var(--text-scale-sm)] font-semibold rounded-full ${property.status === 'active'
-                        ? 'bg-green-100 20 text-green-800 '
+                        ? 'bg-green-100 text-green-800 '
                         : property.status === 'pending'
-                          ? 'bg-yellow-100 20 text-yellow-800 '
+                          ? 'bg-yellow-100 text-yellow-800 '
                           : 'bg-slate-100  text-slate-800 '
                         }`}>
                         {property.status === 'active' ? 'Aktive' :

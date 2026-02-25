@@ -99,12 +99,12 @@ export default function NewAgent() {
           <div className="flex items-center">
             <button
               onClick={() => router.push("/admin/agents")}
-              className="flex items-center text-blue-100 hover:text-white mr-6 transition-colors duration-200"
+              className="flex items-center text-slate-600 hover:text-blue-600 mr-6 transition-colors duration-200"
             >
               <ArrowLeft className="h-5 w-5 mr-2" />
               <span className="font-medium">Kthehu</span>
             </button>
-            <h1 className="text-3xl font-bold text-white">Shto Agjent të Ri</h1>
+            <h1 className="text-3xl font-bold text-slate-900">Shto Agjent të Ri</h1>
           </div>
         </div>
       </header>
@@ -114,10 +114,10 @@ export default function NewAgent() {
           {/* Basic Information */}
           <div className="card p-8 border-none">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center mr-4">
                 <User className="h-6 w-6 text-white" />
               </div>
-              <h2 className="text-2xl font-bold bg-white bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold text-slate-900">
                 Informacione Personale
               </h2>
             </div>
@@ -192,10 +192,10 @@ export default function NewAgent() {
           {/* Security */}
           <div className="card p-8 border-none">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center mr-4">
                 <Shield className="h-6 w-6 text-white" />
               </div>
-              <h2 className="text-2xl font-bold bg-white bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold text-slate-900">
                 Siguria dhe Të Drejtat
               </h2>
             </div>
@@ -278,12 +278,12 @@ export default function NewAgent() {
           </div>
 
           {/* Permissions Info */}
-          <div className="bg-blue-50 10 border border-blue-200 50 rounded-lg p-6">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
             <h3 className="text-lg font-semibold text-blue-900  mb-3">Të Drejtat e Rolit</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
                 <h4 className="font-medium text-blue-800  mb-2">Agjent:</h4>
-                <ul className="space-y-1 text-blue-700 80">
+                <ul className="space-y-1 text-blue-700">
                   <li>• Mund të krijojë pasuri të reja</li>
                   <li>• Mund të editojë vetëm pasuritë e tij</li>
                   <li>• Mund të shikojë të gjitha pasuritë</li>
@@ -292,7 +292,7 @@ export default function NewAgent() {
               </div>
               <div>
                 <h4 className="font-medium text-blue-800  mb-2">Administrator:</h4>
-                <ul className="space-y-1 text-blue-700 80">
+                <ul className="space-y-1 text-blue-700">
                   <li>• Të gjitha të drejtat e agjentit</li>
                   <li>• Mund të editojë të gjitha pasuritë</li>
                   <li>• Mund të menaxhojë agjentët</li>

@@ -30,13 +30,13 @@ export default function Navigation() {
   };
 
   return (
-    <nav aria-label="Kryesore" className="sticky top-0 z-[100] border-b border-white/10" style={{ background: '#0d2b6b', backdropFilter: 'blur(12px)' }}>
+    <nav aria-label="Kryesore" className="sticky top-0 z-[100] bg-white/80 backdrop-blur-xl border-b border-gray-100 shadow-sm transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-18">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 py-2 group">
             <div className="relative">
-              <div className="p-2 bg-white rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+              <div className="p-2 bg-blue-600 rounded-xl shadow-lg shadow-blue-600/20 group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
                 <svg className="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
                   <path d="M12 1l11 9h-3v10h-6v-6h-4v6H4V10H1L12 1z" opacity="0.3" />
@@ -44,10 +44,10 @@ export default function Navigation() {
               </div>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold text-white tracking-tight">
+              <h1 className="text-xl font-bold text-slate-900 tracking-tight">
                 Real Estate Tiranë
               </h1>
-              <p className="text-white/60 text-xs font-medium">Premium Properties • {new Date().getFullYear()}</p>
+              <p className="text-slate-500 text-xs font-medium">Premium Properties • {new Date().getFullYear()}</p>
             </div>
           </Link>
 
@@ -60,8 +60,8 @@ export default function Navigation() {
                   key={item.name}
                   href={item.href}
                   className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive(item.href)
-                    ? 'text-white bg-white/15'
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                    ? 'text-[var(--primary-dark)] bg-blue-50'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                     }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -84,7 +84,7 @@ export default function Navigation() {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-3 rounded-lg text-white/70 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-200 touch-manipulation min-h-[44px] min-w-[44px]"
+              className="inline-flex items-center justify-center p-3 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 touch-manipulation min-h-[44px] min-w-[44px]"
               aria-expanded={isMenuOpen}
               aria-label={isMenuOpen ? "Mbyll menunë" : "Hap menunë kryesore"}
             >
@@ -100,7 +100,7 @@ export default function Navigation() {
 
       {/* Mobile menu */}
       <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'}`}>
-        <div className="px-4 pt-4 pb-6 space-y-2 bg-[var(--background)] border-t border-gray-100 shadow-xl">
+        <div className="px-4 pt-4 pb-6 space-y-2 bg-white/95 backdrop-blur-xl border-t border-gray-100 shadow-2xl rounded-b-2xl">
           {navigation.map((item) => {
             const Icon = item.icon;
             return (

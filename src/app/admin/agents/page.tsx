@@ -145,20 +145,20 @@ export default function AgentsPage() {
               <div className="flex items-center">
                 <Link
                   href="/admin/dashboard"
-                  className="flex items-center text-white/90 hover:text-white mr-6 transition-colors duration-200"
+                  className="flex items-center text-slate-600 hover:text-blue-600 mr-6 transition-colors duration-200"
                 >
                   <span className="font-medium">← Kthehu</span>
                 </Link>
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold text-white">Menaxhimi i Agjentëve</h1>
-                  <p className="text-blue-200">Menaxho agjentët dhe të drejtat e tyre</p>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Menaxhimi i Agjentëve</h1>
+                  <p className="text-blue-600">Menaxho agjentët dhe të drejtat e tyre</p>
                 </div>
               </div>
               {/* Desktop add button */}
               <div className="hidden sm:block">
                 <button
                   onClick={() => setShowAddForm(true)}
-                  className="inline-flex items-center bg-white text-white px-5 py-2.5 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  className="inline-flex items-center bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
                   <Plus className="h-5 w-5 mr-2" />
                   Shto Agjent të Ri
@@ -169,7 +169,7 @@ export default function AgentsPage() {
                 <button
                   aria-label="Hap menunë"
                   onClick={() => setMobileMenuOpen(v => !v)}
-                  className="inline-flex items-center justify-center p-2 rounded-md bg-white/10 text-white hover:bg-white/15"
+                  className="inline-flex items-center justify-center p-2 rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100"
                 >
                   <MoreVertical className="h-5 w-5" />
                 </button>
@@ -242,7 +242,7 @@ export default function AgentsPage() {
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200 ">
-                <thead className="bg-slate-50 50">
+                <thead className="bg-slate-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500  uppercase tracking-wider">
                       Agjenti
@@ -267,7 +267,7 @@ export default function AgentsPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="shrink-0 h-10 w-10">
-                            <div className="h-10 w-10 bg-white rounded-full flex items-center justify-center">
+                            <div className="h-10 w-10 bg-blue-600 rounded-full flex items-center justify-center">
                               <User className="h-5 w-5 text-white" />
                             </div>
                           </div>
@@ -295,8 +295,8 @@ export default function AgentsPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-[var(--text-scale-sm)] font-semibold rounded-full ${agent.role === 'ADMIN'
-                          ? 'bg-purple-100 20 text-purple-800 '
-                          : 'bg-green-100 20 text-green-800 '
+                          ? 'bg-purple-100 text-purple-800 '
+                          : 'bg-green-100 text-green-800 '
                           }`}>
                           {getRoleLabel(agent.role)}
                         </span>

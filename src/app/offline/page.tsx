@@ -120,7 +120,7 @@ export default function OfflinePage() {
 
           {/* Connection Status Indicator */}
           <div
-            className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${isOnline ? 'bg-green-100 20 text-green-800 ' : 'bg-red-100 20 text-red-800 '
+            className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${isOnline ? 'bg-green-100 text-green-800 ' : 'bg-red-100 text-red-800 '
               }`}
           >
             <div
@@ -169,9 +169,9 @@ export default function OfflinePage() {
               {quickActions.map((action) => {
                 const Icon = action.icon;
                 const colorClasses: Record<string, string> = {
-                  blue: 'bg-blue-50 10 text-blue-600  border-blue-200 50',
-                  green: 'bg-green-50 10 text-green-600  border-green-200 50',
-                  purple: 'bg-purple-50 10 text-purple-600  border-purple-200 50',
+                  blue: 'bg-blue-50 text-blue-600  border-blue-200',
+                  green: 'bg-green-50 text-green-600  border-green-200',
+                  purple: 'bg-purple-50 text-purple-600  border-purple-200',
                 };
                 return (
                   <Link
@@ -196,11 +196,11 @@ export default function OfflinePage() {
           </div>
 
           {/* Offline Features Info */}
-          <div className="bg-blue-50 10 rounded-lg p-4 text-left">
+          <div className="bg-blue-50 rounded-lg p-4 text-left">
             <h3 className="font-medium text-blue-900  mb-2">
               {getTranslation('availableOfflineTitle', locale)}
             </h3>
-            <ul className="text-sm text-blue-800 80 space-y-1">
+            <ul className="text-sm text-blue-800 space-y-1">
               {/* Keeping these strings static for now.  Consider adding to i18n if needed. */}
               <li>• Browse recently viewed properties</li>
               <li>• View cached property details</li>
@@ -210,7 +210,7 @@ export default function OfflinePage() {
           </div>
 
           {/* Tips */}
-          <div className="bg-slate-50 50 rounded-lg p-4 text-left">
+          <div className="bg-slate-50 rounded-lg p-4 text-left">
             <h3 className="font-medium text-[var(--foreground)] mb-2">
               {getTranslation('tipsTitle', locale)}
             </h3>

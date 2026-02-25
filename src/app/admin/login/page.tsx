@@ -75,7 +75,7 @@ export default function AdminLogin() {
         <div className="card py-8 px-4 border-none sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 10 border border-red-200  text-red-700  px-4 py-3 rounded">
+              <div className="bg-red-50 border border-red-200  text-red-700  px-4 py-3 rounded">
                 {error}
               </div>
             )}
@@ -148,11 +148,11 @@ export default function AdminLogin() {
           </div>
 
           {/* Login help */}
-          <div className="mt-6 p-4 bg-blue-50 20 rounded-md">
+          <div className="mt-6 p-4 bg-blue-50 rounded-md">
             <h3 className="text-sm font-medium text-blue-800  mb-2">
               Ndihmë për hyrje:
             </h3>
-            <div className="text-sm text-blue-700 80">
+            <div className="text-sm text-blue-700">
               <p>Përdorni email-in dhe fjalëkalimin që ju ka dhënë administratori.</p>
               <p>Nëse keni probleme me hyrjen, kontaktoni administratorin.</p>
             </div>

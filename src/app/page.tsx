@@ -262,8 +262,11 @@ export default function Home() {
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className="bg-slate-50 py-20 border-t border-gray-100 overflow-hidden">
-          <div className="container-custom">
+        <section id="contact" className="bg-slate-50 py-20 border-t border-gray-100 overflow-hidden relative">
+          <div className="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-[0.03]"></div>
+          <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-purple-400/20 rounded-full blur-3xl"></div>
+          <div className="container-custom relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
                 <div className="inline-flex items-center px-3 py-1 bg-blue-100 border border-blue-200 rounded-full text-[var(--primary-dark)] text-xs font-semibold mb-4">
@@ -274,8 +277,8 @@ export default function Home() {
                   {t('teamHelpDescription')}
                 </p>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                    <div className="p-3 bg-blue-600 rounded-xl text-white">
+                  <div className="flex items-center gap-4 p-4 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
+                    <div className="p-3 bg-blue-600 rounded-xl text-white shadow-lg shadow-blue-600/20">
                       <Phone className="h-6 w-6" />
                     </div>
                     <div>
@@ -285,7 +288,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-xl relative">
+              <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-8 border border-white shadow-2xl relative">
                 <h3 className="text-xl font-bold text-[var(--foreground)] mb-2">{t('contactUs')}</h3>
                 <p className="text-slate-600 mb-6 text-sm">
                   {t('contactDescription')}

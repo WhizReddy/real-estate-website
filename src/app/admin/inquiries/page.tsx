@@ -110,13 +110,13 @@ export default function InquiriesPage() {
             <div className="flex items-center">
               <Link
                 href="/admin/dashboard"
-                className="flex items-center text-white/90 hover:text-white mr-6 transition-colors duration-200"
+                className="flex items-center text-slate-600 hover:text-[var(--primary)] mr-6 transition-colors duration-200"
               >
                 <span className="font-medium">← Kthehu</span>
               </Link>
               <div>
-                <h1 className="text-3xl font-bold text-white">Pyetjet e Klientëve</h1>
-                <p className="text-blue-200">Menaxhoni pyetjet dhe kërkesat e klientëve</p>
+                <h1 className="text-3xl font-bold text-[var(--foreground)]">Pyetjet e Klientëve</h1>
+                <p className="text-slate-500">Menaxhoni pyetjet dhe kërkesat e klientëve</p>
               </div>
             </div>
           </div>
@@ -155,7 +155,7 @@ export default function InquiriesPage() {
                   filteredInquiries.map((inquiry) => (
                     <div
                       key={inquiry.id}
-                      className={`p-4 hover:bg-slate-50 :bg-slate-800/50 cursor-pointer transition-colors ${selectedInquiry?.id === inquiry.id ? 'bg-blue-50 20 border-l-4 border-[var(--primary)] text-blue-900 ' : ''
+                      className={`p-4 hover:bg-slate-50 cursor-pointer transition-colors ${selectedInquiry?.id === inquiry.id ? 'bg-blue-50 border-l-4 border-[var(--primary)] text-blue-900 ' : ''
                         }`}
                       onClick={() => handleViewInquiry(inquiry)}
                     >
@@ -263,7 +263,7 @@ export default function InquiriesPage() {
                   {selectedInquiry.propertyTitle && (
                     <div>
                       <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">Pasuria e Interesuar</h3>
-                      <div className="bg-slate-50 50 p-4 rounded-lg">
+                      <div className="bg-slate-50 p-4 rounded-lg">
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="font-medium text-[var(--foreground)]">{selectedInquiry.propertyTitle}</p>
@@ -287,7 +287,7 @@ export default function InquiriesPage() {
                   {/* Message */}
                   <div>
                     <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">Mesazhi</h3>
-                    <div className="bg-slate-50 50 p-4 rounded-lg">
+                    <div className="bg-slate-50 p-4 rounded-lg">
                       <p className="text-slate-700  whitespace-pre-wrap">{selectedInquiry.message}</p>
                     </div>
                   </div>

@@ -156,7 +156,7 @@ export default function IntegrationTest() {
               )}
 
               {syncResults && (
-                <div className="mt-4 p-3 bg-blue-50 10 border border-blue-200 50 rounded-md">
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
                   <h3 className="font-medium text-blue-900  mb-2">Last Sync Results</h3>
                   {syncResults.error ? (
                     <p className="text-red-600 text-sm">{syncResults.error}</p>
@@ -258,7 +258,7 @@ export default function IntegrationTest() {
                           <summary className="text-sm text-slate-600  cursor-pointer">
                             View Details
                           </summary>
-                          <pre className="text-xs text-slate-600  mt-2 bg-slate-50 50 p-2 rounded overflow-x-auto">
+                          <pre className="text-xs text-slate-600  mt-2 bg-slate-50 p-2 rounded overflow-x-auto">
                             {JSON.stringify(result.data, null, 2)}
                           </pre>
                         </details>

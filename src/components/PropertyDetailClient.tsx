@@ -58,12 +58,12 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
       <StructuredData property={property} type="property" />
       <article className="bg-[var(--background)] min-h-screen text-[var(--foreground)] transition-colors duration-300">
         {/* Breadcrumb Header */}
-        <header className="bg-primary/5 10 border-b border-primary/20">
+        <header className="bg-primary/5 border-b border-primary/20">
           <div className="container-custom py-[var(--spacing-lg)]">
             <div className="flex items-center">
               <Link
                 href="/"
-                className="flex items-center text-primary-dark hover:text-primary  :text-white mr-[var(--spacing-md)] transition-colors duration-200"
+                className="flex items-center text-primary-dark hover:text-primary mr-[var(--spacing-md)] transition-colors duration-200"
                 aria-label="Kthehu mbrapa"
               >
                 <ArrowLeft className="h-5 w-5 mr-2" />
@@ -152,7 +152,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                       <span className="font-medium text-[var(--foreground)]">{property.address.zipCode}</span>
                     </div>
                     {property.details.yearBuilt && (
-                      <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 50 rounded-lg">
+                      <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 rounded-lg">
                         <span className="text-slate-500 ">Viti i ndërtimit:</span>
                         <span className="font-medium text-[var(--foreground)] flex items-center">
                           <Calendar className="h-4 w-4 mr-2 text-[var(--primary)]" />
@@ -160,7 +160,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                         </span>
                       </div>
                     )}
-                    <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 50 rounded-lg">
+                    <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 rounded-lg">
                       <span className="text-slate-500 ">Statusi:</span>
                       <span className="font-medium text-[var(--foreground)] capitalize">{property.status}</span>
                     </div>

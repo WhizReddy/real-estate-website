@@ -35,7 +35,7 @@ exports[`Component Visual Regression Tests Dark Mode Support renders components 
           class="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[calc(100%-2rem)] z-10"
         >
           <span
-            class="inline-flex items-center px-3 py-1.5 rounded-full text-[var(--text-scale-sm)] font-medium transition-colors border bg-blue-100 30 text-blue-800  border-transparent "
+            class="inline-flex items-center px-3 py-1.5 rounded-full text-[var(--text-scale-sm)] font-medium transition-colors border bg-blue-100 text-blue-800  border-transparent "
           >
             Për Shitje
           </span>
@@ -509,7 +509,7 @@ exports[`Component Visual Regression Tests High Contrast Mode renders components
           class="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[calc(100%-2rem)] z-10"
         >
           <span
-            class="inline-flex items-center px-3 py-1.5 rounded-full text-[var(--text-scale-sm)] font-medium transition-colors border bg-blue-100 30 text-blue-800  border-transparent "
+            class="inline-flex items-center px-3 py-1.5 rounded-full text-[var(--text-scale-sm)] font-medium transition-colors border bg-blue-100 text-blue-800  border-transparent "
           >
             Për Shitje
           </span>
@@ -1028,7 +1028,7 @@ exports[`Component Visual Regression Tests PropertyCard Component renders proper
         class="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[calc(100%-2rem)] z-10"
       >
         <span
-          class="inline-flex items-center px-3 py-1.5 rounded-full text-[var(--text-scale-sm)] font-medium transition-colors border bg-blue-100 30 text-blue-800  border-transparent "
+          class="inline-flex items-center px-3 py-1.5 rounded-full text-[var(--text-scale-sm)] font-medium transition-colors border bg-blue-100 text-blue-800  border-transparent "
         >
           Për Shitje
         </span>
@@ -1352,7 +1352,7 @@ exports[`Component Visual Regression Tests Responsive Breakpoints renders compon
           class="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[calc(100%-2rem)] z-10"
         >
           <span
-            class="inline-flex items-center px-3 py-1.5 rounded-full text-[var(--text-scale-sm)] font-medium transition-colors border bg-blue-100 30 text-blue-800  border-transparent "
+            class="inline-flex items-center px-3 py-1.5 rounded-full text-[var(--text-scale-sm)] font-medium transition-colors border bg-blue-100 text-blue-800  border-transparent "
           >
             Për Shitje
           </span>
@@ -1826,7 +1826,7 @@ exports[`Component Visual Regression Tests Responsive Breakpoints renders compon
           class="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[calc(100%-2rem)] z-10"
         >
           <span
-            class="inline-flex items-center px-3 py-1.5 rounded-full text-[var(--text-scale-sm)] font-medium transition-colors border bg-blue-100 30 text-blue-800  border-transparent "
+            class="inline-flex items-center px-3 py-1.5 rounded-full text-[var(--text-scale-sm)] font-medium transition-colors border bg-blue-100 text-blue-800  border-transparent "
           >
             Për Shitje
           </span>
@@ -2300,7 +2300,7 @@ exports[`Component Visual Regression Tests Responsive Breakpoints renders compon
           class="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[calc(100%-2rem)] z-10"
         >
           <span
-            class="inline-flex items-center px-3 py-1.5 rounded-full text-[var(--text-scale-sm)] font-medium transition-colors border bg-blue-100 30 text-blue-800  border-transparent "
+            class="inline-flex items-center px-3 py-1.5 rounded-full text-[var(--text-scale-sm)] font-medium transition-colors border bg-blue-100 text-blue-800  border-transparent "
           >
             Për Shitje
           </span>

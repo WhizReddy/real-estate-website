@@ -14,13 +14,13 @@ export default function Badge({ children, variant = 'default', icon: Icon, class
 
     const variants: Record<BadgeVariant, string> = {
         default: "bg-slate-100  text-slate-800  border-transparent",
-        primary: "bg-blue-100 30 text-blue-800  border-transparent",
-        success: "bg-green-100 30 text-green-800  border-transparent",
-        warning: "bg-amber-100 30 text-amber-800  border-transparent",
-        danger: "bg-red-100 30 text-red-800  border-transparent",
+        primary: "bg-blue-100 text-blue-800  border-transparent",
+        success: "bg-green-100 text-green-800  border-transparent",
+        warning: "bg-amber-100 text-amber-800  border-transparent",
+        danger: "bg-red-100 text-red-800  border-transparent",
         outline: "bg-transparent text-[var(--foreground)] border-slate-200 ",
-        "glass-light": "bg-white/90 80 backdrop-blur-md text-slate-900 border-white/20 shadow-sm",
-        "glass-dark": "bg-black/60 40 backdrop-blur-md text-white border-white/10 shadow-sm",
+        "glass-light": "bg-white/90 backdrop-blur-md text-slate-900 border-white/20 shadow-sm",
+        "glass-dark": "bg-black/60 backdrop-blur-md text-white border-white/10 shadow-sm",
     };
 
     return (
