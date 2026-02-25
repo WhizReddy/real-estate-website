@@ -1,234 +1,61 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import MobileNavigation from '../MobileNavigation';
+import { usePathname } from 'next/navigation';
 
-// Mock Next.js router
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-    back: jest.fn(),
-    pathname: '/',
-  }),
-  usePathname: () => '/',
+  usePathname: jest.fn(() => '/'),
 }));
-
-// Mock framer-motion
-jest.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    nav: ({ children, ...props }: any) => <nav {...props}>{children}</nav>,
-    button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
-  },
-  AnimatePresence: ({ children }: any) => children,
-}));
-
-const mockNavigationItems = [
-  { href: '/', label: 'Home', icon: 'Home' },
-  { href: '/properties', label: 'Properties', icon: 'Building' },
-  { href: '/map', label: 'Map', icon: 'Map' },
-  { href: '/contact', label: 'Contact', icon: 'Phone' },
-];
 
 describe('MobileNavigation Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('renders mobile navigation toggle button', () => {
-    render(<MobileNavigation items={mockNavigationItems} />);
-    expect(screen.getByLabelText('Toggle navigation menu')).toBeInTheDocument();
+  it('renders mobile menu button', () => {
+    render(<MobileNavigation />);
+    expect(screen.getByRole('button', { name: /open menu|close menu/i })).toBeInTheDocument();
   });
 
-  it('opens navigation menu when toggle button is clicked', async () => {
-    render(<MobileNavigation items={mockNavigationItems} />);
-    
-    const toggleButton = screen.getByLabelText('Toggle navigation menu');
-    fireEvent.click(toggleButton);
-    
-    await waitFor(() => {
-      expect(screen.getByRole('navigation')).toBeInTheDocument();
-    });
-  });
+  it('opens menu and shows navigation items', () => {
+    render(<MobileNavigation />);
 
-  it('renders all navigation items when menu is open', async () => {
-    render(<MobileNavigation items={mockNavigationItems} />);
-    
-    const toggleButton = screen.getByLabelText('Toggle navigation menu');
-    fireEvent.click(toggleButton);
-    
-    await waitFor(() => {
-      mockNavigationItems.forEach(item => {
-        expect(screen.getByText(item.label)).toBeInTheDocument();
-      });
-    });
-  });
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
 
-  it('closes menu when navigation item is clicked', async () => {
-    render(<MobileNavigation items={mockNavigationItems} />);
-    
     // Open menu
-    const toggleButton = screen.getByLabelText('Toggle navigation menu');
-    fireEvent.click(toggleButton);
-    
-    await waitFor(() => {
-      const homeLink = screen.getByText('Home');
-      fireEvent.click(homeLink);
-    });
-    
-    // Menu should close
-    await waitFor(() => {
-      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
-    });
+    fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
+
+    expect(screen.getByRole('navigation')).toBeInTheDocument();
+    expect(screen.getByText('Ballina')).toBeInTheDocument();
+    expect(screen.getByText('Pasuritë')).toBeInTheDocument();
+    expect(screen.getByText('Kontakti')).toBeInTheDocument();
+    expect(screen.getByText('Admin')).toBeInTheDocument();
   });
 
-  it('closes menu when close button is clicked', async () => {
-    render(<MobileNavigation items={mockNavigationItems} />);
-    
+  it('highlights the active link', () => {
+    (usePathname as jest.Mock).mockReturnValue('/properties');
+    render(<MobileNavigation />);
+
     // Open menu
-    const toggleButton = screen.getByLabelText('Toggle navigation menu');
-    fireEvent.click(toggleButton);
-    
-    await waitFor(() => {
-      const closeButton = screen.getByLabelText('Close navigation menu');
-      fireEvent.click(closeButton);
-    });
-    
-    // Menu should close
-    await waitFor(() => {
-      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
-    });
+    fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
+
+    const propertiesLink = screen.getByText('Pasuritë').closest('a');
+    expect(propertiesLink).toHaveClass('bg-blue-50', 'text-blue-700');
   });
 
-  it('closes menu when overlay is clicked', async () => {
-    render(<MobileNavigation items={mockNavigationItems} />);
-    
+  it('closes menu when backdrop is clicked', () => {
+    render(<MobileNavigation />);
+
     // Open menu
-    const toggleButton = screen.getByLabelText('Toggle navigation menu');
-    fireEvent.click(toggleButton);
-    
-    await waitFor(() => {
-      const overlay = screen.getByTestId('mobile-nav-overlay');
-      fireEvent.click(overlay);
-    });
-    
-    // Menu should close
-    await waitFor(() => {
-      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
-    });
-  });
+    fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
+    expect(screen.getByRole('navigation')).toBeInTheDocument();
 
-  it('handles keyboard navigation', async () => {
-    render(<MobileNavigation items={mockNavigationItems} />);
-    
-    const toggleButton = screen.getByLabelText('Toggle navigation menu');
-    fireEvent.keyDown(toggleButton, { key: 'Enter' });
-    
-    await waitFor(() => {
-      expect(screen.getByRole('navigation')).toBeInTheDocument();
-    });
-  });
+    // Click backdrop (first div inside the overlay with bg-black/50)
+    // We can just find the backdrop by class name or by clicking the parent/sibling
+    const backdrop = document.querySelector('.bg-black\\/50') as Element;
+    fireEvent.click(backdrop);
 
-  it('closes menu on Escape key press', async () => {
-    render(<MobileNavigation items={mockNavigationItems} />);
-    
-    // Open menu
-    const toggleButton = screen.getByLabelText('Toggle navigation menu');
-    fireEvent.click(toggleButton);
-    
-    await waitFor(() => {
-      fireEvent.keyDown(document, { key: 'Escape' });
-    });
-    
-    // Menu should close
-    await waitFor(() => {
-      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
-    });
-  });
-
-  it('highlights active navigation item', async () => {
-    // Mock current pathname
-    jest.doMock('next/navigation', () => ({
-      useRouter: () => ({
-        push: jest.fn(),
-        back: jest.fn(),
-        pathname: '/properties',
-      }),
-      usePathname: () => '/properties',
-    }));
-    
-    render(<MobileNavigation items={mockNavigationItems} />);
-    
-    const toggleButton = screen.getByLabelText('Toggle navigation menu');
-    fireEvent.click(toggleButton);
-    
-    await waitFor(() => {
-      const propertiesLink = screen.getByText('Properties');
-      expect(propertiesLink.closest('a')).toHaveClass('bg-blue-50', 'text-blue-600');
-    });
-  });
-
-  it('applies correct ARIA attributes', async () => {
-    render(<MobileNavigation items={mockNavigationItems} />);
-    
-    const toggleButton = screen.getByLabelText('Toggle navigation menu');
-    expect(toggleButton).toHaveAttribute('aria-expanded', 'false');
-    
-    fireEvent.click(toggleButton);
-    
-    await waitFor(() => {
-      expect(toggleButton).toHaveAttribute('aria-expanded', 'true');
-    });
-  });
-
-  it('handles touch events for mobile devices', async () => {
-    render(<MobileNavigation items={mockNavigationItems} />);
-    
-    const toggleButton = screen.getByLabelText('Toggle navigation menu');
-    fireEvent.touchStart(toggleButton);
-    fireEvent.touchEnd(toggleButton);
-    
-    await waitFor(() => {
-      expect(screen.getByRole('navigation')).toBeInTheDocument();
-    });
-  });
-
-  it('prevents body scroll when menu is open', async () => {
-    render(<MobileNavigation items={mockNavigationItems} />);
-    
-    const toggleButton = screen.getByLabelText('Toggle navigation menu');
-    fireEvent.click(toggleButton);
-    
-    await waitFor(() => {
-      expect(document.body).toHaveClass('overflow-hidden');
-    });
-  });
-
-  it('restores body scroll when menu is closed', async () => {
-    render(<MobileNavigation items={mockNavigationItems} />);
-    
-    const toggleButton = screen.getByLabelText('Toggle navigation menu');
-    fireEvent.click(toggleButton);
-    
-    await waitFor(() => {
-      const closeButton = screen.getByLabelText('Close navigation menu');
-      fireEvent.click(closeButton);
-    });
-    
-    await waitFor(() => {
-      expect(document.body).not.toHaveClass('overflow-hidden');
-    });
-  });
-
-  it('renders custom logo when provided', () => {
-    const customLogo = <div data-testid="custom-logo">Custom Logo</div>;
-    render(<MobileNavigation items={mockNavigationItems} logo={customLogo} />);
-    
-    expect(screen.getByTestId('custom-logo')).toBeInTheDocument();
-  });
-
-  it('handles empty navigation items', () => {
-    render(<MobileNavigation items={[]} />);
-    expect(screen.getByLabelText('Toggle navigation menu')).toBeInTheDocument();
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
   });
 });

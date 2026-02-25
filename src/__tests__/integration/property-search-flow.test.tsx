@@ -125,27 +125,28 @@ function MockPropertySearchPage() {
 
   const handleFiltersChange = async (newFilters: any) => {
     setLoading(true);
-    setFilters({ ...filters, ...newFilters });
+    const updatedFilters = { ...filters, ...newFilters };
+    setFilters(updatedFilters);
 
     // Simulate API call
     setTimeout(() => {
       let filteredProperties = mockProperties;
 
-      if (newFilters.type) {
+      if (updatedFilters.type) {
         filteredProperties = filteredProperties.filter(
-          p => p.type.toLowerCase() === newFilters.type.toLowerCase()
+          p => p.type.toLowerCase() === updatedFilters.type.toLowerCase()
         );
       }
 
-      if (newFilters.minPrice) {
+      if (updatedFilters.minPrice) {
         filteredProperties = filteredProperties.filter(
-          p => p.price >= parseInt(newFilters.minPrice)
+          p => p.price >= parseInt(updatedFilters.minPrice)
         );
       }
 
-      if (newFilters.maxPrice) {
+      if (updatedFilters.maxPrice) {
         filteredProperties = filteredProperties.filter(
-          p => p.price <= parseInt(newFilters.maxPrice)
+          p => p.price <= parseInt(updatedFilters.maxPrice)
         );
       }
 
@@ -231,7 +232,7 @@ describe('Property Search Flow Integration', () => {
     });
 
     expect(screen.getAllByText('Luxury Villa')[0]).toBeInTheDocument();
-    expect(screen.queryByText('Modern Condo')).not.toBeInTheDocument();
+    expect(screen.queryAllByText('Modern Condo')).toHaveLength(0);
   });
 
   it('filters properties by type', async () => {
@@ -245,7 +246,7 @@ describe('Property Search Flow Integration', () => {
     });
 
     expect(screen.getAllByText('Modern Condo')[0]).toBeInTheDocument();
-    expect(screen.queryByText('Luxury Villa')).not.toBeInTheDocument();
+    expect(screen.queryAllByText('Luxury Villa')).toHaveLength(0);
   });
 
   it('shows loading state during search', async () => {

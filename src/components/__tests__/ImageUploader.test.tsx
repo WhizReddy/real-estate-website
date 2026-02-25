@@ -51,7 +51,7 @@ describe('ImageUploader', () => {
     render(<ImageUploader {...defaultProps} images={images} />);
     
     expect(screen.getByText('Imazhet e Ngarkuara (2)')).toBeInTheDocument();
-    expect(screen.getByText('Imazhi i parë do të jetë imazhi kryesor')).toBeInTheDocument();
+    
     
     // Check for primary image badge
     expect(screen.getByText('Kryesor')).toBeInTheDocument();

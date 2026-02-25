@@ -95,8 +95,8 @@ describe('Homepage Styling', () => {
     await screen.findByTestId('search-filters');
 
     // Check for correct container max-width class
-    const mainContainer = screen.getByText(/Gjeni Shtëpinë Tuaj të/).closest('div');
-    expect(mainContainer).toHaveClass('max-w-4xl', 'mx-auto');
+    const mainContainer = screen.getByText(/Gjeni/i).closest('div');
+    expect(mainContainer).toHaveClass('sm:max-w-4xl', 'mx-auto');
   });
 
   it('should have blue hero section with proper gradient', async () => {
@@ -105,7 +105,7 @@ describe('Homepage Styling', () => {
     await screen.findByTestId('search-filters');
 
     // Check hero section has relative and overflow-hidden classes
-    const heroSection = screen.getByText(/Gjeni Shtëpinë Tuaj të/).closest('section');
+    const heroSection = screen.getByText(/Gjeni/i).closest('header');
     expect(heroSection).toHaveClass('relative', 'overflow-hidden');
   });
 

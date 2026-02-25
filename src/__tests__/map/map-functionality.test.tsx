@@ -214,7 +214,7 @@ describe('Map Functionality', () => {
     await waitFor(() => {
       const layerButtons = screen.getAllByRole('button');
       const satelliteButton = layerButtons.find(btn => btn.title === 'Pamja satelitore');
-      
+
       if (satelliteButton) {
         fireEvent.click(satelliteButton);
         expect(mockMap.eachLayer).toHaveBeenCalled();
@@ -234,7 +234,7 @@ describe('Map Functionality', () => {
         });
       }),
     };
-    
+
     Object.defineProperty(navigator, 'geolocation', {
       value: mockGeolocation,
       writable: true,
@@ -245,7 +245,7 @@ describe('Map Functionality', () => {
     await waitFor(() => {
       const locationButton = screen.getByTitle('Shko te lokacioni im');
       fireEvent.click(locationButton);
-      
+
       expect(mockGeolocation.getCurrentPosition).toHaveBeenCalled();
     });
   });
@@ -254,12 +254,12 @@ describe('Map Functionality', () => {
     // Mock fullscreen API
     const mockRequestFullscreen = jest.fn();
     const mockExitFullscreen = jest.fn();
-    
+
     Object.defineProperty(document, 'fullscreenElement', {
       value: null,
       writable: true,
     });
-    
+
     Object.defineProperty(document, 'exitFullscreen', {
       value: mockExitFullscreen,
       writable: true,
@@ -269,10 +269,10 @@ describe('Map Functionality', () => {
 
     await waitFor(() => {
       const fullscreenButton = screen.getByTitle('Harta në ekran të plotë');
-      
+
       // Mock the map ref element
       const mapElement = { requestFullscreen: mockRequestFullscreen };
-      
+
       fireEvent.click(fullscreenButton);
       // Note: In a real test, we'd need to properly mock the ref
     });
@@ -284,7 +284,7 @@ describe('Map Functionality', () => {
     await waitFor(() => {
       const priceFilter = screen.getByDisplayValue('Të gjitha');
       fireEvent.change(priceFilter, { target: { value: 'low' } });
-      
+
       // Should filter properties and update markers
       expect(mockMarker.remove).toHaveBeenCalled();
     });
@@ -345,8 +345,12 @@ describe('Map Functionality', () => {
     consoleSpy.mockRestore();
   });
 
-  it('should clean up resources on unmount', () => {
+  it('should clean up resources on unmount', async () => {
     const { unmount } = render(<MapView properties={mockProperties} />);
+
+    await waitFor(() => {
+      expect(mockLeaflet.map).toHaveBeenCalled();
+    });
 
     unmount();
 

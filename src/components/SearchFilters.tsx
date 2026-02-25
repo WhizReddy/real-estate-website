@@ -367,6 +367,7 @@ export default function SearchFilters({
             <select
               id="sort-by"
               name="sortBy"
+              aria-label={t('sortBy')}
               value={filters.sortBy}
               onChange={(e) => handleFilterChange("sortBy", e.target.value)}
               className="px-3 py-1.5 text-sm border border-gray-300  rounded-md outline-none focus-visible:ring-2 focus-visible:ring-primary/50 bg-[var(--background)] text-[var(--foreground)]"
@@ -382,6 +383,7 @@ export default function SearchFilters({
               <select
                 id="sort-order"
                 name="sortOrder"
+                aria-label={`${t('sortBy')} order`}
                 value={filters.sortOrder}
                 onChange={(e) =>
                   handleFilterChange(

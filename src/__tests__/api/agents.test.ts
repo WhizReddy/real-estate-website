@@ -14,6 +14,9 @@ jest.mock('@/lib/prisma', () => ({
       delete: jest.fn(),
       count: jest.fn(),
     },
+    property: {
+      updateMany: jest.fn(),
+    },
   },
 }));
 

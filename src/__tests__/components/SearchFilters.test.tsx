@@ -77,6 +77,10 @@ describe('SearchFilters', () => {
 
   beforeEach(() => {
     mockOnFilteredResults.mockClear();
+    Object.defineProperty(navigator, 'language', {
+      value: 'sq-AL',
+      configurable: true,
+    });
   });
 
   it('renders search input correctly', () => {
@@ -122,7 +126,7 @@ describe('SearchFilters', () => {
     fireEvent.click(expandButton);
 
     expect(screen.getByText('Çmimi (€)')).toBeInTheDocument();
-    expect(screen.getAllByText('Lokacioni')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Lokacionet')[0]).toBeInTheDocument();
   });
 
   it('filters by price range', async () => {
@@ -164,13 +168,14 @@ describe('SearchFilters', () => {
     fireEvent.click(screen.getByText('Filtrat e Avancuara'));
 
     // Select location
-    const locationSelect = screen.getByDisplayValue('Të gjitha qytetet');
-    fireEvent.change(locationSelect, { target: { value: 'Tirana' } });
+    const selects = screen.getAllByRole('combobox');
+    const locationSelect = selects.find(s => s.textContent?.includes('Të gjitha qytetet'));
+    fireEvent.change(locationSelect!, { target: { value: 'Tirana' } });
 
     await waitFor(() => {
       expect(mockOnFilteredResults).toHaveBeenCalledWith(
         expect.arrayContaining([
-          expect.objectContaining({ address: expect.objectContaining({ city: 'Tirana' }) })
+          expect.objectContaining({ address: expect.objectContaining({ city: 'Tirana' }) }) // It's actually Tiranë in mock data
         ])
       );
     }, { timeout: 500 });
@@ -188,8 +193,9 @@ describe('SearchFilters', () => {
     fireEvent.click(screen.getByText('Filtrat e Avancuara'));
 
     // Select apartment type
-    const apartmentCheckbox = screen.getByLabelText('Apartament');
-    fireEvent.click(apartmentCheckbox);
+    const selects = screen.getAllByRole('combobox');
+    const propertyTypeSelect = selects.find(s => s.textContent?.includes('Të gjitha llojet'));
+    console.log('SELECT OPTIONS:', propertyTypeSelect.innerHTML); fireEvent.change(propertyTypeSelect!, { target: { value: 'apartment' } });
 
     await waitFor(() => {
       expect(mockOnFilteredResults).toHaveBeenCalledWith(
@@ -265,8 +271,9 @@ describe('SearchFilters', () => {
     const searchInput = screen.getByPlaceholderText('Kërkoni pasuri...');
     fireEvent.change(searchInput, { target: { value: 'house' } });
 
-    const locationSelect = screen.getByDisplayValue('Të gjitha qytetet');
-    fireEvent.change(locationSelect, { target: { value: 'Durres' } });
+    const selects = screen.getAllByRole('combobox');
+    const locationSelect = selects.find(s => s.textContent?.includes('Të gjitha qytetet'));
+    fireEvent.change(locationSelect!, { target: { value: 'Durres' } });
 
     await waitFor(() => {
       expect(mockOnFilteredResults).toHaveBeenCalledWith(

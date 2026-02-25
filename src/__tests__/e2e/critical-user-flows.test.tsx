@@ -69,8 +69,16 @@ const MockApp = () => {
   const [currentPage, setCurrentPage] = React.useState('home');
   const [properties, setProperties] = React.useState(mockProperties);
   const [filters, setFilters] = React.useState({});
-  const [selectedProperty, setSelectedProperty] = React.useState(null);
+  const [selectedProperty, setSelectedProperty] = React.useState<any>(null);
   const [favorites, setFavorites] = React.useState<number[]>([]);
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedProperty(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleNavigation = (page: string) => {
     setCurrentPage(page);

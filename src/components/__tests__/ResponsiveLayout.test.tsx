@@ -26,7 +26,7 @@ describe('ResponsiveLayout Component', () => {
         <div>Content</div>
       </ResponsiveLayout>
     );
-    expect(container.firstChild).toHaveClass('min-h-screen', 'bg-gradient-to-br');
+    expect(container.firstChild).toHaveClass('min-h-screen', 'bg-white');
   });
 
   it('handles variants correctly', () => {

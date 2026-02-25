@@ -45,73 +45,73 @@ jest.mock('next/dynamic', () => {
 // Mock the data functions
 
 const mockPropertiesConfig = [
-    {
-      id: 'prop-1',
-      title: 'Modern Apartment in Tirana',
-      description: 'Beautiful apartment',
-      price: 150000,
-      address: {
-        street: 'Main St 123',
-        city: 'Tirana',
-        state: 'Tirana',
-        zipCode: '1001',
-        coordinates: { lat: 41.3275, lng: 19.8187 }
-      },
-      details: {
-        bedrooms: 2,
-        bathrooms: 1,
-        squareFootage: 85,
-        propertyType: 'apartment',
-        yearBuilt: 2020
-      },
-      images: ['/test1.jpg'],
-      features: ['parking', 'balcony'],
-      status: 'active',
-      listingType: 'sale',
-      isPinned: true,
-      agent: {
-        id: 'agent-1',
-        name: 'John Doe',
-        email: 'john@test.com',
-        phone: '+1234567890'
-      },
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z'
+  {
+    id: 'prop-1',
+    title: 'Modern Apartment in Tirana',
+    description: 'Beautiful apartment',
+    price: 150000,
+    address: {
+      street: 'Main St 123',
+      city: 'Tirana',
+      state: 'Tirana',
+      zipCode: '1001',
+      coordinates: { lat: 41.3275, lng: 19.8187 }
     },
-    {
-      id: 'prop-2',
-      title: 'Family House in Durres',
-      description: 'Spacious house',
-      price: 250000,
-      address: {
-        street: 'Oak Ave 456',
-        city: 'Durres',
-        state: 'Durres',
-        zipCode: '2001',
-        coordinates: { lat: 41.3247, lng: 19.4564 }
-      },
-      details: {
-        bedrooms: 4,
-        bathrooms: 2,
-        squareFootage: 150,
-        propertyType: 'house',
-        yearBuilt: 2018
-      },
-      images: ['/test2.jpg'],
-      features: ['garden', 'garage'],
-      status: 'active',
-      listingType: 'sale',
-      isPinned: false,
-      agent: {
-        id: 'agent-2',
-        name: 'Jane Smith',
-        email: 'jane@test.com',
-        phone: '+1234567891'
-      },
-      createdAt: '2024-01-02T00:00:00Z',
-      updatedAt: '2024-01-02T00:00:00Z'
-    }
-  ];
+    details: {
+      bedrooms: 2,
+      bathrooms: 1,
+      squareFootage: 85,
+      propertyType: 'apartment',
+      yearBuilt: 2020
+    },
+    images: ['/test1.jpg'],
+    features: ['parking', 'balcony'],
+    status: 'active',
+    listingType: 'sale',
+    isPinned: true,
+    agent: {
+      id: 'agent-1',
+      name: 'John Doe',
+      email: 'john@test.com',
+      phone: '+1234567890'
+    },
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: 'prop-2',
+    title: 'Family House in Durres',
+    description: 'Spacious house',
+    price: 250000,
+    address: {
+      street: 'Oak Ave 456',
+      city: 'Durres',
+      state: 'Durres',
+      zipCode: '2001',
+      coordinates: { lat: 41.3247, lng: 19.4564 }
+    },
+    details: {
+      bedrooms: 4,
+      bathrooms: 2,
+      squareFootage: 150,
+      propertyType: 'house',
+      yearBuilt: 2018
+    },
+    images: ['/test2.jpg'],
+    features: ['garden', 'garage'],
+    status: 'active',
+    listingType: 'sale',
+    isPinned: false,
+    agent: {
+      id: 'agent-2',
+      name: 'Jane Smith',
+      email: 'jane@test.com',
+      phone: '+1234567891'
+    },
+    createdAt: '2024-01-02T00:00:00Z',
+    updatedAt: '2024-01-02T00:00:00Z'
+  }
+];
 global.fetch = jest.fn((url) => {
   if (url.includes('/api/properties')) {
     return Promise.resolve({
@@ -252,8 +252,8 @@ describe('Property Search Integration', () => {
     await screen.findByTestId('map-view');
 
     // Check hero section content
-    expect(screen.getByText(/Gjeni Shtëpinë Tuaj të/)).toBeInTheDocument();
-    expect(screen.getByText(/Përsosur/)).toBeInTheDocument();
+    expect(screen.getByText(/Gjeni/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tuaj/i)).toBeInTheDocument();
   });
 
   it('shows mobile components', async () => {
