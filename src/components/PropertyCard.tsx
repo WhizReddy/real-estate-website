@@ -41,7 +41,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
             <PropertyImageGallery images={property.images} title={property.title} />
           ) : (
             // Fallback placeholder
-            <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+            <div className="w-full h-full bg-white flex items-center justify-center">
               <div className="text-gray-400 text-center">
                 <Square className="h-12 w-12 mx-auto mb-2" />
                 <span className="text-sm">Nuk ka imazh</span>
@@ -50,21 +50,19 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           )}
 
           {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent"></div>
 
           {/* Status Badges - Top Left */}
           <div className="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[calc(100%-2rem)] z-10">
-            <Badge variant="glass-light">
-              {getListingTypeLabel(property.listingType)}
-            </Badge>
-            {property.isPinned && (
-              <Badge variant="warning" icon={Star}>
-                I Zgjedhur
+            <Badge variant="primary">
+              {property.isPinned && (
+                <Badge variant="warning" icon={Star}>
+                  I Zgjedhur
+                </Badge>
+              )}
+              <Badge variant="secondary">
+                {getPropertyTypeLabel(property.details.propertyType)}
               </Badge>
-            )}
-            <Badge variant="glass-dark">
-              {getPropertyTypeLabel(property.details.propertyType)}
-            </Badge>
           </div>
 
           {/* Favorite Button - Top Right */}
@@ -114,7 +112,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           {property.agent && (
             <div className="mb-4">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-white text-xs font-semibold">
                   {property.agent.name.split(' ').map(n => n[0]).join('')}
                 </div>
                 <div className="flex-1 min-w-0">

@@ -65,7 +65,7 @@ export default function AdminLogin() {
           <h2 className="text-2xl font-bold text-[var(--foreground)]">
             Hyrje për Agjentë
           </h2>
-          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-2 text-sm text-slate-600 ">
             Hyni në panelin tuaj të administrimit
           </p>
         </div>
@@ -75,7 +75,7 @@ export default function AdminLogin() {
         <div className="card py-8 px-4 border-none sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded">
+              <div className="bg-red-50 10 border border-red-200  text-red-700  px-4 py-3 rounded">
                 {error}
               </div>
             )}
@@ -130,10 +130,10 @@ export default function AdminLogin() {
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300 dark:border-slate-700" />
+                <div className="w-full border-t border-gray-300 " />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-[var(--background)] text-slate-500 dark:text-slate-400">ose</span>
+                <span className="px-2 bg-[var(--background)] text-slate-500 ">ose</span>
               </div>
             </div>
 
@@ -148,11 +148,11 @@ export default function AdminLogin() {
           </div>
 
           {/* Login help */}
-          <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-md">
-            <h3 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">
+          <div className="mt-6 p-4 bg-blue-50 20 rounded-md">
+            <h3 className="text-sm font-medium text-blue-800  mb-2">
               Ndihmë për hyrje:
             </h3>
-            <div className="text-sm text-blue-700 dark:text-blue-300/80">
+            <div className="text-sm text-blue-700 80">
               <p>Përdorni email-in dhe fjalëkalimin që ju ka dhënë administratori.</p>
               <p>Nëse keni probleme me hyrjen, kontaktoni administratorin.</p>
             </div>

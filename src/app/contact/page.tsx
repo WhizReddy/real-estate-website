@@ -12,7 +12,7 @@ export default function ContactPage() {
     return (
         <Layout variant="homepage">
             {/* Header */}
-            <section className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl">
+            <section className="bg-white shadow-xl">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <Link
                         href="/"

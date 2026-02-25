@@ -58,12 +58,12 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
       <StructuredData property={property} type="property" />
       <article className="bg-[var(--background)] min-h-screen text-[var(--foreground)] transition-colors duration-300">
         {/* Breadcrumb Header */}
-        <header className="bg-primary/5 dark:bg-primary/10 border-b border-primary/20">
+        <header className="bg-primary/5 10 border-b border-primary/20">
           <div className="container-custom py-[var(--spacing-lg)]">
             <div className="flex items-center">
               <Link
                 href="/"
-                className="flex items-center text-primary-dark hover:text-primary dark:text-primary-light dark:hover:text-white mr-[var(--spacing-md)] transition-colors duration-200"
+                className="flex items-center text-primary-dark hover:text-primary  :text-white mr-[var(--spacing-md)] transition-colors duration-200"
                 aria-label="Kthehu mbrapa"
               >
                 <ArrowLeft className="h-5 w-5 mr-2" />
@@ -71,7 +71,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
               </Link>
               <div>
                 <h1 className="text-[var(--text-scale-hero)] font-bold text-[var(--foreground)] leading-tight mb-2">{property.title}</h1>
-                <div className="flex items-center text-[var(--text-scale-lg)] text-slate-600 dark:text-slate-400">
+                <div className="flex items-center text-[var(--text-scale-lg)] text-slate-600 ">
                   <MapPin className="h-5 w-5 mr-2" />
                   <span>{property.address.street}, {property.address.city}</span>
                 </div>
@@ -98,12 +98,12 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                         {getListingTypeLabel(property.listingType)}
                       </Badge>
                       {property.isPinned && (
-                        <Badge variant="warning" icon={Star} className="px-4 py-2 border border-amber-200 dark:border-amber-800 text-[var(--text-scale-sm)] font-semibold">
+                        <Badge variant="warning" icon={Star} className="px-4 py-2 border border-amber-200 text-[var(--text-scale-sm)] font-semibold">
                           I Zgjedhur
                         </Badge>
                       )}
                     </div>
-                    <h2 className="text-[var(--text-scale-h1)] font-bold text-primary dark:text-primary-light flex items-center">
+                    <h2 className="text-[var(--text-scale-h1)] font-bold text-[var(--primary)] flex items-center">
                       <Euro className="h-8 w-8 mr-3" />
                       {formatPrice(property.price)}
                     </h2>
@@ -121,7 +121,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                 {/* Description */}
                 <div className="mb-[var(--spacing-xl)]">
                   <h3 className="text-[var(--text-scale-h3)] font-semibold text-[var(--foreground)] mb-[var(--spacing-sm)]">Përshkrimi</h3>
-                  <p className="text-[var(--text-scale-base)] text-slate-600 dark:text-slate-400 leading-relaxed">{property.description}</p>
+                  <p className="text-[var(--text-scale-base)] text-[var(--foreground)] opacity-80 leading-relaxed">{property.description}</p>
                 </div>
 
                 {/* Features */}
@@ -130,7 +130,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                     <h3 className="text-[var(--text-scale-h3)] font-semibold text-[var(--foreground)] mb-[var(--spacing-sm)]">Karakteristikat</h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-[var(--spacing-sm)]">
                       {property.features.map((feature, index) => (
-                        <div key={index} className="flex items-center text-[var(--text-scale-base)] text-slate-600 dark:text-slate-400">
+                        <div key={index} className="flex items-center text-[var(--text-scale-base)] text-[var(--foreground)] opacity-80">
                           <div className="w-2 h-2 bg-[var(--primary)] rounded-full mr-3"></div>
                           <span className="capitalize">{feature}</span>
                         </div>
@@ -140,28 +140,28 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                 )}
 
                 {/* Additional Details */}
-                <div className="border-t border-gray-200 dark:border-slate-800 pt-[var(--spacing-lg)]">
+                <div className="border-t border-gray-200 pt-[var(--spacing-lg)]">
                   <h3 className="text-[var(--text-scale-h3)] font-semibold text-[var(--foreground)] mb-[var(--spacing-sm)]">Detaje Shtesë</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-[var(--spacing-md)] text-[var(--text-scale-base)]">
-                    <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-                      <span className="text-slate-500 dark:text-slate-400">Adresa e plotë:</span>
+                    <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 rounded-lg">
+                      <span className="text-slate-500">Adresa e plotë:</span>
                       <span className="font-medium text-[var(--foreground)]">{property.address.street}, {property.address.city}</span>
                     </div>
-                    <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-                      <span className="text-slate-500 dark:text-slate-400">Kodi postar:</span>
+                    <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 rounded-lg">
+                      <span className="text-slate-500">Kodi postar:</span>
                       <span className="font-medium text-[var(--foreground)]">{property.address.zipCode}</span>
                     </div>
                     {property.details.yearBuilt && (
-                      <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-                        <span className="text-slate-500 dark:text-slate-400">Viti i ndërtimit:</span>
+                      <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 50 rounded-lg">
+                        <span className="text-slate-500 ">Viti i ndërtimit:</span>
                         <span className="font-medium text-[var(--foreground)] flex items-center">
                           <Calendar className="h-4 w-4 mr-2 text-[var(--primary)]" />
                           {property.details.yearBuilt}
                         </span>
                       </div>
                     )}
-                    <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-                      <span className="text-slate-500 dark:text-slate-400">Statusi:</span>
+                    <div className="flex justify-between p-[var(--spacing-sm)] bg-slate-50 50 rounded-lg">
+                      <span className="text-slate-500 ">Statusi:</span>
                       <span className="font-medium text-[var(--foreground)] capitalize">{property.status}</span>
                     </div>
                   </div>
@@ -171,13 +171,13 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
               {/* Enhanced Map and Location Section */}
               <div className="card border-none">
                 {/* Map Tabs - Neighborhood now powered by OpenStreetMap */}
-                <div className="border-b border-gray-200 dark:border-slate-800">
+                <div className="border-b border-gray-200 ">
                   <div className="flex">
                     <button
                       onClick={() => setActiveMapTab('location')}
                       className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${activeMapTab === 'location'
                         ? 'text-[var(--primary)] border-b-2 border-[var(--primary)] bg-[var(--primary)]/10'
-                        : 'text-gray-500 hover:text-[var(--foreground)] hover:bg-gray-50 dark:hover:bg-slate-800'
+                        : 'text-gray-500 hover:text-[var(--foreground)] hover:bg-gray-50'
                         }`}
                     >
                       <div className="flex items-center justify-center gap-2">
@@ -189,7 +189,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                       onClick={() => setActiveMapTab('neighborhood')}
                       className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${activeMapTab === 'neighborhood'
                         ? 'text-[var(--primary)] border-b-2 border-[var(--primary)] bg-[var(--primary)]/10'
-                        : 'text-gray-500 hover:text-[var(--foreground)] hover:bg-gray-50 dark:hover:bg-slate-800'
+                        : 'text-gray-500 hover:text-[var(--foreground)] hover:bg-gray-50'
                         }`}
                     >
                       <div className="flex items-center justify-center gap-2">

@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function ResponsiveDemoPage() {
   return (
-  <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 text-slate-900">
+  <div className="min-h-screen bg-white text-slate-900">
       {/* Navbar */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-slate-200">
         <nav className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">

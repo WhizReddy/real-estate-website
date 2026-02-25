@@ -104,7 +104,7 @@ export default function InquiriesPage() {
 
   return (
     <div className="min-h-full bg-[var(--background)] overflow-x-hidden">
-      <header className="bg-linear-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl sticky top-0 z-40">
+      <header className="bg-white shadow-xl sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -128,7 +128,7 @@ export default function InquiriesPage() {
           {/* Inquiries List */}
           <div className="lg:w-1/2">
             <div className="card border-none">
-              <div className="p-6 border-b border-gray-200 dark:border-slate-800">
+              <div className="p-6 border-b border-gray-200 ">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold text-[var(--foreground)]">
                     Pyetjet ({filteredInquiries.length})
@@ -136,7 +136,7 @@ export default function InquiriesPage() {
                   <select
                     value={filter}
                     onChange={(e) => setFilter(e.target.value as 'all' | 'unread' | 'read')}
-                    className="border border-gray-300 dark:border-slate-700 bg-[var(--background)] text-[var(--foreground)] rounded-md px-3 py-1 text-sm"
+                    className="border border-gray-300  bg-[var(--background)] text-[var(--foreground)] rounded-md px-3 py-1 text-sm"
                   >
                     <option value="all">Të gjitha</option>
                     <option value="unread">Të palexuara</option>
@@ -145,40 +145,40 @@ export default function InquiriesPage() {
                 </div>
               </div>
 
-              <div className="divide-y divide-gray-200 dark:divide-slate-800 max-h-96 overflow-y-auto">
+              <div className="divide-y divide-gray-200  max-h-96 overflow-y-auto">
                 {filteredInquiries.length === 0 ? (
-                  <div className="p-8 text-center text-slate-500 dark:text-slate-400">
-                    <MessageCircle className="h-12 w-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
+                  <div className="p-8 text-center text-slate-500 ">
+                    <MessageCircle className="h-12 w-12 mx-auto mb-4 text-slate-300 " />
                     <p>Nuk ka pyetje të reja</p>
                   </div>
                 ) : (
                   filteredInquiries.map((inquiry) => (
                     <div
                       key={inquiry.id}
-                      className={`p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors ${selectedInquiry?.id === inquiry.id ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-[var(--primary)] text-blue-900 dark:text-blue-100' : ''
+                      className={`p-4 hover:bg-slate-50 :bg-slate-800/50 cursor-pointer transition-colors ${selectedInquiry?.id === inquiry.id ? 'bg-blue-50 20 border-l-4 border-[var(--primary)] text-blue-900 ' : ''
                         }`}
                       onClick={() => handleViewInquiry(inquiry)}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center mb-2">
-                            <User className="h-4 w-4 text-slate-400 dark:text-slate-500 mr-2" />
+                            <User className="h-4 w-4 text-slate-400  mr-2" />
                             <span className="font-medium text-[var(--foreground)]">{inquiry.name}</span>
-                            <span className="ml-2 text-sm text-slate-500 dark:text-slate-400">
+                            <span className="ml-2 text-sm text-slate-500 ">
                               {formatDate(inquiry.createdAt)}
                             </span>
                           </div>
 
                           {inquiry.propertyTitle && (
                             <div className="flex items-center mb-2">
-                              <Home className="h-4 w-4 text-slate-400 dark:text-slate-500 mr-2" />
-                              <span className="text-sm text-slate-600 dark:text-slate-400 truncate">
+                              <Home className="h-4 w-4 text-slate-400  mr-2" />
+                              <span className="text-sm text-slate-600  truncate">
                                 {inquiry.propertyTitle}
                               </span>
                             </div>
                           )}
 
-                          <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
+                          <p className="text-sm text-slate-600  line-clamp-2">
                             {inquiry.message}
                           </p>
                         </div>
@@ -217,7 +217,7 @@ export default function InquiriesPage() {
           <div className="lg:w-1/2">
             {selectedInquiry ? (
               <div className="card border-none">
-                <div className="p-6 border-b border-gray-200 dark:border-slate-800">
+                <div className="p-6 border-b border-gray-200 ">
                   <h2 className="text-lg font-semibold text-[var(--foreground)]">Detajet e Pyetjes</h2>
                 </div>
 
@@ -227,11 +227,11 @@ export default function InquiriesPage() {
                     <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">Informacionet e Kontaktit</h3>
                     <div className="space-y-2">
                       <div className="flex items-center">
-                        <User className="h-4 w-4 text-slate-400 dark:text-slate-500 mr-3" />
+                        <User className="h-4 w-4 text-slate-400  mr-3" />
                         <span className="text-[var(--foreground)]">{selectedInquiry.name}</span>
                       </div>
                       <div className="flex items-center">
-                        <Mail className="h-4 w-4 text-slate-400 dark:text-slate-500 mr-3" />
+                        <Mail className="h-4 w-4 text-slate-400  mr-3" />
                         <a
                           href={`mailto:${selectedInquiry.email}`}
                           className="text-blue-600 hover:text-blue-800"
@@ -241,7 +241,7 @@ export default function InquiriesPage() {
                       </div>
                       {selectedInquiry.phone && (
                         <div className="flex items-center">
-                          <Phone className="h-4 w-4 text-slate-400 dark:text-slate-500 mr-3" />
+                          <Phone className="h-4 w-4 text-slate-400  mr-3" />
                           <a
                             href={`tel:${selectedInquiry.phone}`}
                             className="text-blue-600 hover:text-blue-800"
@@ -251,8 +251,8 @@ export default function InquiriesPage() {
                         </div>
                       )}
                       <div className="flex items-center">
-                        <Calendar className="h-4 w-4 text-slate-400 dark:text-slate-500 mr-3" />
-                        <span className="text-slate-600 dark:text-slate-400">
+                        <Calendar className="h-4 w-4 text-slate-400  mr-3" />
+                        <span className="text-slate-600 ">
                           {formatDate(selectedInquiry.createdAt)}
                         </span>
                       </div>
@@ -263,7 +263,7 @@ export default function InquiriesPage() {
                   {selectedInquiry.propertyTitle && (
                     <div>
                       <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">Pasuria e Interesuar</h3>
-                      <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg">
+                      <div className="bg-slate-50 50 p-4 rounded-lg">
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="font-medium text-[var(--foreground)]">{selectedInquiry.propertyTitle}</p>
@@ -287,13 +287,13 @@ export default function InquiriesPage() {
                   {/* Message */}
                   <div>
                     <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">Mesazhi</h3>
-                    <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg">
-                      <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{selectedInquiry.message}</p>
+                    <div className="bg-slate-50 50 p-4 rounded-lg">
+                      <p className="text-slate-700  whitespace-pre-wrap">{selectedInquiry.message}</p>
                     </div>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex space-x-3 pt-4 border-t border-gray-200 dark:border-slate-800">
+                  <div className="flex space-x-3 pt-4 border-t border-gray-200 ">
                     <a
                       href={`mailto:${selectedInquiry.email}?subject=Përgjigje për pyetjen tuaj&body=Përshëndetje ${selectedInquiry.name},%0D%0A%0D%0AFaleminderit për pyetjen tuaj për pasurinë "${selectedInquiry.propertyTitle}".%0D%0A%0D%0A`}
                       className="flex-1 bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
@@ -315,8 +315,8 @@ export default function InquiriesPage() {
               </div>
             ) : (
               <div className="card border-none p-8 text-center">
-                <MessageCircle className="h-12 w-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
-                <p className="text-slate-500 dark:text-slate-400">Zgjidhni një pyetje për të parë detajet</p>
+                <MessageCircle className="h-12 w-12 mx-auto mb-4 text-slate-300 " />
+                <p className="text-slate-500 ">Zgjidhni një pyetje për të parë detajet</p>
               </div>
             )}
           </div>

@@ -78,7 +78,7 @@ export default function AgentsPage() {
     <Layout>
       <div className="bg-gray-50">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 py-16">
+        <section className="bg-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-medium mb-6">
@@ -195,7 +195,7 @@ export default function AgentsPage() {
         </section>
 
         {/* Contact Section */}
-        <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 py-16">
+        <section className="bg-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h2 className="text-3xl font-bold text-white mb-4">

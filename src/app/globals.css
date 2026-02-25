@@ -35,20 +35,6 @@
     /* blue-700 */
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: #0B1120;
-      /* slate-950 */
-      --foreground: #F8FAFC;
-      /* slate-50 */
-      --primary: #3b82f6;
-      /* blue-500 for better dark contrast */
-      --primary-light: #93c5fd;
-      /* blue-300 */
-      --primary-dark: #2563eb;
-      /* blue-600 */
-    }
-  }
 }
 
 body {
@@ -80,7 +66,7 @@ body {
   input:focus-visible,
   select:focus-visible,
   textarea:focus-visible {
-    @apply ring-2 ring-[var(--primary)] ring-offset-2 dark:ring-offset-slate-900;
+    @apply ring-2 ring-[var(--primary)] ring-offset-2;
   }
 }
 
@@ -91,7 +77,7 @@ body {
 }
 
 @utility card {
-  @apply bg-[var(--background)] rounded-2xl shadow-[0_8px_30px] shadow-black/[0.04] border border-gray-100 dark:border-slate-800 overflow-hidden;
+  @apply bg-[var(--background)] rounded-2xl shadow-[0_8px_30px] shadow-black/[0.04] border border-gray-100 overflow-hidden;
 }
 
 @utility card-interactive {
@@ -103,11 +89,11 @@ body {
 }
 
 @utility btn-secondary {
-  @apply inline-flex items-center justify-center px-4 py-2 bg-[var(--background)] text-[var(--foreground)] font-medium rounded-xl border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+  @apply inline-flex items-center justify-center px-4 py-2 bg-[var(--background)] text-[var(--foreground)] font-medium rounded-xl border border-gray-200 hover:bg-gray-50 transition-all active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
 }
 
 @utility input-field {
-  @apply w-full px-4 py-2.5 bg-[var(--background)] border border-gray-200 dark:border-slate-700 text-[var(--foreground)] rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary transition-all placeholder:text-gray-400 dark:placeholder:text-slate-500;
+  @apply w-full px-4 py-2.5 bg-[var(--background)] border border-gray-200 text-[var(--foreground)] rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary transition-all placeholder:text-gray-400;
 }
 
 /* Animations */

@@ -37,7 +37,7 @@ export default function AgentCard({
               sizes="48px"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold text-sm">
+            <div className="w-full h-full bg-white flex items-center justify-center text-white font-semibold text-sm">
               {agent.name.split(' ').map(n => n[0]).join('')}
             </div>
           )}
@@ -75,7 +75,7 @@ export default function AgentCard({
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100">
       {/* Agent Photo */}
-      <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600">
+      <div className="relative h-48 w-full overflow-hidden bg-white">
         {agent.photo ? (
           <Image
             src={agent.photo}

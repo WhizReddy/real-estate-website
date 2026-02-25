@@ -46,7 +46,7 @@ export default function MortgageCalculator({ price, className = '' }: MortgageCa
 
     return (
         <div className={`bg-white rounded-2xl shadow-xl overflow-hidden border border-blue-100 ${className}`}>
-            <div className="bg-linear-to-r from-blue-900 to-indigo-900 p-6 text-white text-center">
+            <div className="bg-white p-6 text-white text-center">
                 <div className="flex items-center justify-center gap-2 mb-1">
                     <Calculator className="h-5 w-5 text-blue-300" />
                     <h3 className="text-xl font-bold">Kalkulatori i Hipotekës</h3>

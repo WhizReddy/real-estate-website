@@ -314,7 +314,7 @@ export default function PropertyDetailMap({
     // Create custom marker for main property
     const mainMarkerIcon = L.divIcon({
       html: `
-  <div class="main-property-marker bg-linear-to-r from-blue-600 to-blue-700 text-white px-4 py-3 rounded-lg text-sm font-bold shadow-xl border-3 border-white relative">
+  <div class="main-property-marker bg-white text-white px-4 py-3 rounded-lg text-sm font-bold shadow-xl border-3 border-white relative">
           <div class="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 rounded-full animate-pulse"></div>
           ${formatPrice(prop.price)}
         </div>
@@ -383,7 +383,7 @@ export default function PropertyDetailMap({
 
       const nearbyMarkerIcon = L.divIcon({
         html: `
-          <div class="nearby-property-marker bg-linear-to-r from-blue-500 to-blue-600 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-600 hover:to-blue-700 transition-all cursor-pointer">
+          <div class="nearby-property-marker bg-white text-white px-3 py-2 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-600 hover:to-blue-700 transition-all cursor-pointer">
             ${formatPrice(prop.price)}
           </div>
         `,

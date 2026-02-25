@@ -210,7 +210,7 @@ export default function ImageUploader({
                 className="relative group bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300"
               >
                 {/* Image Container */}
-                <div className="aspect-[4/3] relative bg-gradient-to-br from-gray-100 to-gray-200">
+                <div className="aspect-[4/3] relative bg-white">
                   {imageUrl.startsWith('data:') ? (
                     <img
                       src={imageUrl}
@@ -292,7 +292,7 @@ export default function ImageUploader({
                         Imazhi #{index + 1}
                       </span>
                       {index === 0 && (
-                        <div className="flex items-center space-x-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs px-2 py-1 rounded-full">
+                        <div className="flex items-center space-x-1 bg-white text-white text-xs px-2 py-1 rounded-full">
                           <Star className="h-3 w-3" />
                           <span>Kryesor</span>
                         </div>

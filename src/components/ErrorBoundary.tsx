@@ -122,7 +122,7 @@ ${JSON.stringify(bugReport, null, 2)}
 
       // Default error UI
       return (
-        <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-white flex items-center justify-center p-4">
           <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
             <div className="mb-6">
               <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -147,7 +147,7 @@ ${JSON.stringify(bugReport, null, 2)}
             <div className="space-y-3">
               <button
                 onClick={this.handleRetry}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
               >
                 <RefreshCw className="h-4 w-4" />
                 Provo Përsëri

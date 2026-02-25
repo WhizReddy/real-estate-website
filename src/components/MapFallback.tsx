@@ -20,7 +20,7 @@ export default function MapFallback({ properties, height = '400px', onRetry }: M
     <div className="relative">
       <div
         style={{ height }}
-        className="w-full rounded-lg border border-gray-200 bg-gradient-to-br from-blue-50 to-indigo-50 overflow-hidden"
+        className="w-full rounded-lg border border-gray-200 bg-white overflow-hidden"
       >
         {validProperties.length > 0 ? (
           <div className="h-full flex flex-col">

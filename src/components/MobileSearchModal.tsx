@@ -60,7 +60,7 @@ export default function MobileSearchModal({
     <div className="fixed inset-0 z-50 bg-white md:hidden">
       <div className="flex flex-col h-full">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
           <h2 className="text-lg font-semibold text-white">Kërkoni Pasuri</h2>
           <button
             onClick={onClose}

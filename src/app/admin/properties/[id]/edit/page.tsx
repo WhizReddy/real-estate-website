@@ -210,13 +210,13 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
   return (
     <div className="min-h-full bg-[var(--background)]">
       {/* Header */}
-      <header className="bg-[var(--background)] shadow-sm dark:border-b dark:border-slate-800">
+      <header className="bg-[var(--background)] shadow-sm  ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Link
                 href="/admin/dashboard"
-                className="flex items-center text-slate-600 dark:text-slate-400 hover:text-[var(--foreground)] mr-4"
+                className="flex items-center text-slate-600  hover:text-[var(--foreground)] mr-4"
               >
                 <ArrowLeft className="h-5 w-5 mr-1" />
                 Kthehu
@@ -399,7 +399,7 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
               <h3 className="text-md font-medium text-[var(--foreground)] mb-3">
                 Përditëso Lokacionin në Hartë
               </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              <p className="text-sm text-slate-600  mb-4">
                 Kliko në hartë për të ndryshuar lokacionin e pasurisë. Koordinatat do të përditësohen automatikisht.
               </p>
               <InteractiveMapView
@@ -537,7 +537,7 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
               {featuresList.map((feature, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-3 py-1 rounded-full text-sm"
+                  className="inline-flex items-center bg-slate-100  text-slate-800  px-3 py-1 rounded-full text-sm"
                 >
                   {feature}
                   <button
@@ -574,7 +574,7 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
           <div className="flex justify-end space-x-4">
             <Link
               href="/admin/dashboard"
-              className="px-6 py-2 border border-gray-300 dark:border-slate-700 rounded-md text-[var(--foreground)] hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className="px-6 py-2 border border-gray-300  rounded-md text-[var(--foreground)] hover:bg-slate-50 :bg-slate-800/50"
             >
               Anulo
             </Link>

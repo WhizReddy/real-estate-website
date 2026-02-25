@@ -139,7 +139,7 @@ export default function AgentsPage() {
     <ErrorBoundary>
       <div className="min-h-full bg-[var(--background)] overflow-x-hidden">
         {/* Header */}
-        <header className="bg-linear-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl sticky top-0 z-40">
+        <header className="bg-white shadow-xl sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-4 relative pt-[env(safe-area-inset-top)]">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="flex items-center">
@@ -158,7 +158,7 @@ export default function AgentsPage() {
               <div className="hidden sm:block">
                 <button
                   onClick={() => setShowAddForm(true)}
-                  className="inline-flex items-center bg-linear-to-r from-blue-600 to-blue-700 text-white px-5 py-2.5 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  className="inline-flex items-center bg-white text-white px-5 py-2.5 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
                   <Plus className="h-5 w-5 mr-2" />
                   Shto Agjent të Ri
@@ -178,11 +178,11 @@ export default function AgentsPage() {
             {mobileMenuOpen && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setMobileMenuOpen(false)} aria-hidden="true" />
-                <div className="absolute right-4 top-12 z-50 w-56 rounded-lg border border-gray-200 dark:border-slate-800 bg-[var(--background)]/95 text-[var(--foreground)] shadow-xl backdrop-blur">
+                <div className="absolute right-4 top-12 z-50 w-56 rounded-lg border border-gray-200  bg-[var(--background)]/95 text-[var(--foreground)] shadow-xl backdrop-blur">
                   <div className="py-1">
                     <button
                       onClick={() => { setMobileMenuOpen(false); setShowAddForm(true); }}
-                      className="w-full text-left flex items-center px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-md"
+                      className="w-full text-left flex items-center px-3 py-2 hover:bg-slate-50 :bg-slate-800/50 rounded-md"
                     >
                       <Plus className="h-4 w-4 mr-2 text-blue-700" />
                       Shto Agjent të Ri
@@ -203,7 +203,7 @@ export default function AgentsPage() {
                   <User className="h-6 w-6 text-blue-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Totali i Agjentëve</p>
+                  <p className="text-sm font-medium text-slate-600 ">Totali i Agjentëve</p>
                   <p className="text-2xl font-semibold text-[var(--foreground)]">{agents.length}</p>
                 </div>
               </div>
@@ -214,7 +214,7 @@ export default function AgentsPage() {
                   <Shield className="h-6 w-6 text-purple-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Administratorë</p>
+                  <p className="text-sm font-medium text-slate-600 ">Administratorë</p>
                   <p className="text-2xl font-semibold text-[var(--foreground)]">
                     {agents.filter(a => a.role === 'ADMIN').length}
                   </p>
@@ -227,7 +227,7 @@ export default function AgentsPage() {
                   <UserCheck className="h-6 w-6 text-green-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Agjentë Aktivë</p>
+                  <p className="text-sm font-medium text-slate-600 ">Agjentë Aktivë</p>
                   <p className="text-2xl font-semibold text-[var(--foreground)]">
                     {agents.filter(a => a.role === 'AGENT').length}
                   </p>
@@ -237,37 +237,37 @@ export default function AgentsPage() {
           </div>
           {/* Agents Table */}
           <div className="card overflow-hidden border-none text-[var(--foreground)]">
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-slate-800">
+            <div className="px-6 py-4 border-b border-gray-200 ">
               <h2 className="text-lg font-semibold text-[var(--foreground)]">Lista e Agjentëve</h2>
             </div>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-800">
-                <thead className="bg-slate-50 dark:bg-slate-800/50">
+              <table className="min-w-full divide-y divide-gray-200 ">
+                <thead className="bg-slate-50 50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500  uppercase tracking-wider">
                       Agjenti
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500  uppercase tracking-wider">
                       Kontakti
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500  uppercase tracking-wider">
                       Roli
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500  uppercase tracking-wider">
                       Pasuritë
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500  uppercase tracking-wider">
                       Veprime
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-[var(--background)] divide-y divide-gray-200 dark:divide-slate-800">
+                <tbody className="bg-[var(--background)] divide-y divide-gray-200 ">
                   {agents.map((agent) => (
-                    <tr key={agent.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <tr key={agent.id} className="hover:bg-slate-50 :bg-slate-800/50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="shrink-0 h-10 w-10">
-                            <div className="h-10 w-10 bg-linear-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                            <div className="h-10 w-10 bg-white rounded-full flex items-center justify-center">
                               <User className="h-5 w-5 text-white" />
                             </div>
                           </div>
@@ -275,7 +275,7 @@ export default function AgentsPage() {
                             <div className="text-[var(--text-scale-base)] font-medium text-[var(--foreground)]">
                               {agent.name}
                             </div>
-                            <div className="text-[var(--text-scale-sm)] text-slate-500 dark:text-slate-400">
+                            <div className="text-[var(--text-scale-sm)] text-slate-500 ">
                               ID: {agent.id}
                             </div>
                           </div>
@@ -283,20 +283,20 @@ export default function AgentsPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-[var(--text-scale-base)] text-[var(--foreground)] flex items-center">
-                          <Mail className="h-4 w-4 mr-2 text-slate-400 dark:text-slate-500" />
+                          <Mail className="h-4 w-4 mr-2 text-slate-400 " />
                           {agent.email}
                         </div>
                         {agent.phone && (
-                          <div className="text-[var(--text-scale-sm)] text-slate-500 dark:text-slate-400 flex items-center mt-1">
-                            <Phone className="h-4 w-4 mr-2 text-slate-400 dark:text-slate-500" />
+                          <div className="text-[var(--text-scale-sm)] text-slate-500  flex items-center mt-1">
+                            <Phone className="h-4 w-4 mr-2 text-slate-400 " />
                             {agent.phone}
                           </div>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-[var(--text-scale-sm)] font-semibold rounded-full ${agent.role === 'ADMIN'
-                          ? 'bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-300'
-                          : 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300'
+                          ? 'bg-purple-100 20 text-purple-800 '
+                          : 'bg-green-100 20 text-green-800 '
                           }`}>
                           {getRoleLabel(agent.role)}
                         </span>
@@ -335,12 +335,12 @@ export default function AgentsPage() {
         {/* Add Agent Modal */}
         {showAddForm && (
           <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border border-gray-200 dark:border-slate-800 w-96 shadow-lg rounded-md bg-[var(--background)] text-[var(--foreground)]">
+            <div className="relative top-20 mx-auto p-5 border border-gray-200  w-96 shadow-lg rounded-md bg-[var(--background)] text-[var(--foreground)]">
               <div className="mt-3">
                 <h3 className="text-lg font-medium text-[var(--foreground)] mb-4">Shto Agjent të Ri</h3>
                 <form onSubmit={handleAddAgent} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    <label className="block text-sm font-medium text-slate-700  mb-1">
                       Emri i plotë *
                     </label>
                     <input
@@ -353,7 +353,7 @@ export default function AgentsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    <label className="block text-sm font-medium text-slate-700  mb-1">
                       Email *
                     </label>
                     <input
@@ -366,7 +366,7 @@ export default function AgentsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    <label className="block text-sm font-medium text-slate-700  mb-1">
                       Telefoni
                     </label>
                     <input
@@ -378,7 +378,7 @@ export default function AgentsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    <label className="block text-sm font-medium text-slate-700  mb-1">
                       Fjalëkalimi *
                     </label>
                     <input
@@ -391,7 +391,7 @@ export default function AgentsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    <label className="block text-sm font-medium text-slate-700  mb-1">
                       Roli *
                     </label>
                     <select
@@ -426,11 +426,11 @@ export default function AgentsPage() {
         {/* Delete Confirmation Modal */}
         {deleteConfirm && (
           <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border border-gray-200 dark:border-slate-800 w-96 shadow-lg rounded-md bg-[var(--background)] text-[var(--foreground)]">
+            <div className="relative top-20 mx-auto p-5 border border-gray-200  w-96 shadow-lg rounded-md bg-[var(--background)] text-[var(--foreground)]">
               <div className="mt-3 text-center">
                 <h3 className="text-lg font-medium text-[var(--foreground)]">Konfirmo Fshirjen</h3>
                 <div className="mt-2 px-7 py-3">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                  <p className="text-sm text-slate-500 ">
                     A jeni të sigurt që doni të fshini këtë agjent? Ky veprim nuk mund të kthehet.
                   </p>
                 </div>

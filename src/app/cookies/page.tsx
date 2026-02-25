@@ -9,14 +9,14 @@ export default function CookiesPage() {
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-12">
       <header>
-        <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">Cookie Policy</h1>
-        <p className="mt-2 text-base text-slate-600 dark:text-slate-300">
+        <h1 className="text-3xl font-semibold text-slate-900 ">Cookie Policy</h1>
+        <p className="mt-2 text-base text-slate-600 ">
           Cookies help us deliver a faster and more personalized experience. This policy outlines the cookies we use
           and how you can manage your preferences.
         </p>
       </header>
 
-      <section className="space-y-4 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+      <section className="space-y-4 text-sm leading-relaxed text-slate-700 ">
         <p>
           <strong className="font-semibold">Essential Cookies:</strong> Required for authentication, security, and core site
           features. These cannot be disabled without affecting functionality.

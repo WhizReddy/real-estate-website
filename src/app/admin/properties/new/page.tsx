@@ -205,7 +205,7 @@ export default function NewProperty() {
   return (
     <div className="min-h-full bg-[var(--background)]">
       {/* Header */}
-      <header className="bg-linear-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl">
+      <header className="bg-white shadow-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center">
             <button
@@ -225,10 +225,10 @@ export default function NewProperty() {
           {/* Basic Information */}
           <div className="card p-8 border-none">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-linear-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">1</span>
               </div>
-              <h2 className="text-2xl font-bold bg-linear-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-white bg-clip-text text-transparent">
                 Informacione Bazë
               </h2>
             </div>
@@ -318,10 +318,10 @@ export default function NewProperty() {
           {/* Images */}
           <div className="card p-8 border-none">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-linear-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">2</span>
               </div>
-              <h2 className="text-2xl font-bold bg-linear-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-white bg-clip-text text-transparent">
                 Imazhet e Pasurisë *
               </h2>
             </div>
@@ -336,10 +336,10 @@ export default function NewProperty() {
           {/* Address */}
           <div className="card p-8 border-none">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-linear-to-r from-blue-400 to-blue-500 rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">3</span>
               </div>
-              <h2 className="text-2xl font-bold bg-linear-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-white bg-clip-text text-transparent">
                 Adresa dhe Lokacioni
               </h2>
             </div>
@@ -482,10 +482,10 @@ export default function NewProperty() {
           {/* Property Details */}
           <div className="card p-8 border-none">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-linear-to-r from-blue-300 to-blue-400 rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">4</span>
               </div>
-              <h2 className="text-2xl font-bold bg-linear-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-white bg-clip-text text-transparent">
                 Detajet e Pasurisë
               </h2>
             </div>
@@ -596,7 +596,7 @@ export default function NewProperty() {
           {/* Features */}
           <div className="card p-8 border-none">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-linear-to-r from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4">
                 <span className="text-white font-bold text-lg">5</span>
               </div>
               <h2 className="text-2xl font-bold text-[var(--foreground)]">
@@ -659,7 +659,7 @@ export default function NewProperty() {
                 {...register("isPinned")}
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label className="ml-2 text-sm text-slate-700 dark:text-slate-300">
+              <label className="ml-2 text-sm text-slate-700 ">
                 Pin në faqen kryesore (do të shfaqet në krye të listës)
               </label>
             </div>

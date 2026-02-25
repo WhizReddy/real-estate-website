@@ -61,11 +61,11 @@ export default function CreativeLoader({
       {/* Animated Icon Container */}
       <div className="relative mb-4">
         {/* Pulsing Background Circle */}
-        <div className="absolute inset-0 bg-gradient-to-r from-red-100 to-blue-100 rounded-full animate-pulse"></div>
+        <div className="absolute inset-0 bg-white rounded-full animate-pulse"></div>
         
         {/* Rotating Border */}
         <div className="relative bg-white rounded-full p-4 shadow-lg">
-          <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-blue-500 to-yellow-500 rounded-full animate-spin opacity-20"></div>
+          <div className="absolute inset-0 bg-white rounded-full animate-spin opacity-20"></div>
           
           {/* Icon */}
           <div className="relative z-10">
@@ -101,7 +101,7 @@ export default function CreativeLoader({
 
       {/* Progress Bar */}
       <div className="w-32 h-1 bg-gray-200 rounded-full mt-3 overflow-hidden">
-        <div className="h-full bg-gradient-to-r from-red-500 to-blue-500 rounded-full animate-pulse"></div>
+        <div className="h-full bg-white rounded-full animate-pulse"></div>
       </div>
     </div>
   );

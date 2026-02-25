@@ -16,7 +16,7 @@ const DynamicFullMapView = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-screen w-full bg-linear-to-br from-blue-50 to-green-50 flex items-center justify-center">
+      <div className="h-screen w-full bg-white flex items-center justify-center">
         <CreativeLoader type="map" size="lg" />
       </div>
     ),
@@ -140,7 +140,7 @@ export default function MapPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <CreativeLoader type="properties" size="lg" />
       </div>
     );

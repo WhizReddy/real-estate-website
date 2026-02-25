@@ -93,7 +93,7 @@ export default function OptimizedImage({
     return (
       <div
         ref={imgRef}
-        className={`bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center ${className}`}
+        className={`bg-white flex items-center justify-center ${className}`}
         style={fill ? {} : { width, height }}
       >
         <div className="text-gray-400 text-center">

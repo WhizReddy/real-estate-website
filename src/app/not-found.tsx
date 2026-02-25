@@ -12,10 +12,10 @@ export default function NotFound() {
               <Home className="h-full w-full" />
             </div>
             <h1 className="text-4xl font-bold text-[var(--foreground)] mb-4">404</h1>
-            <h2 className="text-2xl font-semibold text-slate-700 dark:text-slate-300 mb-4">
+            <h2 className="text-2xl font-semibold text-slate-700  mb-4">
               Faqja nuk u gjet
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 mb-8">
+            <p className="text-slate-600  mb-8">
               Na vjen keq, por faqja që po kërkoni nuk ekziston ose është zhvendosur.
             </p>
           </div>
@@ -31,14 +31,14 @@ export default function NotFound() {
 
             <Link
               href="/properties"
-              className="inline-flex items-center justify-center w-full px-6 py-3 border border-gray-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+              className="inline-flex items-center justify-center w-full px-6 py-3 border border-gray-300  text-slate-700  font-medium rounded-lg hover:bg-slate-50 :bg-slate-800/50 transition-colors"
             >
               <Search className="h-5 w-5 mr-2" />
               Shiko Të Gjitha Pasuritë
             </Link>
           </div>
 
-          <div className="mt-8 text-sm text-slate-500 dark:text-slate-400">
+          <div className="mt-8 text-sm text-slate-500 ">
             <p>Nëse mendoni se kjo është një gabim, ju lutemi kontaktoni me ne.</p>
           </div>
         </div>

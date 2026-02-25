@@ -14,7 +14,7 @@ export default function Loading() {
       </div>
 
       {/* Hero section skeleton */}
-      <div className="bg-gradient-to-r from-red-600 to-red-800 py-16">
+      <div className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="animate-pulse">
             <div className="h-12 bg-white/20 rounded w-96 mx-auto mb-4"></div>

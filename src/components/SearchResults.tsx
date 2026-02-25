@@ -47,12 +47,12 @@ export default function SearchResults({
                 </>
               ) : (
                 <>
-                  <Search className="inline h-5 w-5 mr-2 text-gray-400 dark:text-gray-500" />
+                  <Search className="inline h-5 w-5 mr-2 text-gray-400 " />
                   Nuk u gjetën rezultate
                 </>
               )}
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-gray-600  mt-1">
               {hasResults ? (
                 <>
                   {properties.length} pasuri{properties.length !== 1 ? '' : ''}
@@ -112,11 +112,11 @@ function NoResultsMessage({ searchTerm }: { searchTerm?: string }) {
     <div className="text-center py-16 card shadow-sm">
       <div className="max-w-md mx-auto">
         <div className="mb-6">
-          <Search className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+          <Search className="h-16 w-16 text-gray-300  mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">
             Nuk u gjetën pasuritë
           </h3>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600 ">
             {searchTerm ? (
               <>
                 Nuk gjetëm asnjë pasuri që përputhet me kërkimin tuaj për{' '}
@@ -128,7 +128,7 @@ function NoResultsMessage({ searchTerm }: { searchTerm?: string }) {
           </p>
         </div>
 
-        <div className="space-y-3 text-sm text-gray-500 dark:text-gray-400">
+        <div className="space-y-3 text-sm text-gray-500 ">
           <p className="font-medium">Sugjerime për kërkimin:</p>
           <ul className="space-y-1">
             <li>• Kontrolloni drejtshkrimin e fjalëve</li>

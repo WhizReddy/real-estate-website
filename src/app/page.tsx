@@ -19,7 +19,7 @@ const SimpleMapView = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-64 bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse flex items-center justify-center">
+      <div className="h-64 bg-slate-100  rounded-xl animate-pulse flex items-center justify-center">
         <div className="text-gray-400 text-sm">Duke ngarkuar hartën...</div>
       </div>
     )
@@ -31,7 +31,7 @@ const MobileStaticMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-[300px] bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse flex items-center justify-center">
+      <div className="h-[300px] bg-slate-100  rounded-xl animate-pulse flex items-center justify-center">
         <div className="text-gray-400 text-sm">Ngarkimi i hartës...</div>
       </div>
     )

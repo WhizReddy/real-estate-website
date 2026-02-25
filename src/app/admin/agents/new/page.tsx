@@ -94,7 +94,7 @@ export default function NewAgent() {
   return (
     <div className="min-h-full bg-[var(--background)]">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl">
+      <header className="bg-white shadow-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center">
             <button
@@ -114,10 +114,10 @@ export default function NewAgent() {
           {/* Basic Information */}
           <div className="card p-8 border-none">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4">
                 <User className="h-6 w-6 text-white" />
               </div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-900 to-indigo-900 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-white bg-clip-text text-transparent">
                 Informacione Personale
               </h2>
             </div>
@@ -151,7 +151,7 @@ export default function NewAgent() {
                   Email *
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400 " />
                   <input
                     type="email"
                     {...register("email", {
@@ -161,7 +161,7 @@ export default function NewAgent() {
                         message: "Email i pavlefshëm"
                       }
                     })}
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-slate-700 bg-[var(--background)] text-[var(--foreground)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                    className="w-full pl-10 pr-3 py-2 border border-gray-300  bg-[var(--background)] text-[var(--foreground)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                     placeholder="agent@realestate-tirana.al"
                   />
                 </div>
@@ -177,11 +177,11 @@ export default function NewAgent() {
                   Telefoni
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500" />
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400 " />
                   <input
                     type="tel"
                     {...register("phone")}
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-slate-700 bg-[var(--background)] text-[var(--foreground)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                    className="w-full pl-10 pr-3 py-2 border border-gray-300  bg-[var(--background)] text-[var(--foreground)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                     placeholder="+355 69 123 4567"
                   />
                 </div>
@@ -192,10 +192,10 @@ export default function NewAgent() {
           {/* Security */}
           <div className="card p-8 border-none">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4">
                 <Shield className="h-6 w-6 text-white" />
               </div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-green-900 to-emerald-900 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-white bg-clip-text text-transparent">
                 Siguria dhe Të Drejtat
               </h2>
             </div>
@@ -215,13 +215,13 @@ export default function NewAgent() {
                         message: "Fjalëkalimi duhet të ketë të paktën 6 karaktere"
                       }
                     })}
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-slate-700 bg-[var(--background)] text-[var(--foreground)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                    className="w-full px-3 py-2 pr-10 border border-gray-300  bg-[var(--background)] text-[var(--foreground)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                     placeholder="••••••••"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400  hover:text-gray-600"
                   >
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
@@ -244,13 +244,13 @@ export default function NewAgent() {
                       required: "Konfirmimi i fjalëkalimit është i detyrueshëm",
                       validate: value => value === password || "Fjalëkalimet nuk përputhen"
                     })}
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-slate-700 bg-[var(--background)] text-[var(--foreground)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                    className="w-full px-3 py-2 pr-10 border border-gray-300  bg-[var(--background)] text-[var(--foreground)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                     placeholder="••••••••"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-400"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400  hover:text-slate-600 "
                   >
                     {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
@@ -278,12 +278,12 @@ export default function NewAgent() {
           </div>
 
           {/* Permissions Info */}
-          <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800/50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-3">Të Drejtat e Rolit</h3>
+          <div className="bg-blue-50 10 border border-blue-200 50 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-blue-900  mb-3">Të Drejtat e Rolit</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">Agjent:</h4>
-                <ul className="space-y-1 text-blue-700 dark:text-blue-300/80">
+                <h4 className="font-medium text-blue-800  mb-2">Agjent:</h4>
+                <ul className="space-y-1 text-blue-700 80">
                   <li>• Mund të krijojë pasuri të reja</li>
                   <li>• Mund të editojë vetëm pasuritë e tij</li>
                   <li>• Mund të shikojë të gjitha pasuritë</li>
@@ -291,8 +291,8 @@ export default function NewAgent() {
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">Administrator:</h4>
-                <ul className="space-y-1 text-blue-700 dark:text-blue-300/80">
+                <h4 className="font-medium text-blue-800  mb-2">Administrator:</h4>
+                <ul className="space-y-1 text-blue-700 80">
                   <li>• Të gjitha të drejtat e agjentit</li>
                   <li>• Mund të editojë të gjitha pasuritë</li>
                   <li>• Mund të menaxhojë agjentët</li>
@@ -307,7 +307,7 @@ export default function NewAgent() {
             <button
               type="button"
               onClick={() => router.push("/admin/agents")}
-              className="px-6 py-2 border border-gray-300 dark:border-slate-700 rounded-md text-[var(--foreground)] hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className="px-6 py-2 border border-gray-300  rounded-md text-[var(--foreground)] hover:bg-slate-50 :bg-slate-800/50"
             >
               Anulo
             </button>

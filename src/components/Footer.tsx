@@ -11,10 +11,10 @@ export default function Footer() {
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl">
+              <div className="p-2 bg-white rounded-xl">
                 <Building2 className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+              <h3 className="text-xl font-bold bg-white bg-clip-text text-transparent">
                 Real Estate Tiranë
               </h3>
             </div>
@@ -67,7 +67,7 @@ export default function Footer() {
           {/* Quick Links */}
           <div className="space-y-4">
             <h4 className="text-lg font-semibold text-white flex items-center">
-              <div className="w-1 h-6 bg-gradient-to-b from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+              <div className="w-1 h-6 bg-white rounded-full mr-3"></div>
               Lidhje të Shpejta
             </h4>
             <ul className="space-y-3">
@@ -113,28 +113,28 @@ export default function Footer() {
           {/* Services */}
           <div className="space-y-4">
             <h4 className="text-lg font-semibold text-white flex items-center">
-              <div className="w-1 h-6 bg-gradient-to-b from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+              <div className="w-1 h-6 bg-white rounded-full mr-3"></div>
               Shërbimet {currentYear}
             </h4>
             <ul className="space-y-3">
               <li className="flex items-center text-gray-300 text-sm">
-                <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+                <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
                 Blerje Pasurie Premium
               </li>
               <li className="flex items-center text-gray-300 text-sm">
-                <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+                <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
                 Shitje me Teknologji AI
               </li>
               <li className="flex items-center text-gray-300 text-sm">
-                <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+                <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
                 Qira Afatgjatë & Afatshkurtër
               </li>
               <li className="flex items-center text-gray-300 text-sm">
-                <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+                <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
                 Konsulencë Investimi
               </li>
               <li className="flex items-center text-gray-300 text-sm">
-                <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+                <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
                 Vlerësim Profesional
               </li>
             </ul>
@@ -143,7 +143,7 @@ export default function Footer() {
           {/* Contact Info */}
           <div className="space-y-4">
             <h4 className="text-lg font-semibold text-white flex items-center">
-              <div className="w-1 h-6 bg-gradient-to-b from-blue-400 to-indigo-400 rounded-full mr-3"></div>
+              <div className="w-1 h-6 bg-white rounded-full mr-3"></div>
               Kontakti {currentYear}
             </h4>
             <div className="space-y-4">

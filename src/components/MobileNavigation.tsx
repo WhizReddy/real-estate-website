@@ -61,7 +61,7 @@ export default function MobileNavigation() {
           <div className="absolute top-0 left-0 w-80 max-w-[85vw] h-full bg-white shadow-2xl">
             <div className="flex flex-col h-full">
               {/* Header */}
-              <div className="p-6 bg-gradient-to-r from-blue-600 to-blue-700">
+              <div className="p-6 bg-white">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                     <Home className="h-5 w-5 text-white" />

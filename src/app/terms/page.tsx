@@ -9,14 +9,14 @@ export default function TermsPage() {
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-12">
       <header>
-        <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">Terms of Service</h1>
-        <p className="mt-2 text-base text-slate-600 dark:text-slate-300">
+        <h1 className="text-3xl font-semibold text-slate-900 ">Terms of Service</h1>
+        <p className="mt-2 text-base text-slate-600 ">
           These terms outline the rules and regulations for using the Real Estate Explorer platform. By accessing the
           site you accept these terms in full.
         </p>
       </header>
 
-      <section className="space-y-4 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+      <section className="space-y-4 text-sm leading-relaxed text-slate-700 ">
         <p>
           <strong className="font-semibold">Use of Service:</strong> You agree to use Real Estate Explorer solely for lawful
           purposes and agree not to engage in any activity that disrupts or interferes with the operation of the

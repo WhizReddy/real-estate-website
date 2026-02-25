@@ -139,7 +139,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
         // correctly on the map.
         const customIcon = L.divIcon({
           html: `
-            <div class="bg-[var(--primary)] min-w-[40px] px-2 py-1 flex items-center justify-center rounded-full border-[3px] border-white dark:border-slate-800 shadow-md transition-transform duration-200 hover:scale-110">
+            <div class="bg-[var(--primary)] min-w-[40px] px-2 py-1 flex items-center justify-center rounded-full border-[3px] border-white  shadow-md transition-transform duration-200 hover:scale-110">
               <div class="w-2 h-2 bg-white rounded-full mr-1"></div>
             </div>
           `,
@@ -394,7 +394,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
               const count = cluster.properties.length;
               const clusterIcon = L.divIcon({
                 html: `
-                  <div class="relative min-w-[36px] h-[36px] flex items-center justify-center rounded-full bg-[var(--primary)] text-white font-bold text-[var(--text-scale-sm)] border-[3px] border-white dark:border-slate-800 shadow-md transition-transform duration-200 hover:scale-110">
+                  <div class="relative min-w-[36px] h-[36px] flex items-center justify-center rounded-full bg-[var(--primary)] text-white font-bold text-[var(--text-scale-sm)] border-[3px] border-white  shadow-md transition-transform duration-200 hover:scale-110">
                     ${count}
                   </div>
                 `,

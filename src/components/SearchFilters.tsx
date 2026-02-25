@@ -332,7 +332,7 @@ export default function SearchFilters({
         <label htmlFor="property-search" className="sr-only">
           Search properties
         </label>
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400  h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
         <input
           id="property-search"
           type="text"
@@ -369,7 +369,7 @@ export default function SearchFilters({
               name="sortBy"
               value={filters.sortBy}
               onChange={(e) => handleFilterChange("sortBy", e.target.value)}
-              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-slate-700 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-primary/50 bg-[var(--background)] text-[var(--foreground)]"
+              className="px-3 py-1.5 text-sm border border-gray-300  rounded-md outline-none focus-visible:ring-2 focus-visible:ring-primary/50 bg-[var(--background)] text-[var(--foreground)]"
             >
               <option value="">{t('sortBy')}</option>
               <option value="price">{t('price')}</option>
@@ -389,7 +389,7 @@ export default function SearchFilters({
                     e.target.value as "asc" | "desc"
                   )
                 }
-                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-slate-700 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-primary/50 bg-[var(--background)] text-[var(--foreground)]"
+                className="px-3 py-1.5 text-sm border border-gray-300  rounded-md outline-none focus-visible:ring-2 focus-visible:ring-primary/50 bg-[var(--background)] text-[var(--foreground)]"
               >
                 <option value="asc">
                   {filters.sortBy === "price"
@@ -429,7 +429,7 @@ export default function SearchFilters({
       {isExpanded && (
         <div
           id="advanced-filters"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pt-4 border-t border-gray-200 dark:border-slate-800"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pt-4 border-t border-gray-200 "
           role="region"
           aria-label="Advanced search filters"
         >

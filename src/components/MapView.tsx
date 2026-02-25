@@ -295,7 +295,7 @@ export default function MapView({
           // Create mobile-friendly marker icon
           const markerIcon = L.divIcon({
             html: `
-              <div class="property-marker bg-linear-to-r from-blue-600 to-blue-700 text-white px-2 py-1 rounded-lg text-xs font-semibold shadow-lg border-2 border-white cursor-pointer">
+              <div class="property-marker bg-white text-white px-2 py-1 rounded-lg text-xs font-semibold shadow-lg border-2 border-white cursor-pointer">
                 ${formatPrice(property.price)}
               </div>
             `,
@@ -631,7 +631,7 @@ export default function MapView({
 
       {/* Loading State */}
       {isLoading && (
-        <div className="absolute inset-0 bg-linear-to-br from-blue-50 to-green-50 bg-opacity-95 flex items-center justify-center rounded-lg">
+        <div className="absolute inset-0 bg-white bg-opacity-95 flex items-center justify-center rounded-lg">
           <CreativeLoader type="map" size="md" />
         </div>
       )}

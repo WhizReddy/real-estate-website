@@ -9,14 +9,14 @@ export default function PrivacyPage() {
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-12">
       <header>
-        <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">Privacy Policy</h1>
-        <p className="mt-2 text-base text-slate-600 dark:text-slate-300">
+        <h1 className="text-3xl font-semibold text-slate-900 ">Privacy Policy</h1>
+        <p className="mt-2 text-base text-slate-600 ">
           We value your privacy and are committed to safeguarding your personal data. This policy explains what
           information we collect, how we use it, and the choices available to you.
         </p>
       </header>
 
-      <section className="space-y-4 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+      <section className="space-y-4 text-sm leading-relaxed text-slate-700 ">
         <p>
           <strong className="font-semibold">Information We Collect:</strong> We collect account details, property preferences,
           and activity logs to personalize your experience and improve our services.

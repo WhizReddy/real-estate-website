@@ -29,11 +29,11 @@ interface PageLoadingProps {
 
 export function PageLoading({ message = 'Po ngarkohet...', showLogo = true }: PageLoadingProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+    <div className="min-h-screen bg-white flex items-center justify-center">
       <div className="text-center">
         {showLogo && (
           <div className="mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg mx-auto mb-4 flex items-center justify-center">
+            <div className="w-16 h-16 bg-white rounded-xl shadow-lg mx-auto mb-4 flex items-center justify-center">
               <Home className="h-8 w-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">Real Estate Tiranë</h1>
@@ -46,7 +46,7 @@ export function PageLoading({ message = 'Po ngarkohet...', showLogo = true }: Pa
         </div>
 
         <div className="w-64 h-1 bg-gray-200 rounded-full mx-auto overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full animate-pulse"></div>
+          <div className="h-full bg-white rounded-full animate-pulse"></div>
         </div>
       </div>
     </div>
@@ -106,7 +106,7 @@ export function PropertyGridSkeleton({ count = 6 }: PropertyGridSkeletonProps) {
 // Map loading skeleton
 export function MapLoadingSkeleton() {
   return (
-    <div className="w-full h-full bg-gradient-to-br from-blue-50 to-green-50 rounded-lg flex items-center justify-center animate-pulse">
+    <div className="w-full h-full bg-white rounded-lg flex items-center justify-center animate-pulse">
       <div className="text-center">
         <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
           <MapPin className="h-8 w-8 text-blue-500" />

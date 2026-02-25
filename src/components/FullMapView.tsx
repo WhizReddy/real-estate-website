@@ -593,7 +593,7 @@ export default function FullMapView({
           // Create custom marker icon with enhanced styling
           const markerIcon = L.divIcon({
             html: `
-              <div class="property-marker-full bg-linear-to-r from-blue-600 to-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-700 hover:to-blue-800 transition-all cursor-pointer transform hover:scale-105 z-10">
+              <div class="property-marker-full bg-white text-white px-3 py-2 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-700 hover:to-blue-800 transition-all cursor-pointer transform hover:scale-105 z-10">
                 ${formatPrice(property.price)}
               </div>
             `,
@@ -1150,7 +1150,7 @@ export default function FullMapView({
               <div className="space-y-2">
                 <Link
                   href={`/properties/${selectedProperty.id}`}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all font-medium text-sm"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all font-medium text-sm"
                 >
                   📋 Shiko Detajet e Plota
                 </Link>
@@ -1158,7 +1158,7 @@ export default function FullMapView({
                   href={`https://www.google.com/maps/dir/?api=1&destination=${selectedProperty.address.coordinates.lat},${selectedProperty.address.coordinates.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 transition-all font-medium text-sm"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white text-white rounded-md hover:from-green-700 hover:to-green-800 transition-all font-medium text-sm"
                 >
                   <Navigation className="h-4 w-4" />
                   Navigim
@@ -1293,7 +1293,7 @@ export default function FullMapView({
               <div className="space-y-2">
                 <Link
                   href={`/properties/${selectedProperty.id}`}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded text-sm hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white text-white rounded text-sm hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
                 >
                   📋 Shiko Detajet
                 </Link>
@@ -1301,7 +1301,7 @@ export default function FullMapView({
                   href={`https://www.google.com/maps/dir/?api=1&destination=${selectedProperty.address.coordinates.lat},${selectedProperty.address.coordinates.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-linear-to-r from-green-600 to-green-700 text-white rounded text-sm hover:from-green-700 hover:to-green-800 transition-all font-medium"
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white text-white rounded text-sm hover:from-green-700 hover:to-green-800 transition-all font-medium"
                 >
                   <Navigation className="h-3 w-3" />
                   Navigim
@@ -1323,7 +1323,7 @@ export default function FullMapView({
 
       {/* Loading State */}
       {isLoading && (
-        <div className="absolute inset-0 bg-linear-to-br from-blue-50 to-green-50 bg-opacity-95 flex items-center justify-center">
+        <div className="absolute inset-0 bg-white bg-opacity-95 flex items-center justify-center">
           <CreativeLoader type="map" size="lg" />
         </div>
       )}
@@ -1339,7 +1339,7 @@ export default function FullMapView({
             </p>
             <button
               onClick={handleRetry}
-              className="inline-flex items-center px-4 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all"
+              className="inline-flex items-center px-4 py-2 bg-white text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all"
             >
               <RefreshCw className="h-4 w-4 mr-2" />
               Provo Përsëri

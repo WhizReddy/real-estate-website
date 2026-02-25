@@ -36,7 +36,7 @@ export default function Navigation() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 py-2 group">
             <div className="relative">
-              <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+              <div className="p-2 bg-white rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
                 <svg className="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
                   <path d="M12 1l11 9h-3v10h-6v-6h-4v6H4V10H1L12 1z" opacity="0.3" />

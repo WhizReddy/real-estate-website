@@ -197,7 +197,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-full bg-[var(--background)] overflow-x-hidden">
       {/* Header */}
-      <header className="bg-linear-to-r from-blue-900 via-blue-800 to-indigo-900 shadow-xl sticky top-0 z-40">
+      <header className="bg-white shadow-xl sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-4 relative pt-[env(safe-area-inset-top)]">
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
             <div>
@@ -241,7 +241,7 @@ export default function AdminDashboard() {
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center px-4 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="flex items-center px-4 py-2 bg-white text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <LogOut className="h-5 w-5 mr-2" />
                 <span className="font-medium">Dil</span>
@@ -266,7 +266,7 @@ export default function AdminDashboard() {
                 onClick={() => setMobileMenuOpen(false)}
                 aria-hidden="true"
               />
-              <div className="absolute right-4 top-12 z-50 w-56 rounded-lg border border-gray-200 dark:border-slate-800 bg-[var(--background)]/95 text-[var(--foreground)] shadow-xl backdrop-blur">
+              <div className="absolute right-4 top-12 z-50 w-56 rounded-lg border border-gray-200  bg-[var(--background)]/95 text-[var(--foreground)] shadow-xl backdrop-blur">
                 <div className="py-1">
                   {userRole === 'ADMIN' && (
                     <Link
@@ -328,11 +328,11 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <div className="card border-none p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+              <div className="p-2 bg-blue-100 30 rounded-lg">
                 <div className="w-6 h-6 bg-blue-600 rounded"></div>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Totali i Pasurive</p>
+                <p className="text-sm font-medium text-slate-600 ">Totali i Pasurive</p>
                 <p className="text-2xl font-semibold text-[var(--foreground)]">{allProperties.length}</p>
               </div>
             </div>
@@ -340,11 +340,11 @@ export default function AdminDashboard() {
 
           <div className="card border-none p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+              <div className="p-2 bg-green-100 30 rounded-lg">
                 <div className="w-6 h-6 bg-green-600 rounded"></div>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Aktive</p>
+                <p className="text-sm font-medium text-slate-600 ">Aktive</p>
                 <p className="text-2xl font-semibold text-[var(--foreground)]">
                   {allProperties.filter(p => p.status === 'active').length}
                 </p>
@@ -354,11 +354,11 @@ export default function AdminDashboard() {
 
           <div className="card border-none p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+              <div className="p-2 bg-yellow-100 30 rounded-lg">
                 <div className="w-6 h-6 bg-yellow-600 rounded"></div>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Në Pritje</p>
+                <p className="text-sm font-medium text-slate-600 ">Në Pritje</p>
                 <p className="text-2xl font-semibold text-[var(--foreground)]">
                   {allProperties.filter(p => p.status === 'pending').length}
                 </p>
@@ -420,10 +420,10 @@ export default function AdminDashboard() {
 
           {/* Advanced Filters */}
           {showFilters && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-gray-200 dark:border-slate-800">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-gray-200 ">
               {/* Status Filter */}
               <div>
-                <label htmlFor="status-filter" className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
+                <label htmlFor="status-filter" className="block text-sm font-medium text-slate-900  mb-2">
                   📊 Statusi
                 </label>
                 <select
@@ -431,7 +431,7 @@ export default function AdminDashboard() {
                   name="status"
                   value={filters.status}
                   onChange={(e) => handleFilterChange('status', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-700 bg-[var(--background)] text-[var(--foreground)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300  bg-[var(--background)] text-[var(--foreground)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   autoComplete="off"
                 >
                   <option value="all">Të gjitha</option>
@@ -511,7 +511,7 @@ export default function AdminDashboard() {
               Pasuritë ({properties.length} nga {allProperties.length})
             </h2>
             {hasActiveFilters && (
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              <p className="text-sm text-slate-600  mt-1">
                 Filtrat janë aktive - po shfaqen rezultatet e filtruara
               </p>
             )}
@@ -521,29 +521,29 @@ export default function AdminDashboard() {
         {/* Properties Table */}
         <div className="card overflow-hidden border-none text-[var(--foreground)]">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-800">
-              <thead className="bg-slate-50 dark:bg-slate-800/50">
+            <table className="min-w-full divide-y divide-gray-200 ">
+              <thead className="bg-slate-50 50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500  uppercase tracking-wider">
                     Pasuria
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500  uppercase tracking-wider">
                     Lokacioni
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500  uppercase tracking-wider">
                     Çmimi
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500  uppercase tracking-wider">
                     Statusi
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500  uppercase tracking-wider">
                     Veprime
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-[var(--background)] divide-y divide-gray-200 dark:divide-slate-800">
+              <tbody className="bg-[var(--background)] divide-y divide-gray-200 ">
                 {properties.map((property) => (
-                  <tr key={property.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                  <tr key={property.id} className="hover:bg-slate-50 :bg-slate-800/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="shrink-0 h-12 w-12">
@@ -555,7 +555,7 @@ export default function AdminDashboard() {
                           <div className="text-[var(--text-scale-base)] font-medium text-[var(--foreground)]">
                             {property.title}
                           </div>
-                          <div className="text-[var(--text-scale-sm)] text-slate-500 dark:text-slate-400">
+                          <div className="text-[var(--text-scale-sm)] text-slate-500 ">
                             {property.details.bedrooms > 0 ? `${property.details.bedrooms}+` : ''}
                             {property.details.bathrooms} • {property.details.squareFootage}m²
                           </div>
@@ -564,7 +564,7 @@ export default function AdminDashboard() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-[var(--text-scale-base)] text-[var(--foreground)]">{property.address.city}</div>
-                      <div className="text-[var(--text-scale-sm)] text-slate-500 dark:text-slate-400">{property.address.street}</div>
+                      <div className="text-[var(--text-scale-sm)] text-slate-500 ">{property.address.street}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-[var(--text-scale-base)] font-medium text-[var(--foreground)]">
@@ -573,10 +573,10 @@ export default function AdminDashboard() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-[var(--text-scale-sm)] font-semibold rounded-full ${property.status === 'active'
-                        ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300'
+                        ? 'bg-green-100 20 text-green-800 '
                         : property.status === 'pending'
-                          ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300'
+                          ? 'bg-yellow-100 20 text-yellow-800 '
+                          : 'bg-slate-100  text-slate-800 '
                         }`}>
                         {property.status === 'active' ? 'Aktive' :
                           property.status === 'pending' ? 'Në Pritje' : 'E Shitur'}
