@@ -19,7 +19,7 @@ const SimpleMapView = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-64 bg-gray-50 rounded-xl animate-pulse flex items-center justify-center">
+      <div className="h-64 bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse flex items-center justify-center">
         <div className="text-gray-400 text-sm">Duke ngarkuar hartën...</div>
       </div>
     )
@@ -31,7 +31,7 @@ const MobileStaticMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-[300px] bg-gray-50 rounded-xl animate-pulse flex items-center justify-center">
+      <div className="h-[300px] bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse flex items-center justify-center">
         <div className="text-gray-400 text-sm">Ngarkimi i hartës...</div>
       </div>
     )
@@ -138,7 +138,7 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center">
         <CreativeLoader type="properties" size="lg" />
       </div>
     );
@@ -164,19 +164,19 @@ export default function Home() {
           }}
         >
           <div className="relative z-10 container-custom py-16 sm:py-32">
-            <div className="max-w-2xl">
+            <div className="w-full px-4 sm:px-0 sm:max-w-2xl">
               <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-blue-200 text-sm font-semibold mb-6">
                 <HomeIcon className="h-4 w-4 mr-2" />
                 {t('exclusiveAgency')}
               </div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight">
                 {/* Split translation string to emphasise last words */}
                 {t('findYourPerfectHome').split(' ')[0]}{' '}
                 <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(90deg, #60a5fa, #a78bfa)' }}>
                   {t('findYourPerfectHome').split(' ').slice(1).join(' ')}
                 </span>
               </h1>
-              <p className="text-lg sm:text-xl text-blue-100/80 mb-10 leading-relaxed max-w-lg">
+              <p className="text-lg sm:text-xl text-blue-100/80 mb-10 leading-relaxed w-full sm:max-w-lg">
                 {t('heroDescription')}
               </p>
 
@@ -214,7 +214,7 @@ export default function Home() {
         </header>
 
         {/* Properties Section */}
-        <section className="bg-gray-50 relative pb-20">
+        <section className="bg-[var(--background)] relative pb-20">
           <div className="container-custom -mt-12 relative z-20">
             <DynamicSearchFilters
               properties={allProperties}
@@ -237,9 +237,9 @@ export default function Home() {
               {/* Sticky Sidebar Map */}
               <div className="hidden lg:block">
                 <div className="sticky top-6 space-y-6">
-                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                      <MapPin className="h-5 w-5 text-blue-600" />
+                  <div className="card p-5">
+                    <h3 className="text-lg font-bold text-[var(--foreground)] mb-4 flex items-center gap-2">
+                      <MapPin className="h-5 w-5 text-[var(--primary)]" />
                       {t('locations')}
                     </h3>
                     <div className="rounded-xl overflow-hidden border border-slate-100 shadow-inner">
@@ -250,7 +250,7 @@ export default function Home() {
                     </div>
                     <Link
                       href="/map"
-                      className="mt-4 w-full py-3 text-center bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition-colors block text-sm"
+                      className="btn-primary mt-4 w-full py-3 text-center rounded-xl font-semibold transition-colors block text-sm"
                     >
                       {t('openFullMap')}
                     </Link>

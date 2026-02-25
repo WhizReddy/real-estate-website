@@ -85,12 +85,12 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-[var(--spacing-lg)]">
               {/* Image Gallery */}
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="card overflow-hidden">
                 <ImageGallery images={property.images} title={property.title} />
               </div>
 
               {/* Property Details */}
-              <section className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-[var(--spacing-xl)]">
+              <section className="card p-[var(--spacing-xl)]">
                 <div className="flex items-center justify-between mb-[var(--spacing-xl)]">
                   <div>
                     <div className="flex items-center space-x-[var(--spacing-xs)] mb-[var(--spacing-sm)]">
@@ -218,7 +218,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                           href={`https://www.google.com/maps/dir/?api=1&destination=${property.address.coordinates.lat},${property.address.coordinates.lng}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg shadow-sm hover:shadow-md transition-all"
+                          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-[var(--primary)] hover:opacity-90 rounded-lg shadow-sm hover:shadow-md transition-all"
                         >
                           <Navigation className="h-4 w-4" />
                           Directions

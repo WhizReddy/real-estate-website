@@ -101,8 +101,8 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
         <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-[var(--spacing-md)]">
           <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
         </div>
-        <h3 className="text-[var(--text-scale-h3)] font-semibold text-slate-900 dark:text-white mb-2">{t('formSubmitSuccess')}</h3>
-        <p className="text-[var(--text-scale-base)] text-slate-600 dark:text-slate-400 mb-[var(--spacing-lg)]">
+        <h3 className="text-[var(--text-scale-h3)] font-semibold text-[var(--foreground)] mb-2">{t('formSubmitSuccess')}</h3>
+        <p className="text-[var(--text-scale-base)] text-[var(--foreground)] opacity-80 mb-[var(--spacing-lg)]">
           {t('formSuccessDesc')}
         </p>
         <button
@@ -119,17 +119,17 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
     <div className="card p-[var(--spacing-xl)] sticky top-6">
       <div className="flex items-center mb-[var(--spacing-md)]">
         <MessageCircle className="h-6 w-6 text-[var(--primary)] mr-2" />
-        <h3 className="text-[var(--text-scale-h3)] font-semibold text-slate-900 dark:text-white">{t('contactAgent')}</h3>
+        <h3 className="text-[var(--text-scale-h3)] font-semibold text-[var(--foreground)]">{t('contactAgent')}</h3>
       </div>
-      <p className="text-[var(--text-scale-base)] text-slate-600 dark:text-slate-400 mb-[var(--spacing-lg)] leading-relaxed">
-        {t('interestedIn')} <span className="font-medium text-slate-900 dark:text-white">{propertyTitle}</span>?
+      <p className="text-[var(--text-scale-base)] text-[var(--foreground)] opacity-80 mb-[var(--spacing-lg)] leading-relaxed">
+        {t('interestedIn')} <span className="font-medium text-[var(--foreground)]">{propertyTitle}</span>?
         {' '} {t('interestedDesc')}
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-[var(--spacing-md)]">
         {/* Name */}
         <div>
-          <label htmlFor="name" className="block text-[var(--text-scale-sm)] font-medium text-slate-700 dark:text-slate-300 mb-1">
+          <label htmlFor="name" className="block text-[var(--text-scale-sm)] font-medium text-[var(--foreground)] opacity-90 mb-1">
             <User className="inline h-4 w-4 mr-1" />
             {t('formNameLabel')}
           </label>
@@ -144,7 +144,7 @@ export default function ContactForm({ propertyId, propertyTitle }: ContactFormPr
                 message: t('nameMinLength')
               }
             })}
-            className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-gray-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-[var(--text-scale-base)] text-slate-900 dark:text-white transition-all shadow-xs"
+            className="w-full px-4 py-3 bg-[var(--background)] border border-gray-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-[var(--text-scale-base)] text-[var(--foreground)] transition-all shadow-xs"
             placeholder="..."
           />
           {errors.name && (

@@ -105,12 +105,12 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                     </div>
 
                     <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center max-w-4xl mx-auto">
+                        <div className="text-center w-full px-4 sm:max-w-4xl mx-auto">
                             <div className="inline-flex items-center px-4 py-2 bg-blue-50 dark:bg-blue-500/10 rounded-full text-[var(--primary-dark)] dark:text-[var(--primary)] text-sm font-semibold mb-6 animate-fadeIn">
                                 <HomeIcon className="h-4 w-4 mr-2" />
                                 Agjencia Ekskluzive e Tiranës
                             </div>
-                            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-[var(--foreground)] mb-6 leading-[1.15] tracking-tight">
+                            <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-[var(--foreground)] mb-6 leading-tight tracking-tight">
                                 Gjeni Shtëpinë Tuaj të{" "}
                                 <span className="text-[var(--primary)] bg-blue-50 dark:bg-blue-500/10 px-2 rounded-lg italic">
                                     Përsosur
