@@ -55,14 +55,16 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           {/* Status Badges - Top Left */}
           <div className="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[calc(100%-2rem)] z-10">
             <Badge variant="primary">
-              {property.isPinned && (
-                <Badge variant="warning" icon={Star}>
-                  I Zgjedhur
-                </Badge>
-              )}
-              <Badge variant="secondary">
-                {getPropertyTypeLabel(property.details.propertyType)}
+              {getListingTypeLabel(property.listingType)}
+            </Badge>
+            {property.isPinned && (
+              <Badge variant="warning" icon={Star}>
+                I Zgjedhur
               </Badge>
+            )}
+            <Badge variant="glass-dark">
+              {getPropertyTypeLabel(property.details.propertyType)}
+            </Badge>
           </div>
 
           {/* Favorite Button - Top Right */}

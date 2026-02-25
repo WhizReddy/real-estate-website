@@ -106,17 +106,17 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
 
                     <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center w-full px-4 sm:max-w-4xl mx-auto">
-                            <div className="inline-flex items-center px-4 py-2 bg-blue-50 10 rounded-full text-[var(--primary-dark)] [var(--primary)] text-sm font-semibold mb-6 animate-fadeIn">
+                            <div className="inline-flex items-center px-4 py-2 bg-blue-50 rounded-full text-[var(--primary-dark)] text-sm font-semibold mb-6 animate-fadeIn">
                                 <HomeIcon className="h-4 w-4 mr-2" />
                                 Agjencia Ekskluzive e Tiranës
                             </div>
                             <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-[var(--foreground)] mb-6 leading-tight tracking-tight">
                                 Gjeni Shtëpinë Tuaj të{" "}
-                                <span className="text-[var(--primary)] bg-blue-50 10 px-2 rounded-lg italic">
+                                <span className="text-[var(--primary)] bg-blue-50 px-2 rounded-lg italic">
                                     Përsosur
                                 </span>
                             </h1>
-                            <p className="text-lg sm:text-xl text-slate-600  mb-10 leading-relaxed w-full px-4 sm:px-0 sm:max-w-2xl mx-auto">
+                            <p className="text-lg sm:text-xl text-[var(--foreground)] opacity-80 mb-10 leading-relaxed w-full px-4 sm:px-0 sm:max-w-2xl mx-auto">
                                 Zbulimi i pasurive premium në lokacionet më të kërkuara të Tiranës.
                                 Shërbim elitar për klientë që kërkojnë përsosmërinë.
                             </p>
@@ -138,18 +138,18 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                             </div>
 
                             {/* Trust badges */}
-                            <div className="mt-16 pt-8 border-t border-slate-100  grid grid-cols-3 gap-8">
+                            <div className="mt-16 pt-8 border-t border-gray-100 grid grid-cols-3 gap-8">
                                 <div>
                                     <div className="text-2xl font-bold text-[var(--foreground)]">{allProperties.length}+</div>
-                                    <div className="text-sm text-slate-500 ">Pasuri Aktive</div>
+                                    <div className="text-sm text-slate-500">Pasuri Aktive</div>
                                 </div>
                                 <div>
                                     <div className="text-2xl font-bold text-[var(--foreground)]">5★</div>
-                                    <div className="text-sm text-slate-500 ">Besueshmëri</div>
+                                    <div className="text-sm text-slate-500">Besueshmëri</div>
                                 </div>
                                 <div>
                                     <div className="text-2xl font-bold text-[var(--foreground)]">24/7</div>
-                                    <div className="text-sm text-slate-500 ">Mbështetje</div>
+                                    <div className="text-sm text-slate-500">Mbështetje</div>
                                 </div>
                             </div>
                         </div>
@@ -157,7 +157,7 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                 </section>
 
                 {/* Search Section Transition */}
-                <div className="bg-slate-50 50 relative pb-20">
+                <div className="bg-[var(--background)] relative pb-20">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20">
                         <DynamicSearchFilters
                             properties={allProperties}
