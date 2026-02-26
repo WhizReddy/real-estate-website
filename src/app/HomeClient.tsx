@@ -127,7 +127,7 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                                     {t('findYourPerfectHome').split(' ').slice(1).join(' ')}
                                 </span>
                             </h1>
-                            <p className="text-lg sm:text-xl text-[var(--foreground)] opacity-80 mb-10 leading-relaxed w-full sm:max-w-2xl mx-auto">
+                            <p className="text-lg sm:text-xl text-[var(--foreground)] opacity-80 mb-10 leading-relaxed w-full px-4 sm:px-0 sm:max-w-2xl mx-auto">
                                 {t('heroDescription')}
                             </p>
 

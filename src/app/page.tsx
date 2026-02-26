@@ -176,7 +176,7 @@ export default function Home() {
                   {t('findYourPerfectHome').split(' ').slice(1).join(' ')}
                 </span>
               </h1>
-              <p className="text-lg sm:text-xl text-blue-100/80 mb-10 leading-relaxed w-full sm:max-w-2xl mx-auto sm:mx-0">
+              <p className="text-lg sm:text-xl text-blue-100/80 mb-10 leading-relaxed w-full px-4 sm:px-0 sm:max-w-2xl mx-auto sm:mx-0">
                 {t('heroDescription')}
               </p>
 
@@ -273,7 +273,7 @@ export default function Home() {
                   {t('contact')}
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] mb-6">{t('readyToMove')}</h2>
-                <p className="text-slate-600 text-lg mb-8 max-w-md w-full px-4 sm:px-0 sm:max-w-2xl">
+                <p className="text-slate-600 text-lg mb-8 w-full px-4 sm:px-0 sm:max-w-2xl">
                   {t('teamHelpDescription')}
                 </p>
                 <div className="space-y-4">

@@ -61,14 +61,14 @@ export default function MobileNavigation() {
           <div className="absolute top-0 left-0 w-80 max-w-[85vw] h-full bg-white shadow-2xl">
             <div className="flex flex-col h-full">
               {/* Header */}
-              <div className="p-6 bg-white">
+              <div className="p-6 bg-blue-600">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                     <Home className="h-5 w-5 text-white" />
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-white">Real Estate</h2>
-                    <p className="text-blue-200 text-sm">Tirana, Albania</p>
+                    <p className="text-blue-100 text-sm">Tirana, Albania</p>
                   </div>
                 </div>
               </div>
@@ -85,8 +85,8 @@ export default function MobileNavigation() {
                         <Link
                           href={item.href}
                           className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 active:scale-95 ${isActive
-                              ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600'
-                              : 'text-gray-700 hover:bg-gray-50'
+                            ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600'
+                            : 'text-gray-700 hover:bg-gray-50'
                             }`}
                           style={{ touchAction: 'manipulation' }}
                         >
