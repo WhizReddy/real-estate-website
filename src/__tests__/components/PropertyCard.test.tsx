@@ -116,6 +116,6 @@ describe('PropertyCard', () => {
     const { container } = render(<PropertyCard property={mockProperty} />);
 
     const card = container.querySelector('.group > div');
-    expect(card).toHaveClass('transition-all', 'duration-500');
+    expect(card).toHaveClass('card-interactive');
   });
 });

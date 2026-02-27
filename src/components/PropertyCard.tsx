@@ -80,7 +80,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
             <h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-primary transition-colors duration-300 flex-1 mr-2">
               {property.title}
             </h3>
-            <span className="text-xl font-black text-primary whitespace-nowrap">
+            <span className="text-lg sm:text-xl font-black text-primary whitespace-nowrap">
               {formatPrice(property.price)}
             </span>
           </div>
@@ -177,9 +177,9 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
               </button>
             </div>
 
-            <span className="btn-primary py-1.5 text-sm group-hover:scale-105">
+            <div className="btn-primary py-1.5 text-sm group-hover:scale-105">
               Shiko Detajet
-            </span>
+            </div>
           </div>
         </div>
       </div>

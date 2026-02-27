@@ -164,7 +164,7 @@ export default function Home() {
           }}
         >
           <div className="relative z-10 container-custom py-16 sm:py-32">
-            <div className="w-full sm:max-w-4xl mx-auto text-center sm:text-left">
+            <div className="w-full sm:max-w-4xl md:max-w-5xl mx-auto text-center sm:text-left">
               <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-blue-200 text-sm font-semibold mb-6">
                 <HomeIcon className="h-4 w-4 mr-2" />
                 {t('exclusiveAgency')}
@@ -180,7 +180,7 @@ export default function Home() {
                 {t('heroDescription')}
               </p>
 
-              <div className="flex flex-col sm:flex-row items-start gap-4">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 flex-wrap">
                 <a
                   href="#properties"
                   className="w-full sm:w-auto px-8 py-4 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-400 transition-all shadow-lg shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]"

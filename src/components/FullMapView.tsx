@@ -593,7 +593,7 @@ export default function FullMapView({
           // Create custom marker icon with enhanced styling
           const markerIcon = L.divIcon({
             html: `
-              <div class="property-marker-full bg-white text-white px-3 py-2 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-700 hover:to-blue-800 transition-all cursor-pointer transform hover:scale-105 z-10">
+              <div class="property-marker-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow-lg border-2 border-white hover:from-blue-700 hover:to-blue-800 transition-all cursor-pointer transform hover:scale-105 z-10">
                 ${formatPrice(property.price)}
               </div>
             `,
@@ -643,7 +643,7 @@ export default function FullMapView({
               ${property.images && property.images[0]
               ? `<div class="relative h-32 overflow-hidden">
                      <img src="${property.images[0]}" alt="${property.title}" class="w-full h-full object-cover" />
-                     <div class="absolute inset-0 bg-linear-to-t from-black/50 via-black/10 to-transparent"></div>
+                     <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent"></div>
                      <span class="absolute bottom-2 left-2 text-xs font-semibold text-white bg-black/40 backdrop-blur-sm px-2 py-1 rounded-full">
                        ${property.details.propertyType}
                      </span>
