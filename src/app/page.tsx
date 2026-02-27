@@ -176,7 +176,7 @@ export default function Home() {
                   {t('findYourPerfectHome').split(' ').slice(1).join(' ')}
                 </span>
               </h1>
-              <p className="text-lg sm:text-xl md:text-2xl text-blue-100/80 mb-10 leading-relaxed w-full sm:max-w-3xl mx-auto sm:mx-0">
+              <p className="text-lg sm:text-xl md:text-2xl text-blue-100/80 mb-10 leading-relaxed break-words w-full sm:max-w-3xl mx-auto sm:mx-0">
                 {t('heroDescription')}
               </p>
 
@@ -197,17 +197,25 @@ export default function Home() {
               </div>
 
               {/* Trust badges — glassmorphism cards */}
-              <div className="mt-14 flex flex-wrap gap-4">
-                {[
-                  { value: `${allProperties.length}+`, label: t('activeProperties') },
-                  { value: '5★', label: t('reliability') },
-                  { value: '24/7', label: t('support') },
-                ].map((badge) => (
-                  <div key={badge.label} className="px-5 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15">
-                    <div className="text-xl font-bold text-white">{badge.value}</div>
-                    <div className="text-xs text-blue-200/70">{badge.label}</div>
+              <div className="mt-14 flex flex-wrap justify-center sm:justify-start gap-y-4">
+                <div className="w-1/2 sm:w-auto px-2">
+                  <div className="px-5 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 text-center">
+                    <div className="text-xl font-bold text-white">{allProperties.length}+</div>
+                    <div className="text-xs text-blue-200/70 whitespace-nowrap">{t('activeProperties')}</div>
                   </div>
-                ))}
+                </div>
+                <div className="w-1/2 sm:w-auto px-2">
+                  <div className="px-5 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 text-center">
+                    <div className="text-xl font-bold text-white">5★</div>
+                    <div className="text-xs text-blue-200/70 whitespace-nowrap">{t('reliability')}</div>
+                  </div>
+                </div>
+                <div className="w-full sm:w-auto px-2">
+                  <div className="px-5 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 text-center">
+                    <div className="text-xl font-bold text-white">24/7</div>
+                    <div className="text-xs text-blue-200/70 whitespace-nowrap">{t('support')}</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

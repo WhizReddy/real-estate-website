@@ -75,9 +75,8 @@ export default function MobileFloatingActions({
       {/* Main Action Button */}
       <button
         onClick={handleMainButtonClick}
-        className={`flex items-center justify-center w-14 h-14 bg-white text-white rounded-full shadow-lg transition-all duration-300 hover:scale-110 active:scale-95 ${
-          isExpanded ? 'rotate-45' : 'rotate-0'
-        }`}
+        className={`flex items-center justify-center w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg shadow-blue-600/30 transition-all duration-300 hover:scale-110 active:scale-95 ${isExpanded ? 'rotate-45' : 'rotate-0'
+          }`}
         style={{ touchAction: 'manipulation' }}
         aria-label={isExpanded ? "Close actions" : "Open actions"}
       >

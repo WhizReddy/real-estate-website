@@ -5,13 +5,16 @@ export async function POST(request: NextRequest) {
   try {
     console.log('Upload request received');
     console.log('BLOB_READ_WRITE_TOKEN exists:', !!process.env.BLOB_READ_WRITE_TOKEN);
-    
-    const token = process.env.BLOB_READ_WRITE_TOKEN;
-    const isValidToken = token && token !== 'dev-blob-token' && token.startsWith('vercel_blob_');
 
-    if (!isValidToken) {
-      console.warn('Warning: Invalid or development BLOB token detected');
-      console.warn('Token preview:', token?.substring(0, 20));
+    const token = process.env.BLOB_READ_WRITE_TOKEN;
+    const isValidToken = token && typeof token === 'string' && token !== 'dev-blob-token' && token.startsWith('vercel_blob_');
+
+    if (!token) {
+      console.error('❌ BLOB_READ_WRITE_TOKEN is missing');
+    } else if (!isValidToken) {
+      console.warn('⚠️ BLOB_READ_WRITE_TOKEN appears to be invalid or a dummy token');
+      console.warn('Token length:', token.length);
+      console.warn('Starts with vercel_blob_:', token.startsWith('vercel_blob_'));
     }
 
     const formData = await request.formData();
@@ -90,7 +93,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { 
+      {
         error: userMessage,
         details: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
       },

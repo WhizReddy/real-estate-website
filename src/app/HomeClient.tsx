@@ -127,7 +127,7 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                                     {t('findYourPerfectHome').split(' ').slice(1).join(' ')}
                                 </span>
                             </h1>
-                            <p className="text-lg sm:text-xl md:text-2xl text-[var(--foreground)] opacity-80 mb-10 leading-relaxed w-full sm:max-w-3xl mx-auto">
+                            <p className="text-lg sm:text-xl md:text-2xl text-[var(--foreground)] opacity-80 mb-10 leading-relaxed break-words w-full sm:max-w-3xl mx-auto">
                                 {t('heroDescription')}
                             </p>
 
@@ -148,18 +148,18 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                             </div>
 
                             {/* Trust badges */}
-                            <div className="mt-16 pt-8 border-t border-gray-100 grid grid-cols-2 md:flex md:flex-wrap justify-center gap-8 md:gap-12">
-                                <div className="text-center">
+                            <div className="mt-16 pt-8 border-t border-gray-100 flex flex-wrap justify-center items-center gap-y-8">
+                                <div className="w-1/2 sm:w-auto text-center px-4">
                                     <div className="text-2xl md:text-3xl font-bold text-[var(--foreground)]">{allProperties.length}+</div>
-                                    <div className="text-sm text-slate-500">{t('activeProperties')}</div>
+                                    <div className="text-sm text-slate-500 whitespace-nowrap">{t('activeProperties')}</div>
                                 </div>
-                                <div className="text-center">
+                                <div className="w-1/2 sm:w-auto text-center px-4 border-l sm:border-l-0 border-gray-100">
                                     <div className="text-2xl md:text-3xl font-bold text-[var(--foreground)]">5★</div>
-                                    <div className="text-sm text-slate-500">{t('reliability')}</div>
+                                    <div className="text-sm text-slate-500 whitespace-nowrap">{t('reliability')}</div>
                                 </div>
-                                <div className="text-center col-span-2 md:col-span-1">
+                                <div className="w-full sm:w-auto text-center px-4 mt-6 sm:mt-0 sm:border-l sm:border-gray-100">
                                     <div className="text-2xl md:text-3xl font-bold text-[var(--foreground)]">24/7</div>
-                                    <div className="text-sm text-slate-500">{t('support')}</div>
+                                    <div className="text-sm text-slate-500 whitespace-nowrap">{t('support')}</div>
                                 </div>
                             </div>
                         </div>
