@@ -28,15 +28,15 @@ export default function ViewOnMapButton({
   const getVariantClasses = () => {
     switch (variant) {
       case 'primary':
-        return 'bg-white text-white hover:from-blue-700 hover:to-blue-800 border-transparent shadow-md hover:shadow-lg';
+        return 'bg-blue-600 text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 border-transparent shadow-md hover:shadow-lg';
       case 'secondary':
-        return 'bg-white text-white hover:from-gray-700 hover:to-gray-800 border-transparent shadow-md hover:shadow-lg';
+        return 'bg-gray-600 text-white bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 border-transparent shadow-md hover:shadow-lg';
       case 'outline':
         return 'bg-white text-blue-600 hover:bg-blue-50 border-2 border-blue-600 hover:border-blue-700 shadow-sm hover:shadow-md';
       case 'minimal':
         return 'bg-transparent text-gray-600 hover:text-blue-600 hover:bg-gray-50 border-transparent';
       default:
-        return 'bg-white text-white hover:from-blue-700 hover:to-blue-800 border-transparent shadow-md hover:shadow-lg';
+        return 'bg-blue-600 text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 border-transparent shadow-md hover:shadow-lg';
     }
   };
 
@@ -68,7 +68,7 @@ export default function ViewOnMapButton({
 
   const handleClick = () => {
     const mapUrl = `/map?property=${property.id}&lat=${property.address.coordinates.lat}&lng=${property.address.coordinates.lng}`;
-    
+
     if (openInNewTab) {
       window.open(mapUrl, '_blank', 'noopener,noreferrer');
     } else {
@@ -147,12 +147,12 @@ export default function ViewOnMapButton({
 }
 
 // Compact version for use in property cards
-export function ViewOnMapButtonCompact({ 
-  property, 
-  className = '' 
-}: { 
-  property: Property; 
-  className?: string; 
+export function ViewOnMapButtonCompact({
+  property,
+  className = ''
+}: {
+  property: Property;
+  className?: string;
 }) {
   return (
     <ViewOnMapButton
@@ -166,12 +166,12 @@ export function ViewOnMapButtonCompact({
 }
 
 // Full-width version for property detail pages
-export function ViewOnMapButtonFull({ 
-  property, 
-  className = '' 
-}: { 
-  property: Property; 
-  className?: string; 
+export function ViewOnMapButtonFull({
+  property,
+  className = ''
+}: {
+  property: Property;
+  className?: string;
 }) {
   return (
     <ViewOnMapButton
@@ -184,12 +184,12 @@ export function ViewOnMapButtonFull({
 }
 
 // Floating action button version
-export function ViewOnMapFAB({ 
-  property, 
-  className = '' 
-}: { 
-  property: Property; 
-  className?: string; 
+export function ViewOnMapFAB({
+  property,
+  className = ''
+}: {
+  property: Property;
+  className?: string;
 }) {
   return (
     <div className={`fixed bottom-6 right-6 z-50 ${className}`}>

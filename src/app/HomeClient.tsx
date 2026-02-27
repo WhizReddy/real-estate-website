@@ -116,7 +116,7 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                     </div>
 
                     <div className="relative w-full mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center w-full sm:max-w-4xl mx-auto">
+                        <div className="text-center w-full sm:max-w-5xl md:max-w-6xl mx-auto">
                             <div className="inline-flex items-center px-4 py-2 bg-blue-50 rounded-full text-[var(--primary-dark)] text-sm font-semibold mb-6 animate-fadeIn">
                                 <HomeIcon className="h-4 w-4 mr-2" />
                                 {t('exclusiveAgency')}
@@ -127,11 +127,11 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                                     {t('findYourPerfectHome').split(' ').slice(1).join(' ')}
                                 </span>
                             </h1>
-                            <p className="text-lg sm:text-xl text-[var(--foreground)] opacity-80 mb-10 leading-relaxed w-full px-4 sm:px-0 sm:max-w-2xl mx-auto">
+                            <p className="text-lg sm:text-xl md:text-2xl text-[var(--foreground)] opacity-80 mb-10 leading-relaxed w-full sm:max-w-3xl mx-auto">
                                 {t('heroDescription')}
                             </p>
 
-                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 flex-wrap">
                                 <a
                                     href="#properties"
                                     className="btn-primary w-full sm:w-auto px-8 py-4 text-lg rounded-2xl shadow-xl shadow-primary/20"
@@ -148,17 +148,17 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                             </div>
 
                             {/* Trust badges */}
-                            <div className="mt-16 pt-8 border-t border-gray-100 grid grid-cols-3 gap-8">
-                                <div>
-                                    <div className="text-2xl font-bold text-[var(--foreground)]">{allProperties.length}+</div>
+                            <div className="mt-16 pt-8 border-t border-gray-100 flex flex-wrap justify-center gap-8 md:gap-12">
+                                <div className="text-center">
+                                    <div className="text-2xl md:text-3xl font-bold text-[var(--foreground)]">{allProperties.length}+</div>
                                     <div className="text-sm text-slate-500">{t('activeProperties')}</div>
                                 </div>
-                                <div>
-                                    <div className="text-2xl font-bold text-[var(--foreground)]">5★</div>
+                                <div className="text-center">
+                                    <div className="text-2xl md:text-3xl font-bold text-[var(--foreground)]">5★</div>
                                     <div className="text-sm text-slate-500">{t('reliability')}</div>
                                 </div>
-                                <div>
-                                    <div className="text-2xl font-bold text-[var(--foreground)]">24/7</div>
+                                <div className="text-center">
+                                    <div className="text-2xl md:text-3xl font-bold text-[var(--foreground)]">24/7</div>
                                     <div className="text-sm text-slate-500">{t('support')}</div>
                                 </div>
                             </div>

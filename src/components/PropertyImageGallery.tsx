@@ -129,7 +129,7 @@ export default function PropertyImageGallery({ images, title }: PropertyImageGal
           </button>
 
           {/* Image Counter */}
-          <div className="absolute bottom-8 left-2 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium z-10">
+          <div className="absolute bottom-8 left-4 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium z-10">
             {currentIndex + 1} / {images.length}
           </div>
 
@@ -140,8 +140,8 @@ export default function PropertyImageGallery({ images, title }: PropertyImageGal
                 key={index}
                 onClick={(e) => goToSlide(index, e)}
                 className={`rounded-full transition-all duration-300 touch-manipulation ${index === currentIndex
-                    ? 'w-4 h-1.5 sm:w-2 sm:h-2 bg-white sm:scale-125'
-                    : 'w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white/50 hover:bg-white/75'
+                  ? 'w-4 h-1.5 sm:w-2 sm:h-2 bg-white sm:scale-125'
+                  : 'w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white/50 hover:bg-white/75'
                   }`}
                 aria-label={`Go to image ${index + 1}`}
               />
