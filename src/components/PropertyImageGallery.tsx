@@ -29,7 +29,7 @@ export default function PropertyImageGallery({ images, title }: PropertyImageGal
 
   const onTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
-    
+
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
@@ -65,7 +65,7 @@ export default function PropertyImageGallery({ images, title }: PropertyImageGal
     if (images.length <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => 
+      setCurrentIndex((prevIndex) =>
         prevIndex < images.length - 1 ? prevIndex + 1 : 0
       );
     }, 5000); // Change slide every 5 seconds
@@ -80,7 +80,7 @@ export default function PropertyImageGallery({ images, title }: PropertyImageGal
   const currentImage = images[currentIndex];
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="relative w-full h-full group"
       onTouchStart={onTouchStart}
@@ -129,7 +129,7 @@ export default function PropertyImageGallery({ images, title }: PropertyImageGal
           </button>
 
           {/* Image Counter */}
-          <div className="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium z-10">
+          <div className="absolute bottom-8 left-2 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium z-10">
             {currentIndex + 1} / {images.length}
           </div>
 
@@ -139,11 +139,10 @@ export default function PropertyImageGallery({ images, title }: PropertyImageGal
               <button
                 key={index}
                 onClick={(e) => goToSlide(index, e)}
-                className={`rounded-full transition-all duration-300 touch-manipulation ${
-                  index === currentIndex
+                className={`rounded-full transition-all duration-300 touch-manipulation ${index === currentIndex
                     ? 'w-4 h-1.5 sm:w-2 sm:h-2 bg-white sm:scale-125'
                     : 'w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white/50 hover:bg-white/75'
-                }`}
+                  }`}
                 aria-label={`Go to image ${index + 1}`}
               />
             ))}

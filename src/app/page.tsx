@@ -176,14 +176,14 @@ export default function Home() {
                   {t('findYourPerfectHome').split(' ').slice(1).join(' ')}
                 </span>
               </h1>
-              <p className="text-lg sm:text-xl text-blue-100/80 mb-10 leading-relaxed w-full px-4 sm:px-0 sm:max-w-2xl mx-auto sm:mx-0">
+              <p className="text-lg sm:text-xl text-blue-100/80 mb-10 leading-relaxed w-full sm:max-w-3xl mx-auto sm:mx-0">
                 {t('heroDescription')}
               </p>
 
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 flex-wrap">
                 <a
                   href="#properties"
-                  className="w-full sm:w-auto px-8 py-4 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-400 transition-all shadow-lg shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full sm:w-auto px-8 py-4 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-400 transition-all shadow-lg shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98] text-center"
                 >
                   {t('viewListings')}
                 </a>

@@ -53,7 +53,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
 
           {/* Status Badges - Top Left */}
-          <div className="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[calc(100%-2rem)] z-10">
+          <div className="absolute top-4 left-4 flex gap-2 flex-wrap z-10">
             <Badge variant="primary">
               {getListingTypeLabel(property.listingType)}
             </Badge>
@@ -156,7 +156,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           )}
 
           {/* Action Buttons */}
-          <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+          <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-2">
               <ViewOnMapButtonCompact
                 property={property}
