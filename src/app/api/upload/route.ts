@@ -11,10 +11,15 @@ export async function POST(request: NextRequest) {
 
     if (!token) {
       console.error('❌ BLOB_READ_WRITE_TOKEN is missing');
-    } else if (!isValidToken) {
+      return NextResponse.json({ error: 'Upload configuration missing (Token not found)' }, { status: 503 });
+    }
+
+    if (!isValidToken) {
       console.warn('⚠️ BLOB_READ_WRITE_TOKEN appears to be invalid or a dummy token');
-      console.warn('Token length:', token.length);
-      console.warn('Starts with vercel_blob_:', token.startsWith('vercel_blob_'));
+      return NextResponse.json({
+        error: 'Upload configuration invalid',
+        details: 'The token does not match the expected Vercel Blob format.'
+      }, { status: 503 });
     }
 
     const formData = await request.formData();
@@ -61,6 +66,7 @@ export async function POST(request: NextRequest) {
     console.log('Uploading to Vercel Blob storage...');
     const blob = await put(`properties/${file.name}`, buffer, {
       access: 'public',
+      token: token, // Explicitly pass token
       contentType: file.type,
       addRandomSuffix: true,
     });
@@ -77,7 +83,6 @@ export async function POST(request: NextRequest) {
     console.error('Error uploading file:', {
       error: errorMessage,
       stack: error instanceof Error ? error.stack : undefined,
-      isBlobAuthError: errorMessage.includes('401') || errorMessage.includes('Unauthorized')
     });
 
     // Provide helpful error messages
@@ -85,7 +90,7 @@ export async function POST(request: NextRequest) {
     let statusCode = 500;
 
     if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
-      userMessage = 'Upload service is not properly configured. Please contact support.';
+      userMessage = 'Upload service is not properly configured (401).';
       statusCode = 503;
     } else if (errorMessage.includes('network') || errorMessage.includes('ECONNREFUSED')) {
       userMessage = 'Unable to reach upload service. Please try again.';
@@ -95,7 +100,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error: userMessage,
-        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
+        system_error: errorMessage, // Expose actual error even in production for debugging
       },
       { status: statusCode }
     );
