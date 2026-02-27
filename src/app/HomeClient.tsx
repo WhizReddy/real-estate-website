@@ -148,7 +148,7 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                             </div>
 
                             {/* Trust badges */}
-                            <div className="mt-16 pt-8 border-t border-gray-100 flex flex-wrap justify-center gap-8 md:gap-12">
+                            <div className="mt-16 pt-8 border-t border-gray-100 grid grid-cols-2 md:flex md:flex-wrap justify-center gap-8 md:gap-12">
                                 <div className="text-center">
                                     <div className="text-2xl md:text-3xl font-bold text-[var(--foreground)]">{allProperties.length}+</div>
                                     <div className="text-sm text-slate-500">{t('activeProperties')}</div>
@@ -157,7 +157,7 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                                     <div className="text-2xl md:text-3xl font-bold text-[var(--foreground)]">5★</div>
                                     <div className="text-sm text-slate-500">{t('reliability')}</div>
                                 </div>
-                                <div className="text-center">
+                                <div className="text-center col-span-2 md:col-span-1">
                                     <div className="text-2xl md:text-3xl font-bold text-[var(--foreground)]">24/7</div>
                                     <div className="text-sm text-slate-500">{t('support')}</div>
                                 </div>

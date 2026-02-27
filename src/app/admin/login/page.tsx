@@ -56,7 +56,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-full bg-[var(--background)] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-full bg-[var(--background)] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md md:max-w-lg lg:max-w-xl">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-blue-600 mb-2">
