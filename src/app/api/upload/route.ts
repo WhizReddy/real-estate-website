@@ -7,22 +7,21 @@ export async function POST(request: NextRequest) {
     console.log('BLOB_READ_WRITE_TOKEN exists:', !!process.env.BLOB_READ_WRITE_TOKEN);
 
     const token = process.env.BLOB_READ_WRITE_TOKEN;
+    const typoToken = process.env.BLOP_READ_WRITE_TOKEN; // Check for user's reported typo
+
     const isProduction = process.env.NODE_ENV === 'production';
     const isValidToken = token && typeof token === 'string' && token.startsWith('vercel_blob_');
     const isDevToken = token === 'dev-blob-token';
 
     if (!token) {
       console.error('❌ BLOB_READ_WRITE_TOKEN is missing');
-      return NextResponse.json({ error: 'Upload configuration missing (Token not found)' }, { status: 503 });
-    }
+      const errorMsg = typoToken
+        ? 'Upload configuration error: You used "BLOP" instead of "BLOB" in your environment variables.'
+        : 'Upload configuration missing (Token not found). Please add BLOB_READ_WRITE_TOKEN to Vercel.';
 
-    // In production, MUST be a real vercel_blob_ token. 
-    // In dev, we can allow the dummy token if explicitly set for testing UI.
-    if (isProduction && !isValidToken) {
-      console.warn('⚠️ BLOB_READ_WRITE_TOKEN is invalid for production');
       return NextResponse.json({
-        error: 'Upload configuration invalid for production',
-        details: 'The token must start with vercel_blob_rw_ in production.'
+        error: errorMsg,
+        details: typoToken ? 'Found BLOP_READ_WRITE_TOKEN but expected BLOB_READ_WRITE_TOKEN.' : 'No token found in process.env'
       }, { status: 503 });
     }
 
