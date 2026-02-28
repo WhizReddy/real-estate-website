@@ -100,7 +100,13 @@ export async function POST(request: NextRequest) {
     let userMessage = 'Failed to upload file';
     let statusCode = 500;
 
-    if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
+    if (errorMessage.includes('public access on a private store')) {
+      userMessage = 'Vercel Blob: Your store is set to PRIVATE. Please change it to PUBLIC in the Vercel Storage settings.';
+      statusCode = 403;
+    } else if (errorMessage.includes('Tenant or user not found')) {
+      userMessage = 'Database: Your DATABASE_URL is missing the postgres.[PROJECT-REF] prefix.';
+      statusCode = 503;
+    } else if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
       userMessage = 'Upload service is not properly configured (401).';
       statusCode = 503;
     } else if (errorMessage.includes('network') || errorMessage.includes('ECONNREFUSED')) {
