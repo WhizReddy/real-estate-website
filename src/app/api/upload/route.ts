@@ -7,18 +7,30 @@ export async function POST(request: NextRequest) {
     console.log('BLOB_READ_WRITE_TOKEN exists:', !!process.env.BLOB_READ_WRITE_TOKEN);
 
     const token = process.env.BLOB_READ_WRITE_TOKEN;
-    const isValidToken = token && typeof token === 'string' && token !== 'dev-blob-token' && token.startsWith('vercel_blob_');
+    const isProduction = process.env.NODE_ENV === 'production';
+    const isValidToken = token && typeof token === 'string' && token.startsWith('vercel_blob_');
+    const isDevToken = token === 'dev-blob-token';
 
     if (!token) {
       console.error('❌ BLOB_READ_WRITE_TOKEN is missing');
       return NextResponse.json({ error: 'Upload configuration missing (Token not found)' }, { status: 503 });
     }
 
-    if (!isValidToken) {
-      console.warn('⚠️ BLOB_READ_WRITE_TOKEN appears to be invalid or a dummy token');
+    // In production, MUST be a real vercel_blob_ token. 
+    // In dev, we can allow the dummy token if explicitly set for testing UI.
+    if (isProduction && !isValidToken) {
+      console.warn('⚠️ BLOB_READ_WRITE_TOKEN is invalid for production');
       return NextResponse.json({
-        error: 'Upload configuration invalid',
-        details: 'The token does not match the expected Vercel Blob format.'
+        error: 'Upload configuration invalid for production',
+        details: 'The token must start with vercel_blob_rw_ in production.'
+      }, { status: 503 });
+    }
+
+    if (!isProduction && !isValidToken && !isDevToken) {
+      console.warn('⚠️ BLOB_READ_WRITE_TOKEN is invalid for development');
+      return NextResponse.json({
+        error: 'Upload configuration invalid for development',
+        details: 'Please set a valid token or use dev-blob-token for local testing.'
       }, { status: 503 });
     }
 
@@ -99,7 +111,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        error: userMessage,
+        error: `${userMessage}: ${errorMessage}`,
         system_error: errorMessage, // Expose actual error even in production for debugging
       },
       { status: statusCode }

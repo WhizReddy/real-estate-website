@@ -134,14 +134,14 @@ export default function PropertyImageGallery({ images, title }: PropertyImageGal
           </div>
 
           {/* Dot Indicators */}
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1.5 sm:space-x-1 z-10">
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1.5 sm:space-x-1 z-10 items-center">
             {images.map((_, index) => (
               <button
                 key={index}
                 onClick={(e) => goToSlide(index, e)}
                 className={`rounded-full transition-all duration-300 touch-manipulation ${index === currentIndex
-                  ? 'w-4 h-1.5 sm:w-2 sm:h-2 bg-white sm:scale-125'
-                  : 'w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white/50 hover:bg-white/75'
+                  ? 'w-6 h-2 sm:w-2 sm:h-2 bg-white scale-125'
+                  : 'w-2 h-2 bg-white/50 hover:bg-white/75'
                   }`}
                 aria-label={`Go to image ${index + 1}`}
               />

@@ -140,9 +140,9 @@ export default function HomeClient({ initialProperties, initialTotal, maxInitial
                                 </a>
                                 <Link
                                     href="/map"
-                                    className="btn-secondary w-full sm:w-auto px-8 py-4 text-lg border-2 rounded-2xl flex items-center justify-center gap-2"
+                                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/10 backdrop-blur-md text-white border-2 border-white/20 hover:bg-white/20 hover:border-white/30 font-semibold transition-all"
                                 >
-                                    <Map className="h-5 w-5 text-[var(--primary)]" />
+                                    <Map className="h-5 w-5" />
                                     {t('interactiveMap')}
                                 </Link>
                             </div>

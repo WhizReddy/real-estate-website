@@ -56,9 +56,9 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-full bg-[var(--background)] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md md:max-w-lg lg:max-w-xl">
-        <div className="text-center">
+    <div className="min-h-screen bg-[var(--background)] flex flex-col items-center justify-center p-4 w-full">
+      <div className="space-y-8 w-full" style={{ maxWidth: '448px' }}>
+        <div className="text-center w-full">
           <h1 className="text-3xl font-bold text-blue-600 mb-2">
             🏠 Pasuritë e Tiranës
           </h1>
@@ -69,10 +69,8 @@ export default function AdminLogin() {
             Hyni në panelin tuaj të administrimit
           </p>
         </div>
-      </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md md:max-w-lg lg:max-w-xl">
-        <div className="card py-8 px-4 border-none sm:px-10">
+        <div className="card py-8 px-6 sm:px-10 border-none shadow-xl w-full">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
               <div className="bg-red-50 border border-red-200  text-red-700  px-4 py-3 rounded">

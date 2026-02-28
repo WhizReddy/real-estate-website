@@ -189,7 +189,7 @@ export default function Home() {
                 </a>
                 <Link
                   href="/map"
-                  className="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-bold rounded-xl border border-white/25 hover:bg-white/20 transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/10 backdrop-blur-md text-white border-2 border-white/20 hover:bg-white/20 hover:border-white/30 font-semibold transition-all"
                 >
                   <Map className="h-5 w-5" />
                   {t('interactiveMap')}
