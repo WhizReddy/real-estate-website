@@ -50,6 +50,7 @@ function ImagePreview({ imageUrl, index }: { imageUrl: string; index: number }) 
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           onLoad={() => setLoading(false)}
           onError={() => setError(true)}
+          unoptimized={imageUrl.includes('blob.vercel-storage.com')}
         />
       )}
     </>
