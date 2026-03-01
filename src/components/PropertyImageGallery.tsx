@@ -14,6 +14,12 @@ function ImageWithFallback({ src, alt, ...props }: any) {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Reset state when source changes
+  useEffect(() => {
+    setError(false);
+    setLoading(true);
+  }, [src]);
+
   if (error || !src) {
     return (
       <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center text-gray-400">

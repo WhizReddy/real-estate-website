@@ -17,6 +17,13 @@ function ImagePreview({ imageUrl, index }: { imageUrl: string; index: number }) 
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // IMPORTANT: Reset error and loading states when the URL changes.
+  // This handles the transition from a local temporary URL to the final blob URL.
+  useEffect(() => {
+    setError(false);
+    setLoading(true);
+  }, [imageUrl]);
+
   if (error || !imageUrl) {
     return (
       <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center text-gray-400 p-4 text-center">
@@ -33,26 +40,16 @@ function ImagePreview({ imageUrl, index }: { imageUrl: string; index: number }) 
           <div className="w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       )}
-      {imageUrl.startsWith('data:') ? (
-        <img
-          src={imageUrl}
-          alt={`Property preview ${index + 1}`}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          onLoad={() => setLoading(false)}
-          onError={() => setError(true)}
-        />
-      ) : (
-        <Image
-          src={imageUrl}
-          alt={`Property image ${index + 1}`}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          onLoad={() => setLoading(false)}
-          onError={() => setError(true)}
-          unoptimized={imageUrl.includes('blob.vercel-storage.com')}
-        />
-      )}
+      {/* Use a standard <img> tag for previews in the uploader. 
+          This avoids Next.js image optimization proxy overhead and potential 400 errors during the creation flow. 
+      */}
+      <img
+        src={imageUrl}
+        alt={`Property image ${index + 1}`}
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        onLoad={() => setLoading(false)}
+        onError={() => setError(true)}
+      />
     </>
   );
 }
