@@ -9,6 +9,58 @@ interface PropertyImageGalleryProps {
   title: string;
 }
 
+// Sub-component for individual image with fallback
+function ImageWithFallback({ src, alt, ...props }: any) {
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  if (error || !src) {
+    return (
+      <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center text-gray-400">
+        <svg
+          className="h-12 w-12 mb-2 opacity-20"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="Status-Off:M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+          />
+        </svg>
+        <span className="text-xs font-medium">Imazhi nuk mund të ngarkohet</span>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {loading && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse z-10" />
+      )}
+      {src.startsWith('data:') ? (
+        <img
+          src={src}
+          alt={alt}
+          className={props.className}
+          onLoad={() => setLoading(false)}
+          onError={() => setError(true)}
+        />
+      ) : (
+        <Image
+          {...props}
+          src={src}
+          alt={alt}
+          onLoad={() => setLoading(false)}
+          onError={() => setError(true)}
+        />
+      )}
+    </>
+  );
+}
+
 export default function PropertyImageGallery({ images, title }: PropertyImageGalleryProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -88,22 +140,13 @@ export default function PropertyImageGallery({ images, title }: PropertyImageGal
       onTouchEnd={onTouchEnd}
     >
       {/* Main Image */}
-      {currentImage.startsWith('data:') ? (
-        // Handle base64 images with regular img tag
-        <img
-          src={currentImage}
-          alt={`${title} - Image ${currentIndex + 1}`}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-        />
-      ) : (
-        // Handle regular URLs with Next.js Image
-        <Image
-          src={currentImage}
+      {images.length > 0 && (
+        <ImageWithFallback
+          src={images[currentIndex]}
           alt={`${title} - Image ${currentIndex + 1}`}
           fill
           className="object-cover group-hover:scale-110 transition-transform duration-700"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          loading="lazy"
         />
       )}
 

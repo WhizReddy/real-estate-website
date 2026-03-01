@@ -12,11 +12,55 @@ interface ImageUploaderProps {
   maxSizePerImage?: number; // in MB
 }
 
-export default function ImageUploader({ 
-  images, 
-  onImagesChange, 
+// Sub-component for individual image preview with fallback
+function ImagePreview({ imageUrl, index }: { imageUrl: string; index: number }) {
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  if (error || !imageUrl) {
+    return (
+      <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center text-gray-400 p-4 text-center">
+        <AlertCircle className="h-8 w-8 mb-2 opacity-20" />
+        <span className="text-[10px] uppercase tracking-wider font-bold opacity-40">Imazhi nuk u ngarkua</span>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {loading && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse z-10 flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+      {imageUrl.startsWith('data:') ? (
+        <img
+          src={imageUrl}
+          alt={`Property preview ${index + 1}`}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          onLoad={() => setLoading(false)}
+          onError={() => setError(true)}
+        />
+      ) : (
+        <Image
+          src={imageUrl}
+          alt={`Property image ${index + 1}`}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-110"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          onLoad={() => setLoading(false)}
+          onError={() => setError(true)}
+        />
+      )}
+    </>
+  );
+}
+
+export default function ImageUploader({
+  images,
+  onImagesChange,
   maxImages = 10,
-  maxSizePerImage = 5 
+  maxSizePerImage = 5
 }: ImageUploaderProps) {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -30,17 +74,17 @@ export default function ImageUploader({
       const validFiles = acceptedFiles.filter(file => {
         const isValidType = file.type.startsWith('image/');
         const isValidSize = file.size <= maxSizePerImage * 1024 * 1024;
-        
+
         if (!isValidType) {
           setUploadError(`Skedari ${file.name} nuk është një imazh i vlefshëm.`);
           return false;
         }
-        
+
         if (!isValidSize) {
           setUploadError(`Skedari ${file.name} është shumë i madh. Maksimumi është ${maxSizePerImage}MB.`);
           return false;
         }
-        
+
         return true;
       });
 
@@ -49,16 +93,14 @@ export default function ImageUploader({
         return;
       }
 
-      // Check if adding these files would exceed the limit
       if (images.length + validFiles.length > maxImages) {
-        setUploadError(`Mund të ngarkoni maksimum ${maxImages} imazhe. Ju keni ${images.length} dhe po përpiqeni të shtoni ${validFiles.length} të tjera.`);
+        setUploadError(`Mund të ngarkoni maksimum ${maxImages} imazhe.`);
         setIsUploading(false);
         return;
       }
 
-      // Upload files to Vercel Blob storage
       const newImageUrls: string[] = [];
-      
+
       for (const file of validFiles) {
         try {
           const formData = new FormData();
@@ -78,7 +120,7 @@ export default function ImageUploader({
           newImageUrls.push(result.url);
         } catch (uploadError) {
           console.error('Error uploading file:', file.name, uploadError);
-          setUploadError(`Gabim gjatë ngarkimit të ${file.name}: ${uploadError instanceof Error ? uploadError.message : 'Gabim i panjohur'}`);
+          setUploadError(`Gabim gjatë ngarkimit të ${file.name}`);
           setIsUploading(false);
           return;
         }
@@ -87,7 +129,7 @@ export default function ImageUploader({
       onImagesChange([...images, ...newImageUrls]);
     } catch (error) {
       console.error('Error uploading images:', error);
-      setUploadError('Ka ndodhur një gabim gjatë ngarkimit të imazheve.');
+      setUploadError('Ka ndodhur një gabim gjatë ngarkimit.');
     } finally {
       setIsUploading(false);
     }
@@ -102,21 +144,7 @@ export default function ImageUploader({
     disabled: isUploading || images.length >= maxImages
   });
 
-  const removeImage = async (index: number) => {
-    const imageUrl = images[index];
-    
-    // If it's a blob URL, delete it from storage
-    if (imageUrl && imageUrl.includes('blob.vercel-storage.com')) {
-      try {
-        await fetch(`/api/upload/delete?url=${encodeURIComponent(imageUrl)}`, {
-          method: 'DELETE',
-        });
-      } catch (error) {
-        console.error('Error deleting image from storage:', error);
-        // Continue with removal from UI even if deletion from storage fails
-      }
-    }
-    
+  const removeImage = (index: number) => {
     const newImages = images.filter((_, i) => i !== index);
     onImagesChange(newImages);
   };
@@ -130,217 +158,123 @@ export default function ImageUploader({
 
   return (
     <div className="space-y-4">
-      {/* Upload Area */}
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-          isDragActive
-            ? 'border-red-500 bg-red-50'
-            : images.length >= maxImages
-            ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
-            : 'border-gray-300 hover:border-red-500 hover:bg-red-50'
-        }`}
+        className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 ${isDragActive
+          ? 'border-red-500 bg-red-50 ring-4 ring-red-500/10'
+          : images.length >= maxImages
+            ? 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60'
+            : 'border-gray-300 hover:border-red-500 hover:bg-red-50/50 hover:shadow-inner'
+          }`}
       >
         <input {...getInputProps()} />
-        
+
         <div className="flex flex-col items-center">
-          <Upload className={`h-12 w-12 mb-4 ${
-            images.length >= maxImages ? 'text-gray-400' : 'text-red-600'
-          }`} />
-          
+          <div className={`p-4 rounded-full mb-4 transition-colors ${images.length >= maxImages ? 'bg-gray-100 text-gray-400' : 'bg-red-50 text-red-600'
+            }`}>
+            <Upload className="h-8 w-8" />
+          </div>
+
           {isUploading ? (
             <div className="text-center">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600 mx-auto mb-2"></div>
-              <p className="text-gray-600">Duke ngarkuar imazhet...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-2 border-red-600 border-t-transparent mx-auto mb-3"></div>
+              <p className="text-sm font-medium text-gray-600">Duke ngarkuar...</p>
             </div>
           ) : images.length >= maxImages ? (
             <div className="text-center">
-              <p className="text-gray-500 font-medium">
-                Keni arritur limitin maksimal të imazheve ({maxImages})
+              <p className="text-gray-500 font-bold text-sm uppercase tracking-wider mb-1">
+                Limiti u arrit ({maxImages})
               </p>
-              <p className="text-gray-400 text-sm">
-                Fshini disa imazhe për të shtuar të reja
-              </p>
+              <p className="text-gray-400 text-xs">Fshini imazhe për të shtuar të reja</p>
             </div>
           ) : (
             <div className="text-center">
-              <p className="text-gray-700 font-medium mb-2">
-                {isDragActive
-                  ? 'Lëshoni imazhet këtu...'
-                  : 'Zvarritni imazhet këtu ose klikoni për të zgjedhur'
-                }
+              <p className="text-gray-900 font-bold mb-1">
+                {isDragActive ? 'Lëshoni imazhet këtu' : 'Shtoni foto të pronës'}
               </p>
-              <p className="text-gray-500 text-sm">
-                Formatet e pranuara: JPEG, PNG, WebP (maksimum {maxSizePerImage}MB secili)
-              </p>
-              <p className="text-gray-500 text-sm">
-                {images.length}/{maxImages} imazhe të ngarkuara
-              </p>
+              <p className="text-gray-500 text-xs mb-3">Zvarritni ose klikoni për të selektuar</p>
+              <div className="flex gap-2 justify-center">
+                <span className="px-2 py-1 bg-gray-100 rounded text-[10px] font-bold text-gray-500 uppercase">JPG</span>
+                <span className="px-2 py-1 bg-gray-100 rounded text-[10px] font-bold text-gray-500 uppercase">PNG</span>
+                <span className="px-2 py-1 bg-gray-100 rounded text-[10px] font-bold text-gray-500 uppercase">WEBP</span>
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Error Message */}
       {uploadError && (
-        <div className="flex items-center p-3 bg-red-50 border border-red-200 rounded-md">
-          <AlertCircle className="h-5 w-5 text-red-600 mr-2 flex-shrink-0" />
-          <p className="text-red-700 text-sm">{uploadError}</p>
+        <div className="flex items-center p-3 bg-red-50 border border-red-100 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
+          <AlertCircle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0" />
+          <p className="text-red-700 text-sm font-medium">{uploadError}</p>
         </div>
       )}
 
-      {/* Modern Image Preview Grid */}
       {images.length > 0 && (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-              <ImageIcon className="h-5 w-5 mr-2 text-red-600" />
-              Imazhet e Ngarkuara ({images.length})
+        <div className="space-y-4 pt-4">
+          <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+            <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center">
+              <ImageIcon className="h-4 w-4 mr-2 text-red-600" />
+              Galeria ({images.length})
             </h3>
-            <div className="flex items-center space-x-2 text-xs text-gray-500">
-              <Star className="h-4 w-4 text-yellow-500" />
-              <span>Imazhi i parë është kryesor</span>
+            <div className="flex items-center space-x-1 text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+              <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+              <span>Foto e parë është ballina</span>
             </div>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {images.map((imageUrl, index) => (
               <div
                 key={index}
-                className="relative group bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300"
+                className="relative group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-red-100 transition-all duration-500"
               >
-                {/* Image Container */}
-                <div className="aspect-[4/3] relative bg-white">
-                  {imageUrl.startsWith('data:') ? (
-                    <img
-                      src={imageUrl}
-                      alt={`Property image ${index + 1}`}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      style={{ 
-                        display: 'block',
-                        backgroundColor: '#f3f4f6',
-                        minHeight: '100%',
-                        minWidth: '100%'
-                      }}
-                      onLoad={(e) => {
-                        console.log('Image loaded successfully:', index);
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                      }}
-                      onError={(e) => {
-                        console.error('Image failed to load:', index, imageUrl.substring(0, 50));
-                        e.currentTarget.style.backgroundColor = '#ef4444';
-                      }}
-                    />
-                  ) : (
-                    <Image
-                      src={imageUrl}
-                      alt={`Property image ${index + 1}`}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      onLoad={() => console.log('Next.js Image loaded:', index)}
-                      onError={() => console.error('Next.js Image failed to load:', index)}
-                    />
-                  )}
-                  
-                  {/* Overlay Controls */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
-                      {/* Move Controls */}
-                      <div className="flex space-x-2">
-                        {index > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => moveImage(index, index - 1)}
-                            className="p-2 bg-white/90 backdrop-blur-sm rounded-full text-gray-700 hover:text-red-600 hover:bg-white transition-all duration-200 shadow-lg"
-                            title="Lëviz majtas"
-                          >
-                            <ArrowLeft className="h-4 w-4" />
-                          </button>
-                        )}
-                        
-                        {index < images.length - 1 && (
-                          <button
-                            type="button"
-                            onClick={() => moveImage(index, index + 1)}
-                            className="p-2 bg-white/90 backdrop-blur-sm rounded-full text-gray-700 hover:text-red-600 hover:bg-white transition-all duration-200 shadow-lg"
-                            title="Lëviz djathtas"
-                          >
-                            <ArrowRight className="h-4 w-4" />
-                          </button>
-                        )}
-                      </div>
-                      
-                      {/* Delete Button */}
+                <div className="aspect-square relative bg-gray-50">
+                  <ImagePreview imageUrl={imageUrl} index={index} />
+
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2">
+                    {index > 0 && (
                       <button
                         type="button"
-                        onClick={() => removeImage(index)}
-                        className="p-2 bg-red-500/90 backdrop-blur-sm rounded-full text-white hover:bg-red-600 transition-all duration-200 shadow-lg"
-                        title="Fshi imazhin"
+                        onClick={() => moveImage(index, index - 1)}
+                        className="p-2 bg-white rounded-full text-gray-900 hover:text-red-600 transition-colors shadow-lg"
+                        title="Lëviz majtas"
                       >
-                        <X className="h-4 w-4" />
+                        <ArrowLeft className="h-3 w-3" />
                       </button>
-                    </div>
+                    )}
+                    {index < images.length - 1 && (
+                      <button
+                        type="button"
+                        onClick={() => moveImage(index, index + 1)}
+                        className="p-2 bg-white rounded-full text-gray-900 hover:text-red-600 transition-colors shadow-lg"
+                        title="Lëviz djathtas"
+                      >
+                        <ArrowRight className="h-3 w-3" />
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="p-2 bg-red-600 rounded-full text-white hover:bg-red-700 transition-colors shadow-lg"
+                      title="Fshi"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
                   </div>
-                </div>
 
-                {/* Image Info Footer */}
-                <div className="p-4 bg-white">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm font-medium text-gray-900">
-                        Imazhi #{index + 1}
-                      </span>
-                      {index === 0 && (
-                        <div className="flex items-center space-x-1 bg-white text-white text-xs px-2 py-1 rounded-full">
-                          <Star className="h-3 w-3" />
-                          <span>Kryesor</span>
-                        </div>
-                      )}
+                  {index === 0 && (
+                    <div className="absolute top-2 left-2 px-2 py-1 bg-yellow-400 text-white rounded text-[8px] font-black uppercase tracking-widest shadow-lg">
+                      Ballina
                     </div>
-                    
-                    <div className="flex items-center space-x-1 text-xs text-gray-500">
-                      <Eye className="h-3 w-3" />
-                      <span>Visible</span>
-                    </div>
-                  </div>
-                  
-                  {/* Image Order Indicator */}
-                  <div className="mt-2 flex items-center space-x-1">
-                    {images.map((_, i) => (
-                      <div
-                        key={i}
-                        className={`h-1 flex-1 rounded-full transition-colors duration-200 ${
-                          i === index 
-                            ? 'bg-red-500' 
-                            : i < index 
-                            ? 'bg-gray-300' 
-                            : 'bg-gray-100'
-                        }`}
-                      />
-                    ))}
+                  )}
+
+                  <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/50 backdrop-blur-md text-white rounded text-[10px] font-bold">
+                    #{index + 1}
                   </div>
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      )}
-
-      {/* Instructions */}
-      {images.length === 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-start">
-            <ImageIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
-            <div className="text-sm text-blue-800">
-              <p className="font-medium mb-1">Këshilla për imazhet:</p>
-              <ul className="space-y-1 text-blue-700">
-                <li>• Imazhi i parë do të jetë imazhi kryesor që shfaqet në listë</li>
-                <li>• Përdorni imazhe me cilësi të lartë për rezultate më të mira</li>
-                <li>• Rekomandohet të keni të paktën 3-5 imazhe për çdo pasuri</li>
-                <li>• Mund të riorganizoni imazhet duke i lëvizur me butonat</li>
-              </ul>
-            </div>
           </div>
         </div>
       )}

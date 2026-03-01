@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Property } from '@/types';
 import { formatPrice } from '@/lib/utils';
 import { getCurrentUser, isAdmin, isAgent, clearSession, UserData } from '@/lib/auth-utils';
@@ -546,10 +547,22 @@ export default function AdminDashboard() {
                   <tr key={property.id} className="hover:bg-slate-50 :bg-slate-800/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="shrink-0 h-12 w-12">
-                          <div className="h-12 w-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                            🏠
-                          </div>
+                        <div className="shrink-0 h-14 w-14 relative group/img cursor-pointer">
+                          {property.images && property.images.length > 0 ? (
+                            <div className="h-14 w-14 rounded-lg overflow-hidden border border-gray-200 shadow-sm relative">
+                              <Image
+                                src={property.images[0]}
+                                alt={property.title}
+                                fill
+                                className="object-cover transition-transform duration-300 group-hover/img:scale-110"
+                                sizes="56px"
+                              />
+                            </div>
+                          ) : (
+                            <div className="h-14 w-14 bg-gray-100 rounded-lg flex items-center justify-center text-xl border border-gray-200">
+                              🏠
+                            </div>
+                          )}
                         </div>
                         <div className="ml-4">
                           <div className="text-[var(--text-scale-base)] font-medium text-[var(--foreground)]">
