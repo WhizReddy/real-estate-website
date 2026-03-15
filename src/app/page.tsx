@@ -284,16 +284,16 @@ export default function Home() {
                 </Link>
               </div>
 
-              <div className="mt-14 grid w-full max-w-2xl grid-cols-1 gap-3 sm:mx-0 sm:grid-cols-3 sm:gap-4">
-                <div className="rounded-2xl border border-white/15 bg-white/10 px-5 py-4 text-center backdrop-blur-sm">
+              <div className="mt-12 grid w-full max-w-3xl grid-cols-1 gap-3 sm:mx-0 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+                <div className="flex min-h-[104px] flex-col justify-center rounded-2xl border border-white/15 bg-white/10 px-5 py-4 text-center backdrop-blur-sm">
                     <div className="text-xl font-bold text-white">{totalProperties || allProperties.length}+</div>
                     <div className="mt-1 text-xs leading-tight text-blue-100/75">{t('activeProperties')}</div>
                 </div>
-                <div className="rounded-2xl border border-white/15 bg-white/10 px-5 py-4 text-center backdrop-blur-sm">
+                <div className="flex min-h-[104px] flex-col justify-center rounded-2xl border border-white/15 bg-white/10 px-5 py-4 text-center backdrop-blur-sm">
                     <div className="text-xl font-bold text-white">5★</div>
                     <div className="mt-1 text-xs leading-tight text-blue-100/75">{t('reliability')}</div>
                 </div>
-                <div className="rounded-2xl border border-white/15 bg-white/10 px-5 py-4 text-center backdrop-blur-sm">
+                <div className="flex min-h-[104px] flex-col justify-center rounded-2xl border border-white/15 bg-white/10 px-5 py-4 text-center backdrop-blur-sm sm:col-span-2 lg:col-span-1">
                     <div className="text-xl font-bold text-white">24/7</div>
                     <div className="mt-1 text-xs leading-tight text-blue-100/75">{t('support')}</div>
                 </div>

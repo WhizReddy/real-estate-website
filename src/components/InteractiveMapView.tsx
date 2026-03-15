@@ -14,6 +14,8 @@ interface InteractiveMapViewProps {
   zoom?: number;
 }
 
+const DEFAULT_MAP_CENTER: [number, number] = [41.3275, 19.8187];
+
 function ensureLeafletStyles() {
   if (typeof document === 'undefined') {
     return Promise.resolve();
@@ -64,7 +66,7 @@ export default function InteractiveMapView({
   selectedLocation,
   onLocationSelect,
   height = '400px',
-  center = [41.3275, 19.8187],
+  center = DEFAULT_MAP_CENTER,
   zoom = 13,
 }: InteractiveMapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -72,12 +74,32 @@ export default function InteractiveMapView({
   const markersRef = useRef<any[]>([]);
   const selectedMarkerRef = useRef<any>(null);
   const onLocationSelectRef = useRef(onLocationSelect);
+  const invalidateTimeoutsRef = useRef<number[]>([]);
   const [isMapReady, setIsMapReady] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
+  const centerLat = center[0] ?? DEFAULT_MAP_CENTER[0];
+  const centerLng = center[1] ?? DEFAULT_MAP_CENTER[1];
+  const selectedLat = selectedLocation?.lat;
+  const selectedLng = selectedLocation?.lng;
 
   useEffect(() => {
     onLocationSelectRef.current = onLocationSelect;
   }, [onLocationSelect]);
+
+  const scheduleInvalidate = (map: any, delay = 0) => {
+    const timeoutId = window.setTimeout(() => {
+      invalidateTimeoutsRef.current = invalidateTimeoutsRef.current.filter((id) => id !== timeoutId);
+      if (mapInstanceRef.current !== map) return;
+      const container = map.getContainer?.();
+      if (!container || !container.isConnected) return;
+
+      try {
+        map.invalidateSize({ pan: false });
+      } catch {}
+    }, delay);
+
+    invalidateTimeoutsRef.current.push(timeoutId);
+  };
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -97,6 +119,14 @@ export default function InteractiveMapView({
           fadeAnimation: false,
           zoomAnimation: false,
           markerZoomAnimation: false,
+          zoomControl: mode === 'view',
+          scrollWheelZoom: mode === 'view',
+          touchZoom: mode === 'view',
+          doubleClickZoom: false,
+          keyboard: mode === 'view',
+          boxZoom: mode === 'view',
+          bounceAtZoomLimits: false,
+          inertia: false,
         });
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -104,7 +134,7 @@ export default function InteractiveMapView({
           maxZoom: 19,
         }).addTo(map);
 
-        map.setView(center, zoom, { animate: false });
+        map.setView([centerLat, centerLng], zoom, { animate: false });
 
         if (mode === 'edit') {
           map.on('click', (e: any) => {
@@ -161,11 +191,9 @@ export default function InteractiveMapView({
         mapInstanceRef.current = map;
 
         map.whenReady(() => {
-          setTimeout(() => {
-            map.invalidateSize();
-            setTimeout(() => map.invalidateSize(), 120);
-            setIsMapReady(true);
-          }, 0);
+          scheduleInvalidate(map, 0);
+          scheduleInvalidate(map, 120);
+          setIsMapReady(true);
         });
       } catch (error) {
         console.error('Interactive map failed to initialize:', error);
@@ -179,8 +207,11 @@ export default function InteractiveMapView({
 
     return () => {
       cancelled = true;
+      invalidateTimeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
+      invalidateTimeoutsRef.current = [];
       if (mapInstanceRef.current) {
         try {
+          mapInstanceRef.current.stop?.();
           mapInstanceRef.current.off();
           mapInstanceRef.current.remove();
         } catch {}
@@ -189,19 +220,27 @@ export default function InteractiveMapView({
       selectedMarkerRef.current = null;
       setIsMapReady(false);
     };
-  }, [center, mode, zoom]);
+  }, [centerLat, centerLng, mode, zoom]);
 
   useEffect(() => {
-    if (!mapInstanceRef.current || !selectedLocation || mode !== 'edit') return;
+    if (selectedLat == null || selectedLng == null || mode !== 'edit') return;
+
+    let cancelled = false;
 
     import('leaflet').then((L) => {
+      if (cancelled) return;
       const map = mapInstanceRef.current;
+      if (!map) return;
+      const container = map.getContainer?.();
+      if (!container || !container.isConnected) return;
 
       if (selectedMarkerRef.current) {
-        map.removeLayer(selectedMarkerRef.current);
+        try {
+          map.removeLayer(selectedMarkerRef.current);
+        } catch {}
       }
 
-      selectedMarkerRef.current = L.marker([selectedLocation.lat, selectedLocation.lng], {
+      selectedMarkerRef.current = L.marker([selectedLat, selectedLng], {
         icon: L.divIcon({
           className: 'selected-location-marker',
           html: `
@@ -232,16 +271,27 @@ export default function InteractiveMapView({
         }),
       }).addTo(map);
 
-      map.setView([selectedLocation.lat, selectedLocation.lng], zoom, { animate: false });
-      setTimeout(() => map.invalidateSize(), 60);
+      map.setView([selectedLat, selectedLng], zoom, { animate: false });
+      scheduleInvalidate(map, 60);
     });
-  }, [mode, selectedLocation, zoom]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mode, selectedLat, selectedLng, zoom]);
 
   useEffect(() => {
     if (!mapInstanceRef.current || mode !== 'view') return;
+    let cancelled = false;
+
     import('leaflet').then((L) => {
+      if (cancelled || !mapInstanceRef.current) return;
       addPropertyMarkers(L, mapInstanceRef.current, properties);
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, [properties, mode]);
 
   const addPropertyMarkers = (L: any, map: any, list: Property[]) => {
@@ -297,9 +347,9 @@ export default function InteractiveMapView({
             onClick={() => {
               if (mapInstanceRef.current) {
                 try {
-                  mapInstanceRef.current.invalidateSize();
+                  mapInstanceRef.current.invalidateSize({ pan: false });
                 } catch {}
-                mapInstanceRef.current.setView(center, zoom, { animate: false });
+                mapInstanceRef.current.setView([centerLat, centerLng], zoom, { animate: false });
               }
             }}
             className="rounded-md border border-gray-200 bg-white p-2 shadow-sm transition-colors duration-200 hover:bg-blue-50"
