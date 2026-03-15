@@ -11,6 +11,12 @@ if (typeof window !== 'undefined') {
 export const metadata: Metadata = {
   title: "Pasuritë e Tiranës - Gjeni shtëpinë tuaj të ëndrrave",
   description: "Platforma më e mirë për pasuritë e patundshme në Tiranë.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: [{ url: "/favicon.svg?v=20260315", type: "image/svg+xml" }],
+    shortcut: [{ url: "/favicon.svg?v=20260315", type: "image/svg+xml" }],
+    apple: [{ url: "/icons/icon-192x192.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({

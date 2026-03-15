@@ -14,134 +14,193 @@ interface InteractiveMapViewProps {
   zoom?: number;
 }
 
+function ensureLeafletStyles() {
+  if (typeof document === 'undefined') {
+    return Promise.resolve();
+  }
+
+  return new Promise<void>((resolve) => {
+    const existingLink = document.getElementById('leaflet-css') as HTMLLinkElement | null;
+
+    if (existingLink) {
+      if (existingLink.dataset.loaded === 'true' || existingLink.sheet) {
+        existingLink.dataset.loaded = 'true';
+        resolve();
+        return;
+      }
+
+      existingLink.addEventListener(
+        'load',
+        () => {
+          existingLink.dataset.loaded = 'true';
+          resolve();
+        },
+        { once: true }
+      );
+      existingLink.addEventListener('error', () => resolve(), { once: true });
+      return;
+    }
+
+    const link = document.createElement('link');
+    link.id = 'leaflet-css';
+    link.rel = 'stylesheet';
+    link.href = '/leaflet.css';
+    link.addEventListener(
+      'load',
+      () => {
+        link.dataset.loaded = 'true';
+        resolve();
+      },
+      { once: true }
+    );
+    link.addEventListener('error', () => resolve(), { once: true });
+    document.head.appendChild(link);
+  });
+}
+
 export default function InteractiveMapView({
   mode = 'view',
   properties = [],
   selectedLocation,
   onLocationSelect,
   height = '400px',
-  center = [41.3275, 19.8187], // Tirana coordinates
+  center = [41.3275, 19.8187],
   zoom = 13,
 }: InteractiveMapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const selectedMarkerRef = useRef<any>(null);
+  const onLocationSelectRef = useRef(onLocationSelect);
   const [isMapReady, setIsMapReady] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
+
+  useEffect(() => {
+    onLocationSelectRef.current = onLocationSelect;
+  }, [onLocationSelect]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Dynamically import Leaflet to avoid SSR issues
-    import('leaflet').then((L) => {
-      if (!mapRef.current || mapInstanceRef.current) return;
+    let cancelled = false;
 
-      // Create map
-      const map = L.map(mapRef.current);
+    const initMap = async () => {
+      try {
+        setMapError(null);
+        setIsMapReady(false);
+        await ensureLeafletStyles();
 
-      // Add tile layer
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 19,
-      }).addTo(map);
+        const L = await import('leaflet');
+        if (cancelled || !mapRef.current || mapInstanceRef.current) return;
 
-      // Set initial view and ensure size/position are initialized
-      map.setView(center, zoom, { animate: false });
-
-      // Add click handler for edit mode
-      if (mode === 'edit') {
-        map.on('click', (e: any) => {
-          const { lat, lng } = e.latlng;
-
-          // Remove existing selected marker
-          if (selectedMarkerRef.current) {
-            map.removeLayer(selectedMarkerRef.current);
-          }
-
-          // Create custom marker icon (blue theme)
-          const customIcon = L.divIcon({
-            className: 'selected-location-marker',
-            html: `
-              <div style="
-                background: #2563eb;
-                width: 24px;
-                height: 24px;
-                border-radius: 50%;
-                border: 3px solid white;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-                position: relative;
-                transform: translate(-50%, -50%);
-              ">
-                <div style="
-                  position: absolute;
-                  top: -10px;
-                  left: 50%;
-                  transform: translateX(-50%);
-                  width: 0;
-                  height: 0;
-                  border-left: 8px solid transparent;
-                  border-right: 8px solid transparent;
-                  border-bottom: 10px solid #2563eb;
-                "></div>
-              </div>
-            `,
-            iconSize: [24, 24],
-            iconAnchor: [12, 12],
-          });
-
-          // Add new marker at clicked location
-          selectedMarkerRef.current = L.marker([lat, lng], {
-            icon: customIcon,
-            draggable: false
-          }).addTo(map);
-
-          // Call the callback with coordinates
-          if (onLocationSelect) {
-            onLocationSelect(parseFloat(lat.toFixed(6)), parseFloat(lng.toFixed(6)));
-          }
+        const map = L.map(mapRef.current, {
+          fadeAnimation: false,
+          zoomAnimation: false,
+          markerZoomAnimation: false,
         });
 
-        // Set cursor style for edit mode
-        map.getContainer().style.cursor = 'crosshair';
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors',
+          maxZoom: 19,
+        }).addTo(map);
+
+        map.setView(center, zoom, { animate: false });
+
+        if (mode === 'edit') {
+          map.on('click', (e: any) => {
+            const { lat, lng } = e.latlng;
+
+            if (selectedMarkerRef.current) {
+              map.removeLayer(selectedMarkerRef.current);
+            }
+
+            const customIcon = L.divIcon({
+              className: 'selected-location-marker',
+              html: `
+                <div style="
+                  background: #2563eb;
+                  width: 24px;
+                  height: 24px;
+                  border-radius: 50%;
+                  border: 3px solid white;
+                  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+                  position: relative;
+                  transform: translate(-50%, -50%);
+                ">
+                  <div style="
+                    position: absolute;
+                    top: -10px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 0;
+                    height: 0;
+                    border-left: 8px solid transparent;
+                    border-right: 8px solid transparent;
+                    border-bottom: 10px solid #2563eb;
+                  "></div>
+                </div>
+              `,
+              iconSize: [24, 24],
+              iconAnchor: [12, 12],
+            });
+
+            selectedMarkerRef.current = L.marker([lat, lng], {
+              icon: customIcon,
+              draggable: false,
+            }).addTo(map);
+
+            onLocationSelectRef.current?.(
+              parseFloat(lat.toFixed(6)),
+              parseFloat(lng.toFixed(6))
+            );
+          });
+
+          map.getContainer().style.cursor = 'crosshair';
+        }
+
+        mapInstanceRef.current = map;
+
+        map.whenReady(() => {
+          setTimeout(() => {
+            map.invalidateSize();
+            setTimeout(() => map.invalidateSize(), 120);
+            setIsMapReady(true);
+          }, 0);
+        });
+      } catch (error) {
+        console.error('Interactive map failed to initialize:', error);
+        if (!cancelled) {
+          setMapError('Harta nuk u ngarkua. Rifresko faqen dhe provo përsëri.');
+        }
       }
+    };
 
-      mapInstanceRef.current = map;
+    initMap();
 
-      // Once ready, invalidate size to ensure proper pane positioning
-      map.whenReady(() => {
-        setTimeout(() => {
-          map.invalidateSize();
-          setIsMapReady(true);
-        }, 0);
-      });
-    });
-
-    // Cleanup
     return () => {
+      cancelled = true;
       if (mapInstanceRef.current) {
         try {
           mapInstanceRef.current.off();
           mapInstanceRef.current.remove();
-        } catch { }
+        } catch {}
         mapInstanceRef.current = null;
-        setIsMapReady(false);
       }
+      selectedMarkerRef.current = null;
+      setIsMapReady(false);
     };
-  }, [mode]);
+  }, [center, mode, zoom]);
 
-  // Update selected location marker when selectedLocation changes
   useEffect(() => {
     if (!mapInstanceRef.current || !selectedLocation || mode !== 'edit') return;
 
     import('leaflet').then((L) => {
       const map = mapInstanceRef.current;
 
-      // Remove existing selected marker
       if (selectedMarkerRef.current) {
         map.removeLayer(selectedMarkerRef.current);
       }
 
-      // Add new marker at selected location
       selectedMarkerRef.current = L.marker([selectedLocation.lat, selectedLocation.lng], {
         icon: L.divIcon({
           className: 'selected-location-marker',
@@ -173,12 +232,11 @@ export default function InteractiveMapView({
         }),
       }).addTo(map);
 
-      // Center map on selected location (disable animation to avoid _leaflet_pos issues)
       map.setView([selectedLocation.lat, selectedLocation.lng], zoom, { animate: false });
+      setTimeout(() => map.invalidateSize(), 60);
     });
-  }, [selectedLocation, zoom, mode]);
+  }, [mode, selectedLocation, zoom]);
 
-  // Update property markers when in view mode and the list changes
   useEffect(() => {
     if (!mapInstanceRef.current || mode !== 'view') return;
     import('leaflet').then((L) => {
@@ -186,17 +244,15 @@ export default function InteractiveMapView({
     });
   }, [properties, mode]);
 
-  // Add property markers function
-  const addPropertyMarkers = (L: any, map: any, properties: Property[]) => {
-    // Clear existing markers
-    markersRef.current.forEach(marker => map.removeLayer(marker));
+  const addPropertyMarkers = (L: any, map: any, list: Property[]) => {
+    markersRef.current.forEach((marker) => map.removeLayer(marker));
     markersRef.current = [];
 
-    properties.forEach((property) => {
+    list.forEach((property) => {
       if (property.address.coordinates.lat && property.address.coordinates.lng) {
         const marker = L.marker([
           property.address.coordinates.lat,
-          property.address.coordinates.lng
+          property.address.coordinates.lng,
         ]).addTo(map);
 
         marker.bindPopup(`
@@ -218,7 +274,6 @@ export default function InteractiveMapView({
       }
     });
 
-    // Fit bounds to show all properties if available
     if (markersRef.current.length > 0) {
       const group = new L.featureGroup(markersRef.current);
       map.fitBounds(group.getBounds().pad(0.1));
@@ -226,12 +281,11 @@ export default function InteractiveMapView({
   };
 
   return (
-    <div className="rounded-lg overflow-hidden border border-gray-300">
-      {/* Toolbar: instructions and controls using flex instead of absolute overlays */}
-      <div className="flex items-center justify-between gap-2 p-2 bg-white border-b border-gray-200">
+    <div className="overflow-hidden rounded-lg border border-gray-300">
+      <div className="flex items-center justify-between gap-2 border-b border-gray-200 bg-white p-2">
         {mode === 'edit' ? (
           <div className="flex items-center gap-2 text-sm text-gray-700">
-            <div className="w-3 h-3 bg-blue-600 rounded-full" />
+            <div className="h-3 w-3 rounded-full bg-blue-600" />
             <span>Kliko në hartë për të zgjedhur lokacionin</span>
           </div>
         ) : (
@@ -242,11 +296,13 @@ export default function InteractiveMapView({
           <button
             onClick={() => {
               if (mapInstanceRef.current) {
-                try { mapInstanceRef.current.invalidateSize(); } catch { }
+                try {
+                  mapInstanceRef.current.invalidateSize();
+                } catch {}
                 mapInstanceRef.current.setView(center, zoom, { animate: false });
               }
             }}
-            className="bg-white hover:bg-blue-50 p-2 rounded-md shadow-sm border border-gray-200 transition-colors duration-200"
+            className="rounded-md border border-gray-200 bg-white p-2 shadow-sm transition-colors duration-200 hover:bg-blue-50"
             title="Kthehu në Tiranë"
             aria-label="Centero hartën në Tiranë"
           >
@@ -258,7 +314,7 @@ export default function InteractiveMapView({
               href={`https://www.google.com/maps?q=${selectedLocation.lat},${selectedLocation.lng}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white hover:bg-blue-50 p-2 rounded-md shadow-sm border border-gray-200 transition-colors duration-200"
+              className="rounded-md border border-gray-200 bg-white p-2 shadow-sm transition-colors duration-200 hover:bg-blue-50"
               title="Hap në Google Maps"
               aria-label="Hap në Google Maps"
             >
@@ -268,15 +324,17 @@ export default function InteractiveMapView({
         </div>
       </div>
 
-      {/* Map canvas */}
-      <div ref={mapRef} style={{ height, width: '100%' }} />
+      <div ref={mapRef} style={{ height, minHeight: height, width: '100%' }} />
 
-      {/* Lightweight loading row instead of absolute overlay */}
-      {!isMapReady && (
-        <div className="p-3 text-center text-sm text-gray-600 bg-gray-50 border-t border-gray-200">
+      {mapError ? (
+        <div className="border-t border-red-200 bg-red-50 p-3 text-center text-sm text-red-600">
+          {mapError}
+        </div>
+      ) : !isMapReady ? (
+        <div className="border-t border-gray-200 bg-gray-50 p-3 text-center text-sm text-gray-600">
           Duke ngarkuar hartën...
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

@@ -406,8 +406,8 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
                 mode="edit"
                 selectedLocation={watch('lat') && watch('lng') ? { lat: watch('lat'), lng: watch('lng') } : undefined}
                 onLocationSelect={(lat, lng) => {
-                  setValue('lat', lat);
-                  setValue('lng', lng);
+                  setValue('lat', lat, { shouldDirty: true, shouldValidate: true });
+                  setValue('lng', lng, { shouldDirty: true, shouldValidate: true });
                 }}
                 height="400px"
               />

@@ -479,8 +479,8 @@ export default function NewProperty() {
                     : undefined
                 }
                 onLocationSelect={(lat, lng) => {
-                  setValue("lat", lat);
-                  setValue("lng", lng);
+                  setValue("lat", lat, { shouldDirty: true, shouldValidate: true });
+                  setValue("lng", lng, { shouldDirty: true, shouldValidate: true });
                 }}
                 height="400px"
               />

@@ -144,6 +144,72 @@ export default function Home() {
     );
   }
 
+  const skylineBuildings = [
+    {
+      key: "west-terrace",
+      className:
+        "left-[-3%] w-[18%] h-28 rounded-t-[2.75rem] bg-gradient-to-b from-slate-100/95 to-slate-200/92 shadow-[0_-16px_55px_rgba(148,163,184,0.18)]",
+      windowGrid: "grid-cols-4 grid-rows-2",
+      windowCount: 8,
+      windowTone: "bg-slate-400/35",
+      highlightEvery: 3,
+    },
+    {
+      key: "west-tower",
+      className:
+        "left-[12%] w-[14%] h-44 rounded-t-[2.5rem] bg-gradient-to-b from-blue-50/95 to-blue-100/92 shadow-[0_-22px_60px_rgba(191,219,254,0.26)]",
+      windowGrid: "grid-cols-3 grid-rows-4",
+      windowCount: 12,
+      windowTone: "bg-blue-300/30",
+      highlightEvery: 4,
+    },
+    {
+      key: "mid-rise",
+      className:
+        "left-[25%] w-[12%] h-32 rounded-t-[2.2rem] bg-gradient-to-b from-slate-200/95 to-slate-300/88 shadow-[0_-14px_45px_rgba(148,163,184,0.18)]",
+      windowGrid: "grid-cols-3 grid-rows-3",
+      windowCount: 9,
+      windowTone: "bg-slate-500/20",
+      highlightEvery: 5,
+    },
+    {
+      key: "central-tower",
+      className:
+        "left-[38%] w-[17%] h-52 rounded-t-[3rem] bg-gradient-to-b from-white/95 to-slate-100/90 shadow-[0_-24px_70px_rgba(255,255,255,0.16)]",
+      windowGrid: "grid-cols-4 grid-rows-4",
+      windowCount: 16,
+      windowTone: "bg-slate-400/28",
+      highlightEvery: 3,
+    },
+    {
+      key: "east-mid",
+      className:
+        "right-[26%] w-[13%] h-36 rounded-t-[2.4rem] bg-gradient-to-b from-blue-100/92 to-blue-200/82 shadow-[0_-18px_55px_rgba(191,219,254,0.24)]",
+      windowGrid: "grid-cols-3 grid-rows-3",
+      windowCount: 9,
+      windowTone: "bg-blue-400/22",
+      highlightEvery: 4,
+    },
+    {
+      key: "east-tower",
+      className:
+        "right-[11%] w-[16%] h-48 rounded-t-[3rem] bg-gradient-to-b from-slate-100/95 to-slate-200/90 shadow-[0_-22px_65px_rgba(148,163,184,0.18)]",
+      windowGrid: "grid-cols-4 grid-rows-4",
+      windowCount: 16,
+      windowTone: "bg-slate-400/30",
+      highlightEvery: 5,
+    },
+    {
+      key: "far-east",
+      className:
+        "right-[-2%] w-[17%] h-32 rounded-t-[2.6rem] bg-gradient-to-b from-blue-50/95 to-slate-100/88 shadow-[0_-14px_45px_rgba(191,219,254,0.2)]",
+      windowGrid: "grid-cols-4 grid-rows-2",
+      windowCount: 8,
+      windowTone: "bg-blue-300/25",
+      highlightEvery: 2,
+    },
+  ] as const;
+
   return (
     <Layout variant="homepage">
       <StructuredData type="website" />
@@ -155,18 +221,32 @@ export default function Home() {
           <div className="absolute inset-x-0 top-0 h-px bg-white/10" />
           <div className="absolute left-[8%] top-[16%] h-32 w-32 rounded-full bg-blue-300/10 blur-3xl" />
           <div className="absolute right-[10%] top-[12%] h-40 w-40 rounded-full bg-cyan-300/10 blur-3xl" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-64">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-72">
             <div className="absolute inset-x-0 bottom-0 h-20 bg-slate-50" />
-            <div className="absolute bottom-20 left-[-4%] h-28 w-[26%] rounded-t-[2.5rem] bg-slate-100/95 shadow-[0_-16px_50px_rgba(148,163,184,0.18)]" />
-            <div className="absolute bottom-20 left-[16%] h-40 w-[16%] rounded-t-[2.5rem] bg-blue-50/95 shadow-[0_-24px_60px_rgba(191,219,254,0.2)]" />
-            <div className="absolute bottom-20 left-[29%] h-24 w-[14%] rounded-t-[2rem] bg-slate-200/95" />
-            <div className="absolute bottom-20 left-[42%] h-48 w-[17%] rounded-t-[3rem] bg-white/90 shadow-[0_-24px_70px_rgba(255,255,255,0.14)]" />
-            <div className="absolute bottom-20 right-[28%] h-32 w-[14%] rounded-t-[2.2rem] bg-blue-100/90" />
-            <div className="absolute bottom-20 right-[14%] h-44 w-[18%] rounded-t-[3rem] bg-slate-100/95 shadow-[0_-24px_70px_rgba(148,163,184,0.16)]" />
-            <div className="absolute bottom-20 right-[-3%] h-28 w-[20%] rounded-t-[2.4rem] bg-blue-50/95" />
-            <div className="absolute bottom-40 left-[19%] h-2 w-2 rounded-full bg-white/60" />
-            <div className="absolute bottom-48 left-[48%] h-2 w-2 rounded-full bg-blue-200/70" />
-            <div className="absolute bottom-36 right-[20%] h-2 w-2 rounded-full bg-white/60" />
+            {skylineBuildings.map((building) => (
+              <div
+                key={building.key}
+                className={`absolute bottom-20 overflow-hidden border border-white/18 ${building.className}`}
+              >
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.24),transparent_30%)]" />
+                <div className="absolute inset-x-[17%] top-3 h-[2px] rounded-full bg-white/30" />
+                <div className={`absolute inset-x-[14%] top-6 bottom-6 grid gap-2.5 ${building.windowGrid}`}>
+                  {Array.from({ length: building.windowCount }).map((_, windowIndex) => (
+                    <span
+                      key={`${building.key}-${windowIndex}`}
+                      className={`rounded-[0.4rem] border border-white/12 ${
+                        windowIndex % building.highlightEvery === 0
+                          ? "bg-amber-100/80 shadow-[0_0_14px_rgba(254,240,138,0.35)]"
+                          : building.windowTone
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+            <div className="absolute bottom-44 left-[18%] h-2 w-2 rounded-full bg-white/55 shadow-[0_0_18px_rgba(255,255,255,0.3)]" />
+            <div className="absolute bottom-56 left-[47%] h-2.5 w-2.5 rounded-full bg-blue-200/70 shadow-[0_0_18px_rgba(191,219,254,0.34)]" />
+            <div className="absolute bottom-40 right-[19%] h-2 w-2 rounded-full bg-white/60 shadow-[0_0_18px_rgba(255,255,255,0.3)]" />
           </div>
 
           <div className="relative z-10 container-custom py-20 pb-32 sm:py-32 sm:pb-40">
