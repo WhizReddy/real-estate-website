@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getProperties } from '@/lib/data';
+import { getSiteUrl } from '@/lib/site-url';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
     const properties = await getProperties();
-    const baseUrl = 'https://pasurite-tiranes.al';
+    const baseUrl = getSiteUrl();
     
     // Static pages
     const staticPages = [

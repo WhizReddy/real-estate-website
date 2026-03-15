@@ -281,7 +281,7 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
                 </label>
                 <input
                   type="number"
-                  {...register('price', { required: 'Çmimi është i detyrueshëm', min: 1 })}
+                  {...register('price', { required: 'Çmimi është i detyrueshëm', min: 1, valueAsNumber: true })}
                   className="input-field"
                 />
                 {errors.price && (
@@ -370,7 +370,7 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
                 <input
                   type="number"
                   step="any"
-                  {...register('lat', { required: 'Latitude është e detyrueshme' })}
+                  {...register('lat', { required: 'Latitude është e detyrueshme', valueAsNumber: true })}
                   className="input-field"
                 />
                 {errors.lat && (
@@ -385,7 +385,7 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
                 <input
                   type="number"
                   step="any"
-                  {...register('lng', { required: 'Longitude është e detyrueshme' })}
+                  {...register('lng', { required: 'Longitude është e detyrueshme', valueAsNumber: true })}
                   className="input-field"
                 />
                 {errors.lng && (
@@ -428,7 +428,7 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
                 <input
                   type="number"
                   min="0"
-                  {...register('bedrooms', { min: 0 })}
+                  {...register('bedrooms', { min: 0, valueAsNumber: true })}
                   className="input-field"
                 />
               </div>
@@ -441,7 +441,7 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
                   type="number"
                   min="1"
                   step="0.5"
-                  {...register('bathrooms', { required: 'Numri i banjove është i detyrueshëm', min: 1 })}
+                  {...register('bathrooms', { required: 'Numri i banjove është i detyrueshëm', min: 1, valueAsNumber: true })}
                   className="input-field"
                 />
                 {errors.bathrooms && (
@@ -456,7 +456,7 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
                 <input
                   type="number"
                   min="1"
-                  {...register('squareFootage', { required: 'Sipërfaqja është e detyrueshme', min: 1 })}
+                  {...register('squareFootage', { required: 'Sipërfaqja është e detyrueshme', min: 1, valueAsNumber: true })}
                   className="input-field"
                 />
                 {errors.squareFootage && (
@@ -487,7 +487,7 @@ export default function EditProperty({ params }: { params: Promise<{ id: string 
                   type="number"
                   min="1900"
                   max={new Date().getFullYear()}
-                  {...register('yearBuilt')}
+                  {...register('yearBuilt', { valueAsNumber: true })}
                   className="input-field"
                 />
               </div>

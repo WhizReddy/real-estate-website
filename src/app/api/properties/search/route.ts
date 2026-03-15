@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { transformPropertyRecord } from "@/lib/property-response";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = 'force-dynamic';
@@ -91,47 +92,21 @@ export async function GET(request: NextRequest) {
         orderBy,
         skip,
         take: limit,
+        include: {
+          owner: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              role: true,
+            },
+          },
+        },
       }),
       prisma.property.count({ where }),
     ]);
 
-    // Transform the data to match the expected format
-    const transformedProperties = properties.map((property) => ({
-      id: property.id,
-      title: property.title,
-      description: property.description,
-      price: property.price,
-      address: {
-        street: property.street,
-        city: property.city,
-        state: property.state,
-        zipCode: property.zipCode,
-        coordinates: {
-          lat: property.latitude,
-          lng: property.longitude,
-        },
-      },
-      details: {
-        bedrooms: property.bedrooms,
-        bathrooms: property.bathrooms,
-        squareFootage: property.squareFootage,
-        propertyType: property.propertyType.toLowerCase(),
-        yearBuilt: property.yearBuilt,
-      },
-      images: JSON.parse(property.images || "[]"),
-      features: JSON.parse(property.features || "[]"),
-      status: property.status.toLowerCase(),
-      listingType: property.listingType.toLowerCase(),
-      isPinned: property.isPinned,
-      agent: {
-        id: 'default-agent',
-        name: 'Real Estate Agent',
-        email: 'agent@realestate-tirana.al',
-        phone: '+355 69 123 4567',
-      },
-      createdAt: property.createdAt.toISOString(),
-      updatedAt: property.updatedAt.toISOString(),
-    }));
+    const transformedProperties = properties.map(transformPropertyRecord);
 
     // Calculate pagination info
     const totalPages = Math.ceil(totalCount / limit);

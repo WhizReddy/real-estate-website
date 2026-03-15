@@ -1,12 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
+import { clearCache } from "@/lib/cache";
+import {
+  AuthenticatedRequest,
+  withAgentAuth,
+} from "@/lib/auth-middleware";
+import { transformPropertyRecord } from "@/lib/property-response";
 import { prisma } from "@/lib/prisma";
 import { validatePropertyData } from "@/lib/validation";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { resolveAuthenticatedDbUser } from "@/lib/serverAuth";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
@@ -26,54 +29,7 @@ export async function GET() {
       },
     });
 
-    // Transform the data to match the expected format
-    const transformedProperties = properties.map((property) => {
-      const owner = property.owner;
-
-      return {
-        id: property.id,
-        title: property.title,
-        description: property.description,
-        price: property.price,
-        address: {
-          street: property.street,
-          city: property.city,
-          state: property.state,
-          zipCode: property.zipCode,
-          coordinates: {
-            lat: property.latitude,
-            lng: property.longitude,
-          },
-        },
-        details: {
-          bedrooms: property.bedrooms,
-          bathrooms: property.bathrooms,
-          squareFootage: property.squareFootage,
-          propertyType: property.propertyType.toLowerCase(),
-          yearBuilt: property.yearBuilt,
-        },
-        images: JSON.parse(property.images || "[]"),
-        features: JSON.parse(property.features || "[]"),
-        status: property.status.toLowerCase(),
-        listingType: property.listingType.toLowerCase(),
-        isPinned: property.isPinned,
-        agent: owner
-          ? {
-            id: owner.id,
-            name: owner.name ?? 'Agjent i Pasurive',
-            email: owner.email,
-            role: owner.role.toLowerCase(),
-          }
-          : {
-            id: 'default-agent',
-            name: 'Real Estate Agent',
-            email: 'agent@realestate-tirana.al',
-            role: 'agent',
-          },
-        createdAt: property.createdAt.toISOString(),
-        updatedAt: property.updatedAt.toISOString(),
-      };
-    });
+    const transformedProperties = properties.map(transformPropertyRecord);
 
     return NextResponse.json({ properties: transformedProperties });
   } catch (error) {
@@ -85,30 +41,18 @@ export async function GET() {
   }
 }
 
-
-export async function POST(request: NextRequest) {
+export const POST = withAgentAuth(async (request: AuthenticatedRequest) => {
   try {
-    // Resolve authenticated user (NextAuth session or custom cookie)
-    const { user: dbUser } = await resolveAuthenticatedDbUser(request);
-    const session = await getServerSession(authOptions);
-    console.log('🔐 Session during property creation:', {
-      hasSession: !!session,
-      userId: session?.user?.id,
-      userEmail: session?.user?.email,
-      userRole: session?.user?.role,
-      resolvedDbUserId: dbUser?.id,
-    });
-
-    const ownerIdToUse: string | undefined = dbUser?.id;
+    const ownerIdToUse = request.auth.user.isVirtual
+      ? undefined
+      : request.auth.user.id;
     const data = await request.json();
 
-    // Use comprehensive validation and sanitization
     const validationResult = validatePropertyData(data);
 
     if (!validationResult.isValid) {
-      console.warn('❌ Validation errors during property creation:', validationResult.errors);
       const errorDetails: Record<string, string> = {};
-      validationResult.errors.forEach(error => {
+      validationResult.errors.forEach((error) => {
         errorDetails[error.field] = error.message;
       });
 
@@ -126,7 +70,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Use sanitized data for database insertion
     const sanitizedData = {
       title: validationResult.sanitizedData.title,
       description: validationResult.sanitizedData.description,
@@ -147,17 +90,8 @@ export async function POST(request: NextRequest) {
       status: validationResult.sanitizedData.status.toUpperCase(),
       listingType: validationResult.sanitizedData.listingType.toUpperCase(),
       isPinned: validationResult.sanitizedData.isPinned,
-      // If user is logged in AND maps to a real DB user, associate property with agent/user
       ...(ownerIdToUse ? { ownerId: ownerIdToUse } : {}),
     };
-
-    // For logging, safely read ownerId if present on the object
-    const logOwnerId = (sanitizedData as { ownerId?: string }).ownerId;
-    console.log('📝 Creating property with data:', {
-      hasOwnerId: !!logOwnerId,
-      ownerId: logOwnerId,
-      title: sanitizedData.title,
-    });
 
     const property = await prisma.property.create({
       data: sanitizedData,
@@ -173,54 +107,11 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Transform the response to match expected format
-    const transformedProperty = {
-      id: property.id,
-      title: property.title,
-      description: property.description,
-      price: property.price,
-      address: {
-        street: property.street,
-        city: property.city,
-        state: property.state,
-        zipCode: property.zipCode,
-        coordinates: {
-          lat: property.latitude,
-          lng: property.longitude,
-        },
-      },
-      details: {
-        bedrooms: property.bedrooms,
-        bathrooms: property.bathrooms,
-        squareFootage: property.squareFootage,
-        propertyType: property.propertyType.toLowerCase(),
-        yearBuilt: property.yearBuilt,
-      },
-      images: JSON.parse(property.images || "[]"),
-      features: JSON.parse(property.features || "[]"),
-      status: property.status.toLowerCase(),
-      listingType: property.listingType.toLowerCase(),
-      isPinned: property.isPinned,
-      agent: property.owner
-        ? {
-          id: property.owner.id,
-          name: property.owner.name ?? 'Agjent i Pasurive',
-          email: property.owner.email,
-          role: property.owner.role.toLowerCase(),
-        }
-        : {
-          id: 'default-agent',
-          name: 'Real Estate Agent',
-          email: 'agent@realestate-tirana.al',
-          role: 'agent',
-        },
-      createdAt: property.createdAt.toISOString(),
-      updatedAt: property.updatedAt.toISOString(),
-    };
+    clearCache();
 
     return NextResponse.json({
       success: true,
-      data: transformedProperty,
+      data: transformPropertyRecord(property),
     });
   } catch (error) {
     console.error("Error creating property:", error);
@@ -271,4 +162,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

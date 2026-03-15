@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCachedData } from "@/lib/cache";
+import { transformPropertyRecord } from "@/lib/property-response";
 
 export const dynamic = 'force-dynamic';
 
@@ -50,47 +51,7 @@ export async function GET(request: Request) {
     const hasMore = page < totalPages;
 
     // Transform the data to match the expected format
-    const transformedProperties = properties.map((property) => ({
-      id: property.id,
-      title: property.title,
-      description: property.description,
-      price: property.price,
-      address: {
-        street: property.street,
-        city: property.city,
-        state: property.state,
-        zipCode: property.zipCode,
-        coordinates: {
-          lat: property.latitude,
-          lng: property.longitude,
-        },
-      },
-      details: {
-        bedrooms: property.bedrooms,
-        bathrooms: property.bathrooms,
-        squareFootage: property.squareFootage,
-        propertyType: property.propertyType.toLowerCase(),
-        yearBuilt: property.yearBuilt,
-      },
-      images: JSON.parse(property.images || "[]"),
-      features: JSON.parse(property.features || "[]"),
-      status: property.status.toLowerCase(),
-      listingType: property.listingType.toLowerCase(),
-      isPinned: property.isPinned,
-      agent: property.owner ? {
-        id: property.owner.id,
-        name: property.owner.name || 'Real Estate Agent',
-        email: property.owner.email,
-        phone: '+355 69 123 4567',
-      } : {
-        id: 'default-agent',
-        name: 'Real Estate Agent',
-        email: 'agent@realestate-tirana.al',
-        phone: '+355 69 123 4567',
-      },
-      createdAt: property.createdAt.toISOString(),
-      updatedAt: property.updatedAt.toISOString(),
-    }));
+    const transformedProperties = properties.map(transformPropertyRecord);
 
     return NextResponse.json({
       success: true,

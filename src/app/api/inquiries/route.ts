@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { withAgentAuth, AuthenticatedRequest } from '@/lib/auth-middleware';
 import { prisma } from '@/lib/prisma';
 
 // Validation schema for inquiry creation
@@ -12,7 +13,7 @@ const InquirySchema = z.object({
 });
 
 // GET /api/inquiries - Get all inquiries (for admin)
-export async function GET(request: NextRequest) {
+export const GET = withAgentAuth(async (request: AuthenticatedRequest) => {
   try {
     const { searchParams } = new URL(request.url);
 
@@ -70,7 +71,7 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});
 
 // POST /api/inquiries - Create a new inquiry
 export async function POST(request: NextRequest) {

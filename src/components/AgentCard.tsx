@@ -1,9 +1,8 @@
 "use client";
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { Agent } from '@/types';
-import { Phone, Mail, Star, MapPin } from 'lucide-react';
+import { Phone, Mail, Star } from 'lucide-react';
 
 interface AgentCardProps {
   agent: Agent;
@@ -37,7 +36,7 @@ export default function AgentCard({
               sizes="48px"
             />
           ) : (
-            <div className="w-full h-full bg-white flex items-center justify-center text-white font-semibold text-sm">
+            <div className="flex h-full w-full items-center justify-center bg-blue-600 text-sm font-semibold text-white">
               {agent.name.split(' ').map(n => n[0]).join('')}
             </div>
           )}
@@ -85,7 +84,7 @@ export default function AgentCard({
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-white">
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-700 via-blue-600 to-slate-900 text-white">
             <div className="text-center">
               <div className="text-4xl font-bold mb-2">
                 {agent.name.split(' ').map(n => n[0]).join('')}

@@ -147,7 +147,7 @@ ${JSON.stringify(bugReport, null, 2)}
             <div className="space-y-3">
               <button
                 onClick={this.handleRetry}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
+                className="w-full flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition-colors hover:bg-blue-700"
               >
                 <RefreshCw className="h-4 w-4" />
                 Provo Përsëri

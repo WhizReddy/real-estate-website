@@ -27,9 +27,10 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
+        const allowDemoAuth = process.env.NODE_ENV !== "production";
 
         // Demo mode - allow quick testing without database
-        if (credentials.email === "demo@admin.com" && credentials.password === "demo123") {
+        if (allowDemoAuth && credentials.email === "demo@admin.com" && credentials.password === "demo123") {
           return {
             id: "demo-admin",
             email: "demo@admin.com",
@@ -74,7 +75,7 @@ export const authOptions: NextAuthOptions = {
           console.error("Authentication error:", error);
 
           // Fallback demo credentials if database is not available
-          if (credentials.email === "admin@example.com" && credentials.password === "admin123") {
+          if (allowDemoAuth && credentials.email === "admin@example.com" && credentials.password === "admin123") {
             return {
               id: "fallback-admin",
               email: "admin@example.com",

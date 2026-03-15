@@ -1127,13 +1127,15 @@ export default function FullMapView({
                   </div>
                 </div>
                 <div className="flex gap-2 mt-3">
-                  <a
-                    href={`tel:${selectedProperty.agent.phone}`}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
-                  >
-                    <Phone className="h-4 w-4" />
-                    Telefono
-                  </a>
+                  {selectedProperty.agent.phone && (
+                    <a
+                      href={`tel:${selectedProperty.agent.phone}`}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+                    >
+                      <Phone className="h-4 w-4" />
+                      Telefono
+                    </a>
+                  )}
                   <a
                     href={`mailto:${selectedProperty.agent.email}`}
                     className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm"
@@ -1150,7 +1152,7 @@ export default function FullMapView({
               <div className="space-y-2">
                 <Link
                   href={`/properties/${selectedProperty.id}`}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all font-medium text-sm"
+                  className="w-full flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-3 font-medium text-white transition-colors hover:bg-blue-700 text-sm"
                 >
                   📋 Shiko Detajet e Plota
                 </Link>
@@ -1158,7 +1160,7 @@ export default function FullMapView({
                   href={`https://www.google.com/maps/dir/?api=1&destination=${selectedProperty.address.coordinates.lat},${selectedProperty.address.coordinates.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white text-white rounded-md hover:from-green-700 hover:to-green-800 transition-all font-medium text-sm"
+                  className="w-full flex items-center justify-center gap-2 rounded-md bg-emerald-600 px-4 py-3 font-medium text-white transition-colors hover:bg-emerald-700 text-sm"
                 >
                   <Navigation className="h-4 w-4" />
                   Navigim
@@ -1270,13 +1272,15 @@ export default function FullMapView({
                   </div>
                 </div>
                 <div className="flex gap-1 mt-2">
-                  <a
-                    href={`tel:${selectedProperty.agent.phone}`}
-                    className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition-colors"
-                  >
-                    <Phone className="h-3 w-3" />
-                    Telefono
-                  </a>
+                  {selectedProperty.agent.phone && (
+                    <a
+                      href={`tel:${selectedProperty.agent.phone}`}
+                      className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition-colors"
+                    >
+                      <Phone className="h-3 w-3" />
+                      Telefono
+                    </a>
+                  )}
                   <a
                     href={`mailto:${selectedProperty.agent.email}`}
                     className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 border border-gray-300 text-gray-700 rounded text-xs hover:bg-gray-50 transition-colors"
@@ -1293,7 +1297,7 @@ export default function FullMapView({
               <div className="space-y-2">
                 <Link
                   href={`/properties/${selectedProperty.id}`}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white text-white rounded text-sm hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
+                  className="w-full flex items-center justify-center gap-2 rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                 >
                   📋 Shiko Detajet
                 </Link>
@@ -1301,7 +1305,7 @@ export default function FullMapView({
                   href={`https://www.google.com/maps/dir/?api=1&destination=${selectedProperty.address.coordinates.lat},${selectedProperty.address.coordinates.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white text-white rounded text-sm hover:from-green-700 hover:to-green-800 transition-all font-medium"
+                  className="w-full flex items-center justify-center gap-2 rounded bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-700"
                 >
                   <Navigation className="h-3 w-3" />
                   Navigim
@@ -1339,7 +1343,7 @@ export default function FullMapView({
             </p>
             <button
               onClick={handleRetry}
-              className="inline-flex items-center px-4 py-2 bg-white text-white rounded-md hover:from-blue-700 hover:to-blue-800 transition-all"
+              className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
             >
               <RefreshCw className="h-4 w-4 mr-2" />
               Provo Përsëri

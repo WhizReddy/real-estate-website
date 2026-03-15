@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 import { Property } from '@/types';
+import { getSiteUrl } from './site-url';
 
-const baseUrl = 'https://pasurite-tiranes.al';
+const baseUrl = getSiteUrl();
 const siteName = 'Pasuritë e Tiranës';
 const defaultDescription = 'Platforma më e mirë për blerjen dhe qiranë e pasurive të patundshme në Tiranë dhe Shqipëri. Gjeni shtëpi, apartamente dhe pasuri komerciale me çmime konkurruese.';
 

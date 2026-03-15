@@ -68,18 +68,29 @@ export default function InquiriesPage() {
     };
   }, [router]);
 
-  const handleDeleteInquiry = (inquiryId: string) => {
-    if (confirm('Jeni të sigurt që doni të fshini këtë pyetje?')) {
-      // In a real app, this would delete from the database
+  const handleDeleteInquiry = async (inquiryId: string) => {
+    if (!confirm('Jeni të sigurt që doni të fshini këtë pyetje?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/inquiries/${inquiryId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete inquiry');
+      }
+
       const updatedInquiries = inquiries.filter(inquiry => inquiry.id !== inquiryId);
       setInquiries(updatedInquiries);
-
-      // Update localStorage
-      localStorage.setItem('inquiries', JSON.stringify(updatedInquiries));
 
       if (selectedInquiry?.id === inquiryId) {
         setSelectedInquiry(null);
       }
+    } catch (error) {
+      console.error('Error deleting inquiry:', error);
+      alert('Gabim gjatë fshirjes së pyetjes. Ju lutem provoni përsëri.');
     }
   };
 

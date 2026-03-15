@@ -1,12 +1,13 @@
 import { MetadataRoute } from 'next';
 import { getProperties } from '@/lib/data';
+import { getSiteUrl } from '@/lib/site-url';
 
 // Make sitemap dynamic instead of static
 export const dynamic = 'force-dynamic';
 export const revalidate = 3600; // Revalidate every hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://pasurite-tiranes.al';
+  const baseUrl = getSiteUrl();
   
   // Get all properties for dynamic routes
   const properties = await getProperties();

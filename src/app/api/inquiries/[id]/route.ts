@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import { withAgentAuth, AuthenticatedRequest } from '@/lib/auth-middleware';
 import { prisma } from '@/lib/prisma';
 
 // Validation schema for inquiry updates
@@ -8,10 +9,10 @@ const InquiryUpdateSchema = z.object({
 });
 
 // GET /api/inquiries/[id] - Get a single inquiry
-export async function GET(
-  request: NextRequest,
+export const GET = withAgentAuth(async (
+  request: AuthenticatedRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   try {
     const { id } = await params;
     const inquiry = await prisma.inquiry.findUnique({
@@ -44,13 +45,13 @@ export async function GET(
       { status: 500 }
     );
   }
-}
+});
 
 // PUT /api/inquiries/[id] - Update an inquiry (mainly for status updates)
-export async function PUT(
-  request: NextRequest,
+export const PUT = withAgentAuth(async (
+  request: AuthenticatedRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   try {
     const { id } = await params;
     const body = await request.json();
@@ -101,13 +102,13 @@ export async function PUT(
       { status: 500 }
     );
   }
-}
+});
 
 // DELETE /api/inquiries/[id] - Delete an inquiry
-export async function DELETE(
-  request: NextRequest,
+export const DELETE = withAgentAuth(async (
+  request: AuthenticatedRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   try {
     const { id } = await params;
     // Check if inquiry exists
@@ -137,4 +138,4 @@ export async function DELETE(
       { status: 500 }
     );
   }
-}
+});

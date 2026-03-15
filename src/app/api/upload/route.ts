@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
+import { withAgentAuth, AuthenticatedRequest } from '@/lib/auth-middleware';
 
-export async function POST(request: NextRequest) {
+export const POST = withAgentAuth(async (request: AuthenticatedRequest) => {
   try {
     console.log('Upload request received');
     console.log('BLOB_READ_WRITE_TOKEN exists:', !!process.env.BLOB_READ_WRITE_TOKEN);
@@ -122,7 +123,7 @@ export async function POST(request: NextRequest) {
       { status: statusCode }
     );
   }
-}
+});
 
 // Set runtime to nodejs for fs access
 export const runtime = 'nodejs';

@@ -29,8 +29,9 @@ export interface Property {
     id: string;
     name: string;
     email: string;
-    phone: string;
+    phone?: string;
     photo?: string;
+    role?: string;
   };
   createdAt: string;
   updatedAt: string;

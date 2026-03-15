@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { transformPropertyRecord } from '@/lib/property-response';
 import { Property } from '@/types';
 
 /**
@@ -7,49 +8,7 @@ import { Property } from '@/types';
  */
 
 function transformProperty(dbProperty: any): Property {
-    return {
-        id: dbProperty.id,
-        title: dbProperty.title,
-        description: dbProperty.description,
-        price: dbProperty.price,
-        address: {
-            street: dbProperty.street,
-            city: dbProperty.city,
-            state: dbProperty.state,
-            zipCode: dbProperty.zipCode,
-            coordinates: {
-                lat: dbProperty.latitude,
-                lng: dbProperty.longitude,
-            },
-        },
-        details: {
-            bedrooms: dbProperty.bedrooms,
-            bathrooms: dbProperty.bathrooms,
-            squareFootage: dbProperty.squareFootage,
-            propertyType: dbProperty.propertyType.toLowerCase(),
-            yearBuilt: dbProperty.yearBuilt,
-        },
-        images: JSON.parse(dbProperty.images || '[]'),
-        features: JSON.parse(dbProperty.features || '[]'),
-        status: dbProperty.status.toLowerCase() as Property['status'],
-        listingType: dbProperty.listingType.toLowerCase() as 'sale' | 'rent',
-        isPinned: dbProperty.isPinned,
-        agent: dbProperty.owner
-            ? {
-                id: dbProperty.owner.id,
-                name: dbProperty.owner.name || 'Real Estate Agent',
-                email: dbProperty.owner.email,
-                phone: '+355 69 123 4567',
-            }
-            : {
-                id: 'default-agent',
-                name: 'Real Estate Agent',
-                email: 'agent@realestate-tirana.al',
-                phone: '+355 69 123 4567',
-            },
-        createdAt: dbProperty.createdAt.toISOString(),
-        updatedAt: dbProperty.updatedAt.toISOString(),
-    };
+    return transformPropertyRecord(dbProperty);
 }
 
 export async function getPropertyDirect(id: string): Promise<Property | null> {

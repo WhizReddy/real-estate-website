@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { withAdminAuth } from "@/lib/auth-middleware";
+import {
+  AuthenticatedRequest,
+  withAdminAuth,
+} from "@/lib/auth-middleware";
 
 /*
  * Single Agent API
@@ -134,10 +137,10 @@ export const DELETE = withAdminAuth(async (
 });
 
 // GET /api/agents/[id]
-export async function GET(
-  request: NextRequest,
+export const GET = withAdminAuth(async (
+  request: AuthenticatedRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   try {
     const { id: agentId } = await params;
     if (!agentId) {
@@ -197,4 +200,4 @@ export async function GET(
       { status: 500 }
     );
   }
-}
+});

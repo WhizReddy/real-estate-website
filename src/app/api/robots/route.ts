@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import { getSiteUrl } from '@/lib/site-url';
 
 export async function GET() {
-  const baseUrl = 'https://pasurite-tiranes.al';
+  const baseUrl = getSiteUrl();
+  const host = new URL(baseUrl).host;
   
   const robots = `User-agent: *
 Allow: /
@@ -51,7 +53,7 @@ User-agent: DotBot
 Disallow: /
 
 # Host directive (helps with canonicalization)
-Host: ${baseUrl}`;
+Host: ${host}`;
 
   return new NextResponse(robots, {
     headers: {

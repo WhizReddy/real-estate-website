@@ -295,7 +295,7 @@ export default function MapView({
           // Create mobile-friendly marker icon
           const markerIcon = L.divIcon({
             html: `
-              <div class="property-marker bg-white text-white px-2 py-1 rounded-lg text-xs font-semibold shadow-lg border-2 border-white cursor-pointer">
+              <div class="property-marker bg-blue-600 text-white px-2 py-1 rounded-lg text-xs font-semibold shadow-lg border-2 border-white cursor-pointer">
                 ${formatPrice(property.price)}
               </div>
             `,

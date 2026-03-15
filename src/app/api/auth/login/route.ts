@@ -7,6 +7,7 @@ export const runtime = "nodejs";
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
+    const allowDemoAuth = process.env.NODE_ENV !== "production";
 
     if (!email || !password) {
       return NextResponse.json(
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest) {
 
     const normalizedEmail = String(email).toLowerCase().trim();
 
-    if (normalizedEmail === "demo@admin.com" && password === "demo123") {
+    if (allowDemoAuth && normalizedEmail === "demo@admin.com" && password === "demo123") {
       const demoToken = `session_demo-admin_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 
       const demoResponse = NextResponse.json({

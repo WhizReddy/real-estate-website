@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { del } from '@vercel/blob';
+import { withAgentAuth, AuthenticatedRequest } from '@/lib/auth-middleware';
 
-export async function DELETE(request: NextRequest) {
+export const DELETE = withAgentAuth(async (request: AuthenticatedRequest) => {
   try {
     const { searchParams } = new URL(request.url);
     const url = searchParams.get('url');
@@ -35,4 +36,4 @@ export async function DELETE(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

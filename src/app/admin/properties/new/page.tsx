@@ -203,19 +203,24 @@ export default function NewProperty() {
   };
 
   return (
-    <div className="min-h-full bg-[var(--background)]">
+    <div className="min-h-full bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.12),_transparent_28%),linear-gradient(180deg,_#f8fafc_0%,_#eff6ff_100%)]">
       {/* Header */}
-      <header className="bg-white shadow-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <header className="bg-gradient-to-r from-slate-950 via-blue-900 to-blue-700 shadow-2xl">
+        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center">
             <button
               onClick={() => handleNavigation("/admin/dashboard")}
-              className="flex items-center text-blue-100 hover:text-white mr-6 transition-colors duration-200"
+              className="mr-4 inline-flex items-center rounded-full border border-white/15 bg-white/10 px-4 py-2 text-blue-50 transition-colors duration-200 hover:bg-white/20 hover:text-white"
             >
               <ArrowLeft className="h-5 w-5 mr-2" />
               <span className="font-medium">Kthehu</span>
             </button>
-            <h1 className="text-3xl font-bold text-white">Shto Pasuri të Re</h1>
+            <div>
+              <p className="text-sm uppercase tracking-[0.24em] text-blue-100/80">
+                Paneli i administrimit
+              </p>
+              <h1 className="text-3xl font-bold text-white">Shto Pasuri të Re</h1>
+            </div>
           </div>
         </div>
       </header>
@@ -223,12 +228,12 @@ export default function NewProperty() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* Basic Information */}
-          <div className="card p-8 border-none">
+          <div className="card border border-slate-200/80 bg-white p-8 shadow-lg shadow-slate-200/60">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4">
+              <div className="mr-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/20">
                 <span className="text-white font-bold text-lg">1</span>
               </div>
-              <h2 className="text-2xl font-bold bg-white bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold text-slate-900">
                 Informacione Bazë
               </h2>
             </div>
@@ -289,6 +294,7 @@ export default function NewProperty() {
                   {...register("price", {
                     required: "Çmimi është i detyrueshëm",
                     min: { value: 1, message: "Çmimi duhet të jetë më i madh se 0" },
+                    valueAsNumber: true,
                   })}
                   className="input-field"
                   placeholder="120000"
@@ -316,12 +322,12 @@ export default function NewProperty() {
           </div>
 
           {/* Images */}
-          <div className="card p-8 border-none">
+          <div className="card border border-slate-200/80 bg-white p-8 shadow-lg shadow-slate-200/60">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4">
+              <div className="mr-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/20">
                 <span className="text-white font-bold text-lg">2</span>
               </div>
-              <h2 className="text-2xl font-bold bg-white bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold text-slate-900">
                 Imazhet e Pasurisë *
               </h2>
             </div>
@@ -334,12 +340,12 @@ export default function NewProperty() {
           </div>
 
           {/* Address */}
-          <div className="card p-8 border-none">
+          <div className="card border border-slate-200/80 bg-white p-8 shadow-lg shadow-slate-200/60">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4">
+              <div className="mr-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/20">
                 <span className="text-white font-bold text-lg">3</span>
               </div>
-              <h2 className="text-2xl font-bold bg-white bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold text-slate-900">
                 Adresa dhe Lokacioni
               </h2>
             </div>
@@ -422,6 +428,7 @@ export default function NewProperty() {
                   step="any"
                   {...register("lat", {
                     required: "Latitude është e detyrueshme",
+                    valueAsNumber: true,
                   })}
                   className="input-field"
                   placeholder="41.3275"
@@ -442,6 +449,7 @@ export default function NewProperty() {
                   step="any"
                   {...register("lng", {
                     required: "Longitude është e detyrueshme",
+                    valueAsNumber: true,
                   })}
                   className="input-field"
                   placeholder="19.8187"
@@ -480,12 +488,12 @@ export default function NewProperty() {
           </div>
 
           {/* Property Details */}
-          <div className="card p-8 border-none">
+          <div className="card border border-slate-200/80 bg-white p-8 shadow-lg shadow-slate-200/60">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4">
+              <div className="mr-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/20">
                 <span className="text-white font-bold text-lg">4</span>
               </div>
-              <h2 className="text-2xl font-bold bg-white bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold text-slate-900">
                 Detajet e Pasurisë
               </h2>
             </div>
@@ -498,7 +506,7 @@ export default function NewProperty() {
                 <input
                   type="number"
                   min="0"
-                  {...register("bedrooms", { min: 0 })}
+                  {...register("bedrooms", { min: 0, valueAsNumber: true })}
                   className="input-field"
                   placeholder="2"
                 />
@@ -515,6 +523,7 @@ export default function NewProperty() {
                   {...register("bathrooms", {
                     required: "Numri i banjove është i detyrueshëm",
                     min: 1,
+                    valueAsNumber: true,
                   })}
                   className="input-field"
                   placeholder="1"
@@ -536,6 +545,7 @@ export default function NewProperty() {
                   {...register("squareFootage", {
                     required: "Sipërfaqja është e detyrueshme",
                     min: 1,
+                    valueAsNumber: true,
                   })}
                   className="input-field"
                   placeholder="85"
@@ -570,7 +580,7 @@ export default function NewProperty() {
                   type="number"
                   min="1900"
                   max={new Date().getFullYear()}
-                  {...register("yearBuilt")}
+                  {...register("yearBuilt", { valueAsNumber: true })}
                   className="input-field"
                   placeholder="2018"
                 />
@@ -594,9 +604,9 @@ export default function NewProperty() {
           </div>
 
           {/* Features */}
-          <div className="card p-8 border-none">
+          <div className="card border border-slate-200/80 bg-white p-8 shadow-lg shadow-slate-200/60">
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4">
+              <div className="mr-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/20">
                 <span className="text-white font-bold text-lg">5</span>
               </div>
               <h2 className="text-2xl font-bold text-[var(--foreground)]">
@@ -622,7 +632,7 @@ export default function NewProperty() {
               <button
                 type="button"
                 onClick={addFeature}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+                className="btn-primary rounded-xl px-4 py-2"
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -648,7 +658,7 @@ export default function NewProperty() {
           </div>
 
           {/* Settings */}
-          <div className="card p-6 border-none">
+          <div className="card border border-slate-200/80 bg-white p-6 shadow-lg shadow-slate-200/60">
             <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">
               Cilësimet
             </h2>
@@ -670,14 +680,14 @@ export default function NewProperty() {
             <button
               type="button"
               onClick={() => handleNavigation("/admin/dashboard")}
-              className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              className="btn-secondary px-6 py-2"
             >
               Anulo
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary px-6 py-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting ? "Duke ruajtur..." : "Ruaj Pasurinë"}
             </button>

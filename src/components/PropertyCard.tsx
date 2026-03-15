@@ -1,8 +1,7 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { Property } from '@/types';
 import { formatPrice, formatAddress } from '@/lib/utils';
-import { Bed, Bath, Square, MapPin, Star, Map, Navigation, Phone, Mail } from 'lucide-react';
+import { Bed, Bath, Square, MapPin, Star, Navigation, Phone, Mail } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 const PropertyImageGallery = dynamic(() => import('./PropertyImageGallery'), { ssr: false });
@@ -114,7 +113,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           {property.agent && (
             <div className="mb-4">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white">
                   {property.agent.name.split(' ').map(n => n[0]).join('')}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -126,18 +125,20 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
                   </p>
                 </div>
                 <div className="flex space-x-1">
-                  <button
-                    aria-label={`Call ${property.agent.name}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      window.location.href = `tel:${property.agent.phone}`;
-                    }}
-                    className="p-1.5 text-primary hover:bg-primary/10 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                    title="Call agent"
-                  >
-                    <Phone className="h-4 w-4" />
-                  </button>
+                  {property.agent.phone && (
+                    <button
+                      aria-label={`Call ${property.agent.name}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.location.href = `tel:${property.agent?.phone}`;
+                      }}
+                      className="p-1.5 text-primary hover:bg-primary/10 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      title="Call agent"
+                    >
+                      <Phone className="h-4 w-4" />
+                    </button>
+                  )}
                   <button
                     aria-label={`Email ${property.agent.name}`}
                     onClick={(e) => {
