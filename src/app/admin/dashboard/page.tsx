@@ -506,7 +506,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Results Summary */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-xl font-semibold text-[var(--foreground)]">
               Pasuritë ({properties.length} nga {allProperties.length})
@@ -522,7 +522,7 @@ export default function AdminDashboard() {
         {/* Properties Table */}
         <div className="card overflow-hidden border-none text-[var(--foreground)]">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 ">
+            <table className="min-w-[840px] w-full divide-y divide-gray-200 ">
               <thead className="bg-slate-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-slate-500  uppercase tracking-wider">

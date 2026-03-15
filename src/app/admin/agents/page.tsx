@@ -241,7 +241,7 @@ export default function AgentsPage() {
               <h2 className="text-lg font-semibold text-[var(--foreground)]">Lista e Agjentëve</h2>
             </div>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 ">
+              <table className="min-w-[820px] w-full divide-y divide-gray-200 ">
                 <thead className="bg-slate-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500  uppercase tracking-wider">
@@ -335,7 +335,7 @@ export default function AgentsPage() {
         {/* Add Agent Modal */}
         {showAddForm && (
           <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border border-gray-200  w-96 shadow-lg rounded-md bg-[var(--background)] text-[var(--foreground)]">
+            <div className="relative top-20 mx-auto w-[calc(100%-2rem)] max-w-md rounded-md border border-gray-200 bg-[var(--background)] p-5 text-[var(--foreground)] shadow-lg">
               <div className="mt-3">
                 <h3 className="text-lg font-medium text-[var(--foreground)] mb-4">Shto Agjent të Ri</h3>
                 <form onSubmit={handleAddAgent} className="space-y-4">

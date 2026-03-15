@@ -150,33 +150,41 @@ export default function Home() {
       <StructuredData type="organization" />
 
       <main className="w-full relative">
-        {/* Hero - white apartments + blue sky */}
-        <header
-          className="relative overflow-hidden min-h-[640px] flex items-center"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, rgba(10,30,80,0.75) 0%, rgba(10,30,80,0.35) 50%, rgba(10,30,80,0.1) 100%),
-              url('/images/hero-bg.png')
-            `,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center bottom',
-            backgroundRepeat: 'no-repeat',
-          }}
-        >
-          <div className="relative z-10 container-custom py-16 sm:py-32">
+        <header className="relative isolate flex min-h-[680px] items-center overflow-hidden bg-[linear-gradient(180deg,#07111f_0%,#0d2140_48%,#1f4f89_100%)]">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(147,197,253,0.25),_transparent_24%),radial-gradient(circle_at_left_center,_rgba(56,189,248,0.14),_transparent_28%),linear-gradient(180deg,_transparent_0%,_rgba(2,6,23,0.18)_100%)]" />
+          <div className="absolute inset-x-0 top-0 h-px bg-white/10" />
+          <div className="absolute left-[8%] top-[16%] h-32 w-32 rounded-full bg-blue-300/10 blur-3xl" />
+          <div className="absolute right-[10%] top-[12%] h-40 w-40 rounded-full bg-cyan-300/10 blur-3xl" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-64">
+            <div className="absolute inset-x-0 bottom-0 h-20 bg-slate-50" />
+            <div className="absolute bottom-20 left-[-4%] h-28 w-[26%] rounded-t-[2.5rem] bg-slate-100/95 shadow-[0_-16px_50px_rgba(148,163,184,0.18)]" />
+            <div className="absolute bottom-20 left-[16%] h-40 w-[16%] rounded-t-[2.5rem] bg-blue-50/95 shadow-[0_-24px_60px_rgba(191,219,254,0.2)]" />
+            <div className="absolute bottom-20 left-[29%] h-24 w-[14%] rounded-t-[2rem] bg-slate-200/95" />
+            <div className="absolute bottom-20 left-[42%] h-48 w-[17%] rounded-t-[3rem] bg-white/90 shadow-[0_-24px_70px_rgba(255,255,255,0.14)]" />
+            <div className="absolute bottom-20 right-[28%] h-32 w-[14%] rounded-t-[2.2rem] bg-blue-100/90" />
+            <div className="absolute bottom-20 right-[14%] h-44 w-[18%] rounded-t-[3rem] bg-slate-100/95 shadow-[0_-24px_70px_rgba(148,163,184,0.16)]" />
+            <div className="absolute bottom-20 right-[-3%] h-28 w-[20%] rounded-t-[2.4rem] bg-blue-50/95" />
+            <div className="absolute bottom-40 left-[19%] h-2 w-2 rounded-full bg-white/60" />
+            <div className="absolute bottom-48 left-[48%] h-2 w-2 rounded-full bg-blue-200/70" />
+            <div className="absolute bottom-36 right-[20%] h-2 w-2 rounded-full bg-white/60" />
+          </div>
+
+          <div className="relative z-10 container-custom py-20 pb-32 sm:py-32 sm:pb-40">
             <div className="w-full sm:max-w-5xl md:max-w-6xl mx-auto text-center sm:text-left">
-              <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-blue-200 text-sm font-semibold mb-6">
+              <div className="mb-6 inline-flex items-center rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-blue-100 backdrop-blur-sm">
                 <HomeIcon className="h-4 w-4 mr-2" />
                 {t('exclusiveAgency')}
               </div>
               <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight">
-                {/* Split translation string to emphasise last words */}
                 {t('findYourPerfectHome').split(' ')[0]}{' '}
-                <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(90deg, #60a5fa, #a78bfa)' }}>
+                <span
+                  className="text-transparent bg-clip-text"
+                  style={{ backgroundImage: 'linear-gradient(90deg, #93c5fd, #e0f2fe)' }}
+                >
                   {t('findYourPerfectHome').split(' ').slice(1).join(' ')}
                 </span>
               </h1>
-              <p className="text-lg sm:text-xl md:text-2xl text-blue-100/80 mb-10 leading-relaxed break-words w-full sm:max-w-3xl mx-auto sm:mx-0">
+              <p className="mb-10 w-full break-words text-lg leading-relaxed text-blue-100/80 sm:mx-0 sm:max-w-3xl sm:text-xl md:text-2xl">
                 {t('heroDescription')}
               </p>
 
@@ -196,25 +204,18 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* Trust badges — glassmorphism cards */}
-              <div className="mt-14 flex flex-wrap justify-center sm:justify-start gap-y-4">
-                <div className="w-1/2 sm:w-auto px-2">
-                  <div className="px-5 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 text-center">
-                    <div className="text-xl font-bold text-white">{allProperties.length}+</div>
-                    <div className="text-xs text-blue-200/70 whitespace-nowrap">{t('activeProperties')}</div>
-                  </div>
+              <div className="mt-14 grid w-full max-w-2xl grid-cols-1 gap-3 sm:mx-0 sm:grid-cols-3 sm:gap-4">
+                <div className="rounded-2xl border border-white/15 bg-white/10 px-5 py-4 text-center backdrop-blur-sm">
+                    <div className="text-xl font-bold text-white">{totalProperties || allProperties.length}+</div>
+                    <div className="mt-1 text-xs leading-tight text-blue-100/75">{t('activeProperties')}</div>
                 </div>
-                <div className="w-1/2 sm:w-auto px-2">
-                  <div className="px-5 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 text-center">
+                <div className="rounded-2xl border border-white/15 bg-white/10 px-5 py-4 text-center backdrop-blur-sm">
                     <div className="text-xl font-bold text-white">5★</div>
-                    <div className="text-xs text-blue-200/70 whitespace-nowrap">{t('reliability')}</div>
-                  </div>
+                    <div className="mt-1 text-xs leading-tight text-blue-100/75">{t('reliability')}</div>
                 </div>
-                <div className="w-full sm:w-auto px-2">
-                  <div className="px-5 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 text-center">
+                <div className="rounded-2xl border border-white/15 bg-white/10 px-5 py-4 text-center backdrop-blur-sm">
                     <div className="text-xl font-bold text-white">24/7</div>
-                    <div className="text-xs text-blue-200/70 whitespace-nowrap">{t('support')}</div>
-                  </div>
+                    <div className="mt-1 text-xs leading-tight text-blue-100/75">{t('support')}</div>
                 </div>
               </div>
             </div>
