@@ -190,15 +190,6 @@ function runPerformanceTests() {
   console.log('\n⚡ Running Performance Tests...');
   
   try {
-    // Check if performance test page exists
-    const perfTestPath = path.join(__dirname, '../app/test-performance/page.tsx');
-    if (fs.existsSync(perfTestPath)) {
-      console.log('   ✅ Performance test page available');
-      console.log('   📊 Run `npm run dev` and visit /test-performance for interactive testing');
-    } else {
-      console.log('   ⚠️  Performance test page not found');
-    }
-    
     // Basic performance checks
     console.log('   🔍 Checking bundle size...');
     const buildOutput = execSync('npm run build', { encoding: 'utf8', stdio: 'pipe' });

@@ -35,6 +35,61 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
       : 'sq';
   const t = (key: string) => getTranslation(key, locale);
 
+  const buildPropertyPopup = (property: Property) => {
+    const coords = property.address.coordinates;
+    const pills = [
+      property.details.bedrooms > 0
+        ? `<span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">${property.details.bedrooms} ${t('bedrooms')}</span>`
+        : '',
+      `<span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">${property.details.bathrooms} ${t('bathrooms')}</span>`,
+      `<span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">${property.details.squareFootage} ${t('squareMeters')}</span>`,
+    ]
+      .filter(Boolean)
+      .join('');
+
+    return `
+      <div class="map-popup-card min-w-[220px] max-w-[280px]">
+        <div class="border-b border-slate-200 pb-3">
+          <span class="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-blue-700">
+            ${property.details.propertyType}
+          </span>
+          <h3 class="mt-2 text-sm font-bold leading-snug text-slate-900">${property.title}</h3>
+          <p class="mt-1 text-base font-extrabold text-blue-600">${formatPrice(property.price)}</p>
+          <p class="mt-1 text-xs text-slate-500">${property.address.street}, ${property.address.city}</p>
+        </div>
+        <div class="mt-3 flex flex-wrap gap-2">
+          ${pills}
+        </div>
+        <div class="mt-4 space-y-2">
+          <a
+            href="/properties/${property.id}"
+            class="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white no-underline shadow-sm transition-colors hover:bg-blue-700"
+          >
+            ${t('viewDetails')}
+          </a>
+          <div class="grid grid-cols-2 gap-2">
+            <a
+              href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coords.lat},${coords.lng}"
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 no-underline transition-colors hover:bg-slate-50"
+            >
+              ${t('streetView')}
+            </a>
+            <a
+              href="https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}"
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 no-underline transition-colors hover:bg-slate-50"
+            >
+              ${t('directions')}
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
   // Cleanup function to properly destroy the map instance and remove layers.
   const cleanupMap = useCallback(() => {
     if (mapInstanceRef.current) {
@@ -357,26 +412,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
               }).addTo(map);
               const coords = property.address.coordinates;
               marker.bindPopup(
-                `
-                <div class="p-[var(--spacing-md)] min-w-[240px] max-w-[280px]">
-                  <div class="mb-[var(--spacing-sm)]">
-                    <h3 class="font-bold text-[var(--text-scale-base)] text-slate-900 leading-tight m-0 mb-1">${property.title}</h3>
-                    <p class="font-bold text-[var(--text-scale-lg)] text-[var(--primary)] m-0">${formatPrice(property.price)}</p>
-                  </div>
-                  <div class="flex flex-wrap gap-2 text-[var(--text-scale-sm)] text-slate-700 mb-[var(--spacing-sm)]">
-                    <span class="bg-slate-100 px-2 py-1 rounded-md border border-slate-200">${property.details.bedrooms} ${t('bedrooms')}</span>
-                    <span class="bg-slate-100 px-2 py-1 rounded-md border border-slate-200">${property.details.bathrooms} ${t('bathrooms')}</span>
-                    <span class="bg-slate-100 px-2 py-1 rounded-md border border-slate-200">${property.details.squareFootage} ${t('squareMeters')}</span>
-                  </div>
-                  <div class="mt-[var(--spacing-md)] flex flex-col gap-2">
-                    <a href="/properties/${property.id}" class="inline-block bg-[var(--primary)] text-white px-4 py-2 rounded-lg text-center font-medium no-underline transition-colors hover:bg-primary-dark focus-visible:ring-2 focus-visible:ring-primary">${t('viewDetails')}</a>
-                    <div class="grid grid-cols-2 gap-2">
-                      <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coords.lat},${coords.lng}" target="_blank" rel="noopener" class="inline-block bg-slate-100 text-[var(--primary)] px-3 py-2 rounded-lg text-center text-[var(--text-scale-sm)] font-medium no-underline transition-colors hover:bg-slate-200">${t('streetView')}</a>
-                      <a href="https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}" target="_blank" rel="noopener" class="inline-block bg-slate-100 text-[var(--primary)] px-3 py-2 rounded-lg text-center text-[var(--text-scale-sm)] font-medium no-underline transition-colors hover:bg-slate-200">${t('directions')}</a>
-                    </div>
-                  </div>
-                </div>
-              `,
+                buildPropertyPopup(property),
                 {
                   maxWidth: 300,
                   className: 'custom-popup leaflet-popup-card',
@@ -436,26 +472,7 @@ export default function SimpleMapView({ properties, height = '400px' }: SimpleMa
               const coords = property.address.coordinates;
               const marker = L.marker([coords.lat, coords.lng], { icon: customIcon }).addTo(map);
               marker.bindPopup(
-                `
-                <div class="p-[var(--spacing-md)] min-w-[240px] max-w-[280px]">
-                  <div class="mb-[var(--spacing-sm)]">
-                    <h3 class="font-bold text-[var(--text-scale-base)] text-slate-900 leading-tight m-0 mb-1">${property.title}</h3>
-                    <p class="font-bold text-[var(--text-scale-lg)] text-[var(--primary)] m-0">${formatPrice(property.price)}</p>
-                  </div>
-                  <div class="flex flex-wrap gap-2 text-[var(--text-scale-sm)] text-slate-700 mb-[var(--spacing-sm)]">
-                    <span class="bg-slate-100 px-2 py-1 rounded-md border border-slate-200">${property.details.bedrooms} ${t('bedrooms')}</span>
-                    <span class="bg-slate-100 px-2 py-1 rounded-md border border-slate-200">${property.details.bathrooms} ${t('bathrooms')}</span>
-                    <span class="bg-slate-100 px-2 py-1 rounded-md border border-slate-200">${property.details.squareFootage} ${t('squareMeters')}</span>
-                  </div>
-                  <div class="mt-[var(--spacing-md)] flex flex-col gap-2">
-                    <a href="/properties/${property.id}" class="inline-block bg-[var(--primary)] text-white px-4 py-2 rounded-lg text-center font-medium no-underline transition-colors hover:bg-primary-dark focus-visible:ring-2 focus-visible:ring-primary">${t('viewDetails')}</a>
-                    <div class="grid grid-cols-2 gap-2">
-                      <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coords.lat},${coords.lng}" target="_blank" rel="noopener" class="inline-block bg-slate-100 text-[var(--primary)] px-3 py-2 rounded-lg text-center text-[var(--text-scale-sm)] font-medium no-underline transition-colors hover:bg-slate-200">${t('streetView')}</a>
-                      <a href="https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}" target="_blank" rel="noopener" class="inline-block bg-slate-100 text-[var(--primary)] px-3 py-2 rounded-lg text-center text-[var(--text-scale-sm)] font-medium no-underline transition-colors hover:bg-slate-200">${t('directions')}</a>
-                    </div>
-                  </div>
-                </div>
-              `,
+                buildPropertyPopup(property),
                 {
                   maxWidth: 300,
                   className: 'custom-popup leaflet-popup-card',
